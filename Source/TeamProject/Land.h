@@ -34,6 +34,11 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Landmass")
 		float Scale = 50;
 
+	virtual void OnConstruction(const FTransform& Transform) override;
+
+	void CreateMesh();
+
+	bool MeshCreated = false;
 
 	TArray<FVector> Vertices;
 	TArray<int32> Triangles;
@@ -42,7 +47,5 @@ public:
 	TArray<FVector2D> UV1s;
 	TArray<FColor> VertexColours;
 	TArray<FProcMeshTangent> Tangents;
-
-
 
 };

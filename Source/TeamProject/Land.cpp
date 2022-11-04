@@ -17,6 +17,26 @@ ALand::ALand()
 void ALand::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+// Called every frame
+void ALand::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+}
+
+void ALand::OnConstruction(const FTransform& Transform)
+{
+	if (!MeshCreated)
+	{
+		CreateMesh();
+		MeshCreated = true;
+	}
+}
+
+void ALand::CreateMesh()
+{
 
 	Vertices.Init({ 0,0,0 }, Size * Size);
 
@@ -37,12 +57,5 @@ void ALand::BeginPlay()
 
 	//UKismetProceduralMeshLibrary::CalculateTangentsForMesh(Vertices, Triangles, UVs, Normals, Tangents);
 	ProcMesh->CreateMeshSection(0, Vertices, Triangles, Normals, UVs, VertexColours, Tangents, true);
-}
-
-// Called every frame
-void ALand::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
 }
 

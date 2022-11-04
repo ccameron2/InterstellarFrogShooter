@@ -29,12 +29,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	PlayerInputComponent->BindAxis(TEXT("Move Forward"), this, &APlayerCharacter::MoveForwards);
-	PlayerInputComponent->BindAxis(TEXT("Strafe"), this, &APlayerCharacter::strafe);
-	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &APlayerCharacter::Turn);
-	PlayerInputComponent->BindAxis(TEXT("Look Up"), this, &APlayerCharacter::LookUp);
-	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &APlayerCharacter::Jump);
 }
 
 void APlayerCharacter::MoveForwards(float AxisAmount)
@@ -43,7 +37,7 @@ void APlayerCharacter::MoveForwards(float AxisAmount)
 }
 
 //Allows the player to move the character left and right
-void APlayerCharacter::strafe(float AxisAmount)
+void APlayerCharacter::Strafe(float AxisAmount)
 {
 	AddMovementInput(GetActorRightVector() * AxisAmount);
 }

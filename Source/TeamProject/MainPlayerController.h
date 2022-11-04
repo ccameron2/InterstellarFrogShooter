@@ -24,7 +24,15 @@ public:
 
 	virtual void SetupInputComponent();
 
-	void switchPawn();
+	void CallMoveForwards(float AxisAmount);
+
+	void CallStrafe(float AxisAmount);
+
+	void CallLookUp(float AxisAmount);
+
+	void CallTurn(float AxisAmount);
+
+	void CallJump();
 
 	APlayerCharacter* Character;
 
