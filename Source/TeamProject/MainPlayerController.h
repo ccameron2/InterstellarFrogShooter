@@ -20,6 +20,9 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	UPROPERTY(EditAnywhere, Category = "Drone")
+		TSubclassOf<ADroneCharacter> DronePawn;
+
 	AMainPlayerController();
 
 	virtual void SetupInputComponent();
@@ -34,8 +37,11 @@ public:
 
 	void CallJump();
 
+	void SpawnDrone();
+
 	APlayerCharacter* Character;
 
 	ADroneCharacter* Drone;
-	
+
+	bool BuildMode = false;
 };

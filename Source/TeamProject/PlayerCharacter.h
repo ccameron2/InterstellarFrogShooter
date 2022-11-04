@@ -35,5 +35,6 @@ public:
 	void Turn(float AxisAmount);
 
 private:
-
+	UPROPERTY(EditAnywhere)
+		UStaticMeshComponent* PlayerMesh;
 };

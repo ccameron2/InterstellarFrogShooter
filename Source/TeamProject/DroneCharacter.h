@@ -26,4 +26,17 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+
+	void MoveForwards(float AxisAmount);
+
+	void Strafe(float AxisAmount);
+
+	void LookUp(float AxisAmount);
+
+	void Turn(float AxisAmount);
+
+private:
+	UPROPERTY(EditAnywhere)
+		UStaticMeshComponent* DroneMesh;
+
 };
