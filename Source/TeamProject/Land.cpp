@@ -31,31 +31,45 @@ void ALand::OnConstruction(const FTransform& Transform)
 	if (!MeshCreated)
 	{
 		CreateMesh();
-		MeshCreated = true;
 	}
 }
 
 void ALand::CreateMesh()
 {
-
+	Vertices.Empty();
+	Triangles.Empty();
 	Vertices.Init({ 0,0,0 }, Size * Size);
 
-	for (int i = 0; i < Size; i++)
+	int indexX = 0;
+	for (int i = -Size/2; i < Size/2; i++)
 	{
-		for (int j = 0; j < Size; j++)
+		int indexY = 0;
+		for (int j = -Size/2; j < Size / 2; j++)
 		{
 			FVector newVector = FVector{ i * Scale,j * Scale,0 };
-			Vertices[Size * i + j] = newVector;
+			Vertices[Size * indexX + indexY] = newVector;
+			indexY++;
 		}
+		indexX++;
 	}
 	UKismetProceduralMeshLibrary::CreateGridMeshTriangles(Size, Size, false, Triangles);
 
 	for (auto& vertex : Vertices)
 	{
-		vertex.Z = 1000 * FMath::PerlinNoise2D(FVector2D(vertex.X / 1000, vertex.Y / 1000));
+		auto result = FMath::PerlinNoise2D(0.6 * FVector2D(vertex.X, vertex.Y) / 2000);
+		result += FMath::PerlinNoise2D(0.3 * FVector2D(vertex.X, vertex.Y) / 2000);
+		result += FMath::PerlinNoise2D(0.2 * FVector2D(vertex.X, vertex.Y) / 2000);
+		vertex.Z += result * 1000;
 	}
 
 	//UKismetProceduralMeshLibrary::CalculateTangentsForMesh(Vertices, Triangles, UVs, Normals, Tangents);
+	ProcMesh->ClearMeshSection(0);
 	ProcMesh->CreateMeshSection(0, Vertices, Triangles, Normals, UVs, VertexColours, Tangents, true);
+	MeshCreated = true;
+}
+
+void ALand::MakeNewMesh()
+{
+	CreateMesh();
 }
 

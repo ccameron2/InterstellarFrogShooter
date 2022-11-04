@@ -32,11 +32,14 @@ public:
 		int32 Size = 500;
 
 	UPROPERTY(EditAnywhere, Category = "Landmass")
-		float Scale = 50;
+		float Scale = 200;
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 
 	void CreateMesh();
+
+	UFUNCTION(CallInEditor, Category = "LandMass")
+		void MakeNewMesh();
 
 	bool MeshCreated = false;
 
