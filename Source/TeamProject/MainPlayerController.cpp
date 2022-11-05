@@ -99,10 +99,11 @@ void AMainPlayerController::SpawnDrone()
 	{
 
 		//Current spawn parameters for the drone
-		FVector SpawnVector = Character->GetActorLocation() + FVector{0.0f, 10.0f, 0.0f};
+		FVector SpawnVector = Character->GetActorLocation() + FVector{0.0f, 0.0f, 100.0f};
+		FRotator SpawnRotation = Character->GetActorRotation();
 
 		//Spawn the drone 
-		Drone = GetWorld()->SpawnActor<ADroneCharacter>(DronePawn, SpawnVector, FRotator(0.0f, 0.0f, 0.0f));
+		Drone = GetWorld()->SpawnActor<ADroneCharacter>(DronePawn, SpawnVector, SpawnRotation);
 
 		//Check if the Drone was correctly spawned and then possess the new drone
 		if (Drone)
