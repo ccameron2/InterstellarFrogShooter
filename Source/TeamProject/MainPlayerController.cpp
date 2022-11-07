@@ -35,7 +35,6 @@ void AMainPlayerController::CallMoveForwards(float AxisAmount)
 {
 	if (Character)
 	{
-
 		Character->MoveForwards(AxisAmount);
 	}
 	if (Drone)
@@ -97,7 +96,6 @@ void AMainPlayerController::SpawnDrone()
 	//Check if the drone doesn't exist so that we can correctly spawn it 
 	if (!Drone)
 	{
-
 		//Current spawn parameters for the drone
 		FVector SpawnVector = Character->GetActorLocation() + FVector{0.0f, 0.0f, 100.0f};
 		FRotator SpawnRotation = Character->GetActorRotation();
@@ -107,7 +105,7 @@ void AMainPlayerController::SpawnDrone()
 
 		//Check if the Drone was correctly spawned and then possess the new drone
 		if (Drone)
-		{
+		{			
 			UnPossess();
 			Possess(Drone);
 		}		
