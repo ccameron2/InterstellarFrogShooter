@@ -54,12 +54,20 @@ void ALand::CreateMesh()
 	}
 	UKismetProceduralMeshLibrary::CreateGridMeshTriangles(Size, Size, false, Triangles);
 
-	for (auto& vertex : Vertices)
+	float tallestVectorHeight = 0;
+	int tallestVector = 0;
+	for (int i = 0; i < Vertices.Num(); i++)
 	{
-		auto result = FMath::PerlinNoise2D(0.6 * FVector2D(vertex.X, vertex.Y) / 2000);
-		result += FMath::PerlinNoise2D(0.3 * FVector2D(vertex.X, vertex.Y) / 2000);
-		result += FMath::PerlinNoise2D(0.2 * FVector2D(vertex.X, vertex.Y) / 2000);
-		vertex.Z += result * 1000;
+		
+		auto result = FMath::PerlinNoise2D(0.6 * FVector2D(Vertices[i].X, Vertices[i].Y) / 2000);
+		result += FMath::PerlinNoise2D(0.3 * FVector2D(Vertices[i].X, Vertices[i].Y) / 2000);
+		result += FMath::PerlinNoise2D(0.2 * FVector2D(Vertices[i].X, Vertices[i].Y) / 2000);
+		Vertices[i].Z += result * 1000;
+		if (Vertices[i].Z > tallestVectorHeight)
+		{
+			tallestVector = i;
+			tallestVectorHeight = Vertices[i].Z;
+		}
 	}
 
 	//UKismetProceduralMeshLibrary::CalculateTangentsForMesh(Vertices, Triangles, UVs, Normals, Tangents);
