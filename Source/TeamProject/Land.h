@@ -3,6 +3,7 @@
 #pragma once
 
 #include <ProceduralMeshComponent.h>
+#include "Components/InstancedStaticMeshComponent.h" 
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
@@ -29,10 +30,17 @@ public:
 		UProceduralMeshComponent* ProcMesh;
 
 	UPROPERTY(EditAnywhere, Category = "Landmass")
-		int32 Size = 500;
+		UInstancedStaticMeshComponent* StaticMesh;
 
 	UPROPERTY(EditAnywhere, Category = "Landmass")
-		float Scale = 200;
+		int32 Size = 250;
+
+	UPROPERTY(EditAnywhere, Category = "Landmass")
+		float Scale = 400;
+
+	UPROPERTY(EditAnywhere, Category = "Landmass")
+		int WaterLevel = -1800;
+
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 
@@ -50,5 +58,8 @@ public:
 	TArray<FVector2D> UV1s;
 	TArray<FColor> VertexColours;
 	TArray<FProcMeshTangent> Tangents;
+	TArray<FVector> WaterVertices;
+	TArray<int32> WaterTriangles;
+	TArray<FColor> WaterColours;
 
 };

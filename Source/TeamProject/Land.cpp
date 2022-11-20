@@ -2,7 +2,8 @@
 
 #include "Land.h"
 #include "KismetProceduralMeshLibrary.h"
-
+#include "External/FastNoise.h"
+#include "External/Delaunator.hpp"
 // Sets default values
 ALand::ALand()
 {
@@ -11,6 +12,9 @@ ALand::ALand()
 	
 	ProcMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("Land Mesh"));
 	SetRootComponent(ProcMesh);
+
+	StaticMesh = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("StaticMesh"));
+	StaticMesh->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -54,15 +58,17 @@ void ALand::CreateMesh()
 	}
 	UKismetProceduralMeshLibrary::CreateGridMeshTriangles(Size, Size, false, Triangles);
 
+	FastNoise noise;
+	noise.SetNoiseType(FastNoise::SimplexFractal);
+
 	float tallestVectorHeight = 0;
 	int tallestVector = 0;
 	for (int i = 0; i < Vertices.Num(); i++)
 	{
-		
-		auto result = FMath::PerlinNoise2D(0.6 * FVector2D(Vertices[i].X, Vertices[i].Y) / 2000);
-		result += FMath::PerlinNoise2D(0.3 * FVector2D(Vertices[i].X, Vertices[i].Y) / 2000);
-		result += FMath::PerlinNoise2D(0.2 * FVector2D(Vertices[i].X, Vertices[i].Y) / 2000);
-		Vertices[i].Z += result * 1000;
+		auto result = noise.GetNoise(Vertices[i].X / 120, Vertices[i].Y / 120);
+		auto largerResult = noise.GetNoise(Vertices[i].X / 300, Vertices[i].Y / 300);
+		Vertices[i].Z += result * 2000;
+		Vertices[i].Z += largerResult * 5000;
 		if (Vertices[i].Z > tallestVectorHeight)
 		{
 			tallestVector = i;
@@ -73,6 +79,48 @@ void ALand::CreateMesh()
 	//UKismetProceduralMeshLibrary::CalculateTangentsForMesh(Vertices, Triangles, UVs, Normals, Tangents);
 	ProcMesh->ClearMeshSection(0);
 	ProcMesh->CreateMeshSection(0, Vertices, Triangles, Normals, UVs, VertexColours, Tangents, true);
+
+	std::vector<double> coords;
+
+	for (auto vertex : Vertices)
+	{
+		if (vertex.Z < WaterLevel)
+		{
+			vertex.Z = WaterLevel;
+			WaterVertices.Push(vertex);
+			WaterColours.Push(FColor::Blue);
+			coords.push_back(vertex.X);
+			coords.push_back(vertex.Y);
+		}
+	}
+
+	// Use external library to triangulate
+	delaunator::Delaunator d(coords);
+
+	// Push resultant triangles into triangles list
+	for (auto& triangle : d.triangles)
+	{
+		WaterTriangles.Push(triangle);
+	}
+	ProcMesh->ClearMeshSection(1);
+	ProcMesh->CreateMeshSection(1, WaterVertices, WaterTriangles, Normals, UVs, WaterColours, Tangents, false);
+
+	//for (auto& vertex : Vertices)
+	//{
+	//	if (vertex.X > WaterLevel)
+	//	{
+	//		FTransform transform;
+	//		transform.SetLocation(vertex);
+	//		
+	//		FQuat Rotation = FVector{ 0,0,float(FMath::Rand())}.ToOrientationQuat();
+	//		transform.SetRotation(Rotation);
+
+	//		if(StaticMesh){ StaticMesh->AddInstance(transform); }			
+	//	}
+	//}
+
+	WaterVertices.Empty(); WaterTriangles.Empty(); WaterColours.Empty();
+
 	MeshCreated = true;
 }
 
