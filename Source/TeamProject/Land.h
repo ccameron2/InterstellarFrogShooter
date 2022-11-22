@@ -26,27 +26,35 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(VisibleAnywhere, Category = "Landmass")
+	UPROPERTY(VisibleAnywhere, Category = "ProcGen")
 		UProceduralMeshComponent* ProcMesh;
 
-	UPROPERTY(EditAnywhere, Category = "Landmass")
-		UInstancedStaticMeshComponent* StaticMesh;
+	UPROPERTY(EditAnywhere, Category = "ProcGen")
+		TArray<UInstancedStaticMeshComponent*> StaticMesh;
 
-	UPROPERTY(EditAnywhere, Category = "Landmass")
+	UPROPERTY(EditAnywhere, Category = "ProcGen")
 		int32 Size = 250;
 
-	UPROPERTY(EditAnywhere, Category = "Landmass")
+	UPROPERTY(EditAnywhere, Category = "ProcGen")
+		uint64 Seed = 69420;
+	
+	UPROPERTY(EditAnywhere, Category = "ProcGen")
 		float Scale = 400;
 
-	UPROPERTY(EditAnywhere, Category = "Landmass")
-		int WaterLevel = -1800;
+	UPROPERTY(EditAnywhere, Category = "ProcGen")
+		int WaterLevel = -2000;
 
+
+	int GeneratedSize = 0;
+	int GeneratedScale = 0;
+	int GeneratedWaterLevel = 0;
+	uint64 GeneratedSeed = 0;
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 
 	void CreateMesh();
 
-	UFUNCTION(CallInEditor, Category = "LandMass")
+	UFUNCTION(CallInEditor, Category = "ProcGen")
 		void MakeNewMesh();
 
 	bool MeshCreated = false;

@@ -4,6 +4,8 @@
 #include "KismetProceduralMeshLibrary.h"
 #include "External/FastNoise.h"
 #include "External/Delaunator.hpp"
+#include "UObject/ConstructorHelpers.h" 
+
 // Sets default values
 ALand::ALand()
 {
@@ -13,9 +15,25 @@ ALand::ALand()
 	ProcMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("Land Mesh"));
 	SetRootComponent(ProcMesh);
 
-	StaticMesh = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("StaticMesh"));
-	StaticMesh->SetupAttachment(RootComponent);
+
+	// This will be replaced and read from file
+	auto MeshAsset1 = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("StaticMesh'/Game/LowPolyAssets/CommonTree_1'"));
+	auto MeshAsset2 = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("StaticMesh'/Game/LowPolyAssets/CommonTree_2'"));
+	auto MeshAsset3 = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("StaticMesh'/Game/LowPolyAssets/CommonTree_3'"));
+
+	StaticMesh.Init(nullptr, 3);
+
+	StaticMesh[0] = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("Tree1 Static Mesh"));
+	StaticMesh[1] = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("Tree2 Static Mesh"));
+	StaticMesh[2] = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("Tree3 Static Mesh"));
+
+	StaticMesh[0]->SetStaticMesh(MeshAsset1.Object);
+	StaticMesh[1]->SetStaticMesh(MeshAsset2.Object);
+	StaticMesh[2]->SetStaticMesh(MeshAsset3.Object);
+	////////////////////////////////////////////
 }
+
+/// Content / LowPolyAssets / CommonTree_1.uasset
 
 // Called when the game starts or when spawned
 void ALand::BeginPlay()
@@ -36,10 +54,22 @@ void ALand::OnConstruction(const FTransform& Transform)
 	{
 		CreateMesh();
 	}
+	
+	// Update mesh on editor parameter changes
+	if (GeneratedWaterLevel != WaterLevel || GeneratedScale != Scale ||
+		GeneratedSize != Size || GeneratedSeed != Seed)
+	{
+		MeshCreated = false;
+		CreateMesh();
+	}
 }
 
 void ALand::CreateMesh()
 {
+	for (auto& mesh : StaticMesh)
+	{
+		mesh->ClearInstances();
+	}
 	Vertices.Empty();
 	Triangles.Empty();
 	Vertices.Init({ 0,0,0 }, Size * Size);
@@ -63,12 +93,15 @@ void ALand::CreateMesh()
 
 	float tallestVectorHeight = 0;
 	int tallestVector = 0;
+
 	for (int i = 0; i < Vertices.Num(); i++)
 	{
-		auto result = noise.GetNoise(Vertices[i].X / 120, Vertices[i].Y / 120);
-		auto largerResult = noise.GetNoise(Vertices[i].X / 300, Vertices[i].Y / 300);
-		Vertices[i].Z += result * 2000;
-		Vertices[i].Z += largerResult * 5000;
+		auto input = Vertices[i] + Seed;
+
+		auto result1 = noise.GetNoise(input.X / 1000, input.Y / 1000);
+		Vertices[i].Z += result1 * 5000;
+		auto result2 = noise.GetNoise(input.X / 120, input.Y / 120);
+		Vertices[i].Z += result2 * 2000;
 		if (Vertices[i].Z > tallestVectorHeight)
 		{
 			tallestVector = i;
@@ -94,33 +127,44 @@ void ALand::CreateMesh()
 		}
 	}
 
-	// Use external library to triangulate
-	delaunator::Delaunator d(coords);
-
-	// Push resultant triangles into triangles list
-	for (auto& triangle : d.triangles)
+	if (coords.size() > 0)
 	{
-		WaterTriangles.Push(triangle);
+		// Use external library to triangulate
+		delaunator::Delaunator d(coords);
+
+		// Push resultant triangles into triangles list
+		for (auto& triangle : d.triangles)
+		{
+			WaterTriangles.Push(triangle);
+		}
+		ProcMesh->ClearMeshSection(1);
+		ProcMesh->CreateMeshSection(1, WaterVertices, WaterTriangles, Normals, UVs, WaterColours, Tangents, false);
 	}
-	ProcMesh->ClearMeshSection(1);
-	ProcMesh->CreateMeshSection(1, WaterVertices, WaterTriangles, Normals, UVs, WaterColours, Tangents, false);
+	
+	for (auto& vertex : Vertices)
+	{
+		if (vertex.Z > WaterLevel && FMath::RandRange(0,100) > 99)
+		{
+			FTransform transform;
+			transform.SetLocation(vertex);
+			
+			transform.SetScale3D(FVector{ 8,8,8 });
 
-	//for (auto& vertex : Vertices)
-	//{
-	//	if (vertex.X > WaterLevel)
-	//	{
-	//		FTransform transform;
-	//		transform.SetLocation(vertex);
-	//		
-	//		FQuat Rotation = FVector{ 0,0,float(FMath::Rand())}.ToOrientationQuat();
-	//		transform.SetRotation(Rotation);
+			FQuat Rotation = FVector{ 0,0,0}.ToOrientationQuat();
+			transform.SetRotation(Rotation);
 
-	//		if(StaticMesh){ StaticMesh->AddInstance(transform); }			
-	//	}
-	//}
+			auto staticMesh = StaticMesh[FMath::RandRange(0, StaticMesh.Num() - 1)];
+
+			if(staticMesh){ staticMesh->AddInstance(transform); }			
+		}
+	}
 
 	WaterVertices.Empty(); WaterTriangles.Empty(); WaterColours.Empty();
 
+
+	GeneratedScale = Scale;
+	GeneratedSize = Size;
+	GeneratedWaterLevel = WaterLevel;
 	MeshCreated = true;
 }
 
