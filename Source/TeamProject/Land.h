@@ -9,6 +9,16 @@
 #include "GameFramework/Actor.h"
 #include "Land.generated.h"
 
+UENUM()
+enum TerrainTypes
+{
+	Forest,
+	Snowy,
+	Mossy,
+	Piney,
+	Desert,
+};
+
 UCLASS()
 class TEAMPROJECT_API ALand : public AActor
 {
@@ -29,11 +39,19 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "ProcGen")
 		UProceduralMeshComponent* ProcMesh;
 
-	UPROPERTY(EditAnywhere, Category = "ProcGen")
-		TArray<UInstancedStaticMeshComponent*> StaticMesh;
+	TArray<UInstancedStaticMeshComponent*> StaticMeshes;
 
 	UPROPERTY(EditAnywhere, Category = "ProcGen")
-		int32 Size = 250;
+		TEnumAsByte<TerrainTypes> TerrainType = Forest;
+
+	TArray<UInstancedStaticMeshComponent*> ForestStaticMeshes;
+	TArray<UInstancedStaticMeshComponent*> SnowyStaticMeshes;
+	TArray<UInstancedStaticMeshComponent*> MossyStaticMeshes;
+	TArray<UInstancedStaticMeshComponent*> PineyStaticMeshes;
+	TArray<UInstancedStaticMeshComponent*> DesertStaticMeshes;
+
+	UPROPERTY(EditAnywhere, Category = "ProcGen")
+		int32 Size = 100;
 
 	UPROPERTY(EditAnywhere, Category = "ProcGen")
 		uint64 Seed = 69420;
@@ -49,10 +67,13 @@ public:
 	int GeneratedScale = 0;
 	int GeneratedWaterLevel = 0;
 	uint64 GeneratedSeed = 0;
+	TEnumAsByte<TerrainTypes> GeneratedTerrainType;
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 
 	void CreateMesh();
+	void ClearMeshInstances();
+	void CalculateNormals();
 
 	UFUNCTION(CallInEditor, Category = "ProcGen")
 		void MakeNewMesh();
@@ -69,5 +90,7 @@ public:
 	TArray<FVector> WaterVertices;
 	TArray<int32> WaterTriangles;
 	TArray<FColor> WaterColours;
+
+
 
 };
