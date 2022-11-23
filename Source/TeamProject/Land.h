@@ -49,6 +49,7 @@ public:
 	TArray<UInstancedStaticMeshComponent*> MossyStaticMeshes;
 	TArray<UInstancedStaticMeshComponent*> PineyStaticMeshes;
 	TArray<UInstancedStaticMeshComponent*> DesertStaticMeshes;
+	TArray<UInstancedStaticMeshComponent*> FoliageStaticMeshes;
 
 	UPROPERTY(EditAnywhere, Category = "ProcGen")
 		int32 Size = 100;
@@ -91,6 +92,6 @@ public:
 	TArray<int32> WaterTriangles;
 	TArray<FColor> WaterColours;
 
-
+	void LoadStaticMeshes();
 
 };
