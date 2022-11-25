@@ -37,6 +37,9 @@ public:
 
 	void CallJump();
 
+	UFUNCTION(BlueprintCallable)
+		void WidgetLoader(int index);
+
 	void SpawnDrone();
 
 	APlayerCharacter* Character;
@@ -44,4 +47,40 @@ public:
 	ADroneCharacter* Drone;
 
 	bool BuildMode = false;
+
+	UPROPERTY(BlueprintReadWrite)
+		bool IsInGame = false;
+
+private:
+
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<UUserWidget> MainMenuWidget;
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<UUserWidget> HUDWidget;
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<UUserWidget> SettingsWidget;
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<UUserWidget> SkillTreeWidget;
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<UUserWidget> PauseUserWidget;
+
+	UPROPERTY()
+		UUserWidget* Menu;
+
+	UPROPERTY()
+		UUserWidget* HUD;
+
+	UPROPERTY()
+		UUserWidget* Settings;
+
+	UPROPERTY()
+		UUserWidget* SkillTree;
+
+	UPROPERTY()
+		UUserWidget* PauseWidget;
 };

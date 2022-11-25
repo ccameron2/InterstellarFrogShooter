@@ -3,7 +3,8 @@
 
 #include "MainPlayerController.h"
 #include "PlayerCharacter.h"
-
+#include "Kismet/GameplayStatics.h"
+#include "Blueprint/UserWidget.h"
 
 AMainPlayerController::AMainPlayerController()
 {
@@ -13,6 +14,17 @@ AMainPlayerController::AMainPlayerController()
 void AMainPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Menu = CreateWidget(this, MainMenuWidget);
+	HUD = CreateWidget(this, HUDWidget);
+	Settings = CreateWidget(this, SettingsWidget);
+	SkillTree = CreateWidget(this, SkillTreeWidget);
+	PauseWidget = CreateWidget(this, PauseUserWidget);
+
+	Menu->AddToViewport();
+	SetInputMode(FInputModeUIOnly());
+	bShowMouseCursor = true;
+
 
 	Character = Cast<APlayerCharacter>(GetPawn());
 }
@@ -87,6 +99,52 @@ void AMainPlayerController::CallJump()
 	if (Character)
 	{
 		Character->Jump();
+	}
+}
+
+void AMainPlayerController::WidgetLoader(int index)
+{
+	if (index == 0)
+	{
+		Menu->AddToViewport();
+		HUD->RemoveFromViewport();
+		Settings->RemoveFromViewport();
+		SkillTree->RemoveFromViewport();
+		PauseWidget->RemoveFromViewport();
+	}
+	else if (index == 1)
+	{
+		HUD->AddToViewport();
+		Menu->RemoveFromViewport();
+		Settings->RemoveFromViewport();
+		SkillTree->RemoveFromViewport();
+		PauseWidget->RemoveFromViewport();
+		
+	}
+	else if (index == 2)
+	{
+		Settings->AddToViewport();
+		Menu->RemoveFromViewport();
+		HUD->RemoveFromViewport();
+		SkillTree->RemoveFromViewport();
+		PauseWidget->RemoveFromViewport();
+	}
+	else if (index == 3)
+	{
+		SkillTree->AddToViewport();
+		Menu->RemoveFromViewport();
+		HUD->RemoveFromViewport();
+		Settings->RemoveFromViewport();
+		PauseWidget->RemoveFromViewport();
+	}
+	else if (index == 4)
+	{
+		PauseWidget->AddToViewport();
+		Menu->RemoveFromViewport();
+		HUD->RemoveFromViewport();
+		Settings->RemoveFromViewport();
+		SkillTree->RemoveFromViewport();
+
 	}
 }
 
