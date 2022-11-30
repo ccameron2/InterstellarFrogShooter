@@ -171,6 +171,7 @@ void ALand::CreateMesh()
 		}
 		ProcMesh->ClearMeshSection(1);
 		ProcMesh->CreateMeshSection(1, WaterVertices, WaterTriangles, Normals, UVs, WaterColours, Tangents, false);
+		ProcMesh->SetMaterial(1, WaterMaterial);
 	}
 	
 	for (auto& vertex : Vertices)
@@ -183,12 +184,12 @@ void ALand::CreateMesh()
 			
 			if (meshNum > 6)
 			{
-				transform.SetScale3D(FVector{float(FMath::RandRange(2,3))});
+				transform.SetScale3D(FVector{float(FMath::RandRange(1,2))});
 
 			}
 			else
 			{
-				transform.SetScale3D(FVector{float(FMath::RandRange(3,6))});
+				transform.SetScale3D(FVector{float(FMath::RandRange(2,5))});
 			}
 
 			FQuat Rotation = FVector{ 0,0,0}.ToOrientationQuat();
@@ -208,11 +209,13 @@ void ALand::CreateMesh()
 					int meshNum = FMath::RandRange(0, FoliageStaticMeshes.Num() - 2);
 					FTransform transform;
 					transform.SetLocation(vertex);
-					transform.SetScale3D(FVector{ float(FMath::RandRange(2,3)) });
+					transform.SetScale3D(FVector{ float(FMath::RandRange(1,2)) });
 					FQuat Rotation = FVector{ 0,0,0 }.ToOrientationQuat();
 					transform.SetRotation(Rotation);
 
 					auto staticMesh = FoliageStaticMeshes[meshNum];
+
+					staticMesh->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
 
 					if (staticMesh) { staticMesh->AddInstance(transform); }
 				}
@@ -223,10 +226,13 @@ void ALand::CreateMesh()
 					int meshNum = FoliageStaticMeshes.Num() - 1;
 					FTransform transform;
 					transform.SetLocation(location);
-					transform.SetScale3D(FVector{ float(FMath::RandRange(2,3))});
+					transform.SetScale3D(FVector{ float(FMath::RandRange(1,2))});
 					FQuat Rotation = FVector{ 0,0,0 }.ToOrientationQuat();
 					transform.SetRotation(Rotation);
+
 					auto staticMesh = FoliageStaticMeshes[meshNum];
+
+					staticMesh->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
 
 					if (staticMesh) { staticMesh->AddInstance(transform); }
 				}
@@ -438,4 +444,7 @@ void ALand::LoadStaticMeshes()
 	FoliageStaticMeshes[8]->SetStaticMesh(MeshAsset59.Object);
 	FoliageStaticMeshes[9]->SetStaticMesh(MeshAsset60.Object);
 	FoliageStaticMeshes[10]->SetStaticMesh(MeshAsset600.Object);
+
+	ConstructorHelpers::FObjectFinder<UMaterial> waterMaterial(TEXT("M_Water_Lake'/Game/StarterContent/Materials/M_Water_Lake.M_Water_Lake'"));
+	WaterMaterial = waterMaterial.Object;
 }

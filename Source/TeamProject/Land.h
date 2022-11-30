@@ -68,6 +68,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "ProcGen")
 		bool CreateOnConstruction = false;
 
+	UMaterialInterface* WaterMaterial;
+
+
 	int GeneratedSize = 0;
 	int GeneratedScale = 0;
 	int GeneratedWaterLevel = 0;
