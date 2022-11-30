@@ -3,6 +3,7 @@
 #pragma once
 #include "MainPlayerController.h"
 #include "Land.h"
+#include <string>
 #include "PlayerCharacter.h"
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
@@ -37,5 +38,5 @@ public:
 	ALand* LandActor;
 
 	UFUNCTION(BlueprintCallable)
-	void OnGuiSetValues();
+	void OnGuiSetValues(FText InSeedString, int InTerrainType);
 };

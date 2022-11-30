@@ -112,43 +112,43 @@ void AMainPlayerController::WidgetLoader(int index)
 	if (index == 0)
 	{
 		Menu->AddToViewport();
-		HUD->RemoveFromViewport();
-		Settings->RemoveFromViewport();
-		SkillTree->RemoveFromViewport();
-		PauseWidget->RemoveFromViewport();
+		HUD->RemoveFromParent();
+		Settings->RemoveFromParent();
+		SkillTree->RemoveFromParent();
+		PauseWidget->RemoveFromParent();
 	}
 	else if (index == 1)
 	{
 		HUD->AddToViewport();
-		Menu->RemoveFromViewport();
-		Settings->RemoveFromViewport();
-		SkillTree->RemoveFromViewport();
-		PauseWidget->RemoveFromViewport();
+		Menu->RemoveFromParent();
+		Settings->RemoveFromParent();
+		SkillTree->RemoveFromParent();
+		PauseWidget->RemoveFromParent();
 		
 	}
 	else if (index == 2)
 	{
 		Settings->AddToViewport();
-		Menu->RemoveFromViewport();
-		HUD->RemoveFromViewport();
-		SkillTree->RemoveFromViewport();
-		PauseWidget->RemoveFromViewport();
+		Menu->RemoveFromParent();
+		HUD->RemoveFromParent();
+		SkillTree->RemoveFromParent();
+		PauseWidget->RemoveFromParent();
 	}
 	else if (index == 3)
 	{
 		SkillTree->AddToViewport();
-		Menu->RemoveFromViewport();
-		HUD->RemoveFromViewport();
-		Settings->RemoveFromViewport();
-		PauseWidget->RemoveFromViewport();
+		Menu->RemoveFromParent();
+		HUD->RemoveFromParent();
+		Settings->RemoveFromParent();
+		PauseWidget->RemoveFromParent();
 	}
 	else if (index == 4)
 	{
 		PauseWidget->AddToViewport();
-		Menu->RemoveFromViewport();
-		HUD->RemoveFromViewport();
-		Settings->RemoveFromViewport();
-		SkillTree->RemoveFromViewport();
+		Menu->RemoveFromParent();
+		HUD->RemoveFromParent();
+		Settings->RemoveFromParent();
+		SkillTree->RemoveFromParent();
 
 	}
 }

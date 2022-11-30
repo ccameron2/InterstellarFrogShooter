@@ -17,14 +17,39 @@ void ATeamProjectGameModeBase::BeginPlay()
 		FTransform Transform;
 		LandActor = GetWorld()->SpawnActorDeferred<ALand>(LandClass, Transform);
 	}
-
 }
 
-void ATeamProjectGameModeBase::OnGuiSetValues()
+void ATeamProjectGameModeBase::OnGuiSetValues(FText InSeedString, int InTerrainType)
 {
+	//Initialise a seed for the case when everything fails with generating a seed
 	int seed = 89514156;
-	int type = 0;
-	LandActor->Init(seed,type);
+
+	//Convert the entered Text into a String variable
+	FString seedString = InSeedString.ToString();
+
+	//Check if the String is numeric
+	//Needs to be checked as this ignores any non numerical characters that the player enters
+	if (seedString.IsNumeric())
+	{
+		//convert the String to an Int
+		int32 seedInt = FCString::Atoi(*seedString);
+
+		//Set the seed to the converted Int
+		seed = seedInt;
+	}
+	else
+	{
+		//if the player enters text with any non numerical character 
+		//Generate a random seed
+		seed = rand();
+	}
+
+	//Currently log the generated Seed and the chosen Terrain Type for Debuging
+	UE_LOG(LogTemp, Warning, TEXT("SEED: %d"), seed);
+	UE_LOG(LogTemp, Warning, TEXT("TERRAIN TYPE: %d"), InTerrainType);
+	
+	//initialise the Terrain
+	LandActor->Init(seed,InTerrainType);
 
 	FTransform Transform;
 	FVector Location = { 0,0,0 };
