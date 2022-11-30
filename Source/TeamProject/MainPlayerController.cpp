@@ -25,7 +25,6 @@ void AMainPlayerController::BeginPlay()
 	SetInputMode(FInputModeUIOnly());
 	bShowMouseCursor = true;
 
-
 	Character = Cast<APlayerCharacter>(GetPawn());
 }
 
@@ -100,6 +99,12 @@ void AMainPlayerController::CallJump()
 	{
 		Character->Jump();
 	}
+}
+
+void AMainPlayerController::RebindCharacter(APlayerCharacter* playerCharacter)
+{
+	Character = nullptr;
+	Character = Cast<APlayerCharacter>(playerCharacter);
 }
 
 void AMainPlayerController::WidgetLoader(int index)

@@ -4,19 +4,22 @@
 #include "External/FastNoise.h"
 #include "External/Delaunator.hpp"
 #include "UObject/ConstructorHelpers.h" 
-
-
-// Sets default values
 ALand::ALand()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	
+
 	ProcMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("Land Mesh"));
 	SetRootComponent(ProcMesh);
 
 	LoadStaticMeshes();
-
+}
+// Sets default values
+void ALand::Init(int seed, int type)
+{
+	Seed = seed;
+	TerrainType = TEnumAsByte<TerrainTypes>(type);
+	Initialised = true;
 }
 
 /// Content / LowPolyAssets / CommonTree_1.uasset
@@ -25,33 +28,38 @@ ALand::ALand()
 void ALand::BeginPlay()
 {
 	Super::BeginPlay();
-	if (!MeshCreated)
-	{
-		CreateMesh();
-	}
 }
 
 // Called every frame
 void ALand::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	if (Initialised)
+	{
+		if (!MeshCreated)
+		{
+			CreateMesh();
+		}
+	}
 }
 
 void ALand::OnConstruction(const FTransform& Transform)
 {
-	if (!MeshCreated)
+	if (CreateOnConstruction)
 	{
-		CreateMesh();
-	}
-	
-	// Update mesh on editor parameter changes
-	if (GeneratedWaterLevel != WaterLevel || GeneratedScale != Scale ||
-		GeneratedSize != Size || GeneratedSeed != Seed || TerrainType != GeneratedTerrainType)
-	{
-		MeshCreated = false;
-		CreateMesh();
-	}
+		if (!MeshCreated)
+		{
+			CreateMesh();
+		}
+
+		// Update mesh on editor parameter changes
+		if (GeneratedWaterLevel != WaterLevel || GeneratedScale != Scale ||
+			GeneratedSize != Size || GeneratedSeed != Seed || TerrainType != GeneratedTerrainType)
+		{
+			MeshCreated = false;
+			CreateMesh();
+		}
+	}	
 }
 
 void ALand::ClearMeshInstances()
@@ -132,7 +140,7 @@ void ALand::CreateMesh()
 
 	//CalculateNormals();
 
-	UKismetProceduralMeshLibrary::CalculateTangentsForMesh(Vertices, Triangles, UVs, Normals, Tangents);
+	//UKismetProceduralMeshLibrary::CalculateTangentsForMesh(Vertices, Triangles, UVs, Normals, Tangents);
 	ProcMesh->ClearMeshSection(0);
 	ProcMesh->CreateMeshSection(0, Vertices, Triangles, Normals, UVs, VertexColours, Tangents, true);
 

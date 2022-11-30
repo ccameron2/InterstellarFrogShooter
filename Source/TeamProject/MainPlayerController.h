@@ -37,6 +37,8 @@ public:
 
 	void CallJump();
 
+	void RebindCharacter(APlayerCharacter* playerCharacter);
+
 	UFUNCTION(BlueprintCallable)
 		void WidgetLoader(int index);
 

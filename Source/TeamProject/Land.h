@@ -28,6 +28,8 @@ public:
 	// Sets default values for this actor's properties
 	ALand();
 
+	void Init(int seed, int type);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -63,6 +65,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "ProcGen")
 		int WaterLevel = -2000;
 
+	UPROPERTY(EditAnywhere, Category = "ProcGen")
+		bool CreateOnConstruction = false;
 
 	int GeneratedSize = 0;
 	int GeneratedScale = 0;
@@ -80,6 +84,7 @@ public:
 		void MakeNewMesh();
 
 	bool MeshCreated = false;
+	bool Initialised = false;
 
 	TArray<FVector> Vertices;
 	TArray<int32> Triangles;
