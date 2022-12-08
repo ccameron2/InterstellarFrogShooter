@@ -140,10 +140,31 @@ void ALand::CreateMesh()
 
 	//CalculateNormals();
 
-	//UKismetProceduralMeshLibrary::CalculateTangentsForMesh(Vertices, Triangles, UVs, Normals, Tangents);
+	UKismetProceduralMeshLibrary::CalculateTangentsForMesh(Vertices, Triangles, UVs, Normals, Tangents);
 	ProcMesh->ClearMeshSection(0);
 	ProcMesh->CreateMeshSection(0, Vertices, Triangles, Normals, UVs, VertexColours, Tangents, true);
-
+	
+	switch (TerrainType)
+	{
+	case Forest:
+		ProcMesh->SetMaterial(0, ForestMaterial);
+		break;
+	case Mossy:
+		ProcMesh->SetMaterial(0, MossyMaterial);
+		break;
+	case Piney:
+		ProcMesh->SetMaterial(0, PineyMaterial);
+		break;
+	case Desert:
+		ProcMesh->SetMaterial(0, DesertMaterial);
+		break;
+	case Snowy:
+		ProcMesh->SetMaterial(0, SnowyMaterial);
+		break;
+	default:
+		ProcMesh->SetMaterial(0, ForestMaterial);
+		break;
+	}
 	/*if (terrainType != Desert)*/
 	std::vector<double> coords;
 
@@ -447,4 +468,16 @@ void ALand::LoadStaticMeshes()
 
 	ConstructorHelpers::FObjectFinder<UMaterial> waterMaterial(TEXT("M_Water_Lake'/Game/StarterContent/Materials/M_Water_Lake.M_Water_Lake'"));
 	WaterMaterial = waterMaterial.Object;
+	ConstructorHelpers::FObjectFinder<UMaterialInstance> forestMaterial(TEXT("M_Terrain_Forest'/Game/M_Terrain_Forest.M_Terrain_Forest'"));
+	ForestMaterial = forestMaterial.Object;
+	ConstructorHelpers::FObjectFinder<UMaterialInstance> desertMaterial(TEXT("M_Terrain_Desert'/Game/M_Terrain_Desert.M_Terrain_Desert'"));
+	DesertMaterial = desertMaterial.Object;
+	ConstructorHelpers::FObjectFinder<UMaterialInstance> mossyMaterial(TEXT("M_Terrain_Mossy'/Game/M_Terrain_Mossy.M_Terrain_Mossy'"));
+	MossyMaterial = mossyMaterial.Object;
+	ConstructorHelpers::FObjectFinder<UMaterialInstance> pineyMaterial(TEXT("M_Terrain_Piney'/Game/M_Terrain_Piney.M_Terrain_Piney'"));
+	PineyMaterial = pineyMaterial.Object;
+	ConstructorHelpers::FObjectFinder<UMaterialInstance> snowyMaterial(TEXT("M_Terrain_Snowy'/Game/M_Terrain_Snowy.M_Terrain_Snowy'"));
+	SnowyMaterial = snowyMaterial.Object;
+
+	///Script/Engine.MaterialInstanceConstant'/Game/M_Terrain_Desert.M_Terrain_Desert'
 }

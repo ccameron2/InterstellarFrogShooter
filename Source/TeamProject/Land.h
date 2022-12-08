@@ -69,6 +69,11 @@ public:
 		bool CreateOnConstruction = false;
 
 	UMaterialInterface* WaterMaterial;
+	UMaterialInterface* ForestMaterial;
+	UMaterialInterface* DesertMaterial;
+	UMaterialInterface* MossyMaterial;
+	UMaterialInterface* PineyMaterial;
+	UMaterialInterface* SnowyMaterial;
 
 
 	int GeneratedSize = 0;
