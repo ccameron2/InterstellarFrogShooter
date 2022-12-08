@@ -87,6 +87,7 @@ public:
 	void CreateMesh();
 	void ClearMeshInstances();
 	void CalculateNormals();
+	void CalculateUVs();
 
 	UFUNCTION(CallInEditor, Category = "ProcGen")
 		void MakeNewMesh();

@@ -141,6 +141,9 @@ void ALand::CreateMesh()
 	//CalculateNormals();
 
 	UKismetProceduralMeshLibrary::CalculateTangentsForMesh(Vertices, Triangles, UVs, Normals, Tangents);
+
+	//CalculateUVs();
+
 	ProcMesh->ClearMeshSection(0);
 	ProcMesh->CreateMeshSection(0, Vertices, Triangles, Normals, UVs, VertexColours, Tangents, true);
 	
@@ -287,6 +290,19 @@ void ALand::CalculateNormals()
 		auto n = v1.Cross(v2);
 		n.Normalize();
 		Normals.Push(n);
+	}
+}
+
+void ALand::CalculateUVs()
+{
+	UVs.Empty();
+	UVs.Init({ 0,0 }, Vertices.Num());
+	for (double i = 0; i < Size; i++)
+	{
+		for (double j = 0; j < Size; j++)
+		{
+			UVs[i * Size + j] = FVector2D{i / Size,j / Size};
+		}
 	}
 }
 
@@ -468,15 +484,15 @@ void ALand::LoadStaticMeshes()
 
 	ConstructorHelpers::FObjectFinder<UMaterial> waterMaterial(TEXT("M_Water_Lake'/Game/StarterContent/Materials/M_Water_Lake.M_Water_Lake'"));
 	WaterMaterial = waterMaterial.Object;
-	ConstructorHelpers::FObjectFinder<UMaterialInstance> forestMaterial(TEXT("M_Terrain_Forest'/Game/M_Terrain_Forest.M_Terrain_Forest'"));
+	ConstructorHelpers::FObjectFinder<UMaterialInstance> forestMaterial(TEXT("M_Terrain_Forest'/Game/Materials/M_Terrain_Forest.M_Terrain_Forest'"));
 	ForestMaterial = forestMaterial.Object;
-	ConstructorHelpers::FObjectFinder<UMaterialInstance> desertMaterial(TEXT("M_Terrain_Desert'/Game/M_Terrain_Desert.M_Terrain_Desert'"));
+	ConstructorHelpers::FObjectFinder<UMaterialInstance> desertMaterial(TEXT("M_Terrain_Desert'/Game/Materials/M_Terrain_Desert.M_Terrain_Desert'"));
 	DesertMaterial = desertMaterial.Object;
-	ConstructorHelpers::FObjectFinder<UMaterialInstance> mossyMaterial(TEXT("M_Terrain_Mossy'/Game/M_Terrain_Mossy.M_Terrain_Mossy'"));
+	ConstructorHelpers::FObjectFinder<UMaterialInstance> mossyMaterial(TEXT("M_Terrain_Mossy'/Game/Materials/M_Terrain_Mossy.M_Terrain_Mossy'"));
 	MossyMaterial = mossyMaterial.Object;
-	ConstructorHelpers::FObjectFinder<UMaterialInstance> pineyMaterial(TEXT("M_Terrain_Piney'/Game/M_Terrain_Piney.M_Terrain_Piney'"));
+	ConstructorHelpers::FObjectFinder<UMaterialInstance> pineyMaterial(TEXT("M_Terrain_Piney'/Game/Materials/M_Terrain_Piney.M_Terrain_Piney'"));
 	PineyMaterial = pineyMaterial.Object;
-	ConstructorHelpers::FObjectFinder<UMaterialInstance> snowyMaterial(TEXT("M_Terrain_Snowy'/Game/M_Terrain_Snowy.M_Terrain_Snowy'"));
+	ConstructorHelpers::FObjectFinder<UMaterialInstance> snowyMaterial(TEXT("M_Terrain_Snowy'/Game/Materials/M_Terrain_Snowy.M_Terrain_Snowy'"));
 	SnowyMaterial = snowyMaterial.Object;
 
 	///Script/Engine.MaterialInstanceConstant'/Game/M_Terrain_Desert.M_Terrain_Desert'
