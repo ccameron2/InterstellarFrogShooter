@@ -69,6 +69,11 @@ public:
 		bool CreateOnConstruction = false;
 
 	UMaterialInterface* WaterMaterial;
+	UMaterialInterface* ForestMaterial;
+	UMaterialInterface* DesertMaterial;
+	UMaterialInterface* MossyMaterial;
+	UMaterialInterface* PineyMaterial;
+	UMaterialInterface* SnowyMaterial;
 
 
 	int GeneratedSize = 0;
@@ -82,6 +87,7 @@ public:
 	void CreateMesh();
 	void ClearMeshInstances();
 	void CalculateNormals();
+	void CalculateUVs();
 
 	UFUNCTION(CallInEditor, Category = "ProcGen")
 		void MakeNewMesh();
