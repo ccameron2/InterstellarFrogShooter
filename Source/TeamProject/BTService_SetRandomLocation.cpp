@@ -3,6 +3,9 @@
 
 #include "BTService_SetRandomLocation.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Engine/TargetPoint.h"
+
 
 UBTService_SetRandomLocation::UBTService_SetRandomLocation()
 {
@@ -13,6 +16,14 @@ void UBTService_SetRandomLocation::TickNode(UBehaviorTreeComponent& OwnerComp, u
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
-	OwnerComp.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), FVector(1000.0f, 10.0f, 100.0f));
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), Waypoints);
 
+	OwnerComp.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), ChooseWaypoint()->GetActorLocation());
+
+}
+
+AActor* UBTService_SetRandomLocation::ChooseWaypoint()
+{
+	int index = FMath::RandRange(0, Waypoints.Num() - 1); // Finds the random waypoint 
+	return Waypoints[index]; // Returns the random value
 }
