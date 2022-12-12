@@ -138,11 +138,7 @@ void ALand::CreateMesh()
 		}
 	}
 
-	//CalculateNormals();
-
 	UKismetProceduralMeshLibrary::CalculateTangentsForMesh(Vertices, Triangles, UVs, Normals, Tangents);
-
-	//CalculateUVs();
 
 	ProcMesh->ClearMeshSection(0);
 	ProcMesh->CreateMeshSection(0, Vertices, Triangles, Normals, UVs, VertexColours, Tangents, true);
@@ -278,32 +274,6 @@ void ALand::MakeNewMesh()
 {
 	Seed = FMath::RandRange(0, 999999999);
 	CreateMesh();
-}
-
-void ALand::CalculateNormals()
-{
-	Normals.Init({ 0,0,0 }, Vertices.Num());
-	for (int i = 0; i < Triangles.Num(); i += 3)
-	{
-		auto v1 = Vertices[Triangles[i + 2]] - Vertices[Triangles[i + 1]];
-		auto v2 = Vertices[Triangles[i]] - Vertices[Triangles[i + 1]];
-		auto n = v1.Cross(v2);
-		n.Normalize();
-		Normals.Push(n);
-	}
-}
-
-void ALand::CalculateUVs()
-{
-	UVs.Empty();
-	UVs.Init({ 0,0 }, Vertices.Num());
-	for (double i = 0; i < Size; i++)
-	{
-		for (double j = 0; j < Size; j++)
-		{
-			UVs[i * Size + j] = FVector2D{i / Size,j / Size};
-		}
-	}
 }
 
 void ALand::LoadStaticMeshes()
