@@ -102,7 +102,9 @@ public:
 	TArray<FProcMeshTangent> Tangents;
 	TArray<FVector> WaterVertices;
 	TArray<int32> WaterTriangles;
+	TArray<FVector> WaterNormals;
 	TArray<FColor> WaterColours;
+	TArray<FProcMeshTangent> WaterTangents;
 
 	void LoadStaticMeshes();
 

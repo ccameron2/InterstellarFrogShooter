@@ -189,8 +189,11 @@ void ALand::CreateMesh()
 		{
 			WaterTriangles.Push(triangle);
 		}
+
+		UKismetProceduralMeshLibrary::CalculateTangentsForMesh(WaterVertices, WaterTriangles, UVs, WaterNormals, WaterTangents);
+		
 		ProcMesh->ClearMeshSection(1);
-		ProcMesh->CreateMeshSection(1, WaterVertices, WaterTriangles, Normals, UVs, WaterColours, Tangents, false);
+		ProcMesh->CreateMeshSection(1, WaterVertices, WaterTriangles, WaterNormals, UVs, WaterColours, WaterTangents, false);
 		ProcMesh->SetMaterial(1, WaterMaterial);
 	}
 	
@@ -452,7 +455,7 @@ void ALand::LoadStaticMeshes()
 	FoliageStaticMeshes[9]->SetStaticMesh(MeshAsset60.Object);
 	FoliageStaticMeshes[10]->SetStaticMesh(MeshAsset600.Object);
 
-	ConstructorHelpers::FObjectFinder<UMaterial> waterMaterial(TEXT("M_Water_Lake'/Game/StarterContent/Materials/M_Water_Lake.M_Water_Lake'"));
+	ConstructorHelpers::FObjectFinder<UMaterial> waterMaterial(TEXT("M_Water_Lake'/Game/Materials/M_Water_Lake.M_Water_Lake'"));
 	WaterMaterial = waterMaterial.Object;
 	ConstructorHelpers::FObjectFinder<UMaterialInstance> forestMaterial(TEXT("M_Terrain_Forest'/Game/Materials/M_Terrain_Forest.M_Terrain_Forest'"));
 	ForestMaterial = forestMaterial.Object;
