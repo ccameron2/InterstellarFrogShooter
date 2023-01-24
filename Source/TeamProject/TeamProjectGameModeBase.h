@@ -38,5 +38,9 @@ public:
 	ALand* LandActor;
 
 	UFUNCTION(BlueprintCallable)
-	void OnGuiSetValues(FText InSeedString, int InTerrainType);
+		void OnGuiSetValues(FText InSeedString, int InTerrainType);
+
+	UFUNCTION(BlueprintCallable)
+		void OnStart();
+
 };

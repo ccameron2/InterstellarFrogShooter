@@ -1,9 +1,10 @@
-//
+// CCameron
 #include "Land.h"
 #include "KismetProceduralMeshLibrary.h"
 #include "External/FastNoise.h"
 #include "External/Delaunator.hpp"
 #include "UObject/ConstructorHelpers.h" 
+
 ALand::ALand()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -14,15 +15,14 @@ ALand::ALand()
 
 	LoadStaticMeshes();
 }
+
 // Sets default values
 void ALand::Init(int seed, int type)
 {
 	Seed = seed;
 	TerrainType = TEnumAsByte<TerrainTypes>(type);
-	Initialised = true;
+	CreateMesh();
 }
-
-/// Content / LowPolyAssets / CommonTree_1.uasset
 
 // Called when the game starts or when spawned
 void ALand::BeginPlay()
@@ -34,32 +34,6 @@ void ALand::BeginPlay()
 void ALand::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (Initialised)
-	{
-		if (!MeshCreated)
-		{
-			CreateMesh();
-		}
-	}
-}
-
-void ALand::OnConstruction(const FTransform& Transform)
-{
-	if (CreateOnConstruction)
-	{
-		if (!MeshCreated)
-		{
-			CreateMesh();
-		}
-
-		// Update mesh on editor parameter changes
-		if (GeneratedWaterLevel != WaterLevel || GeneratedScale != Scale ||
-			GeneratedSize != Size || GeneratedSeed != Seed || TerrainType != GeneratedTerrainType)
-		{
-			MeshCreated = false;
-			CreateMesh();
-		}
-	}	
 }
 
 void ALand::ClearMeshInstances()
@@ -93,44 +67,68 @@ void ALand::ClearMeshInstances()
 void ALand::CreateMesh()
 {
 	ClearMeshInstances();
+
+	// Clear any old data
 	Vertices.Empty();
 	Triangles.Empty();
+	Normals.Empty();
+
+	WaterVertices.Empty();
+	WaterTriangles.Empty();
+	WaterNormals.Empty();
+
 	Vertices.Init({ 0,0,0 }, Size * Size);
 
+	// Set static meshes to correct biome
 	if (TerrainType == Forest) { StaticMeshes = ForestStaticMeshes; }
 	else if(TerrainType == Snowy) { StaticMeshes = SnowyStaticMeshes; }
 	else if (TerrainType == Piney) { StaticMeshes = PineyStaticMeshes; }
 	else if (TerrainType == Mossy) { StaticMeshes = MossyStaticMeshes; }
 	else if (TerrainType == Desert) { StaticMeshes = DesertStaticMeshes; }
 
+	// Create a grid of vertices
 	int indexX = 0;
-	for (int i = -Size/2; i < Size/2; i++)
+	for (int i = -Size / 2; i < Size / 2; i++)
 	{
 		int indexY = 0;
-		for (int j = -Size/2; j < Size / 2; j++)
+		for (int j = -Size / 2; j < Size / 2; j++)
 		{
-			FVector newVector = FVector{ i * Scale,j * Scale,0 };
+			FVector newVector = FVector{ i * Scale, j * Scale,0 };
 			Vertices[Size * indexX + indexY] = newVector;
 			indexY++;
 		}
 		indexX++;
 	}
+
+	// Generate triangles for grid of vertices
 	UKismetProceduralMeshLibrary::CreateGridMeshTriangles(Size, Size, false, Triangles);
 
+	// Create noise object, set noise type to fractal and set seed.
 	FastNoise noise;
 	noise.SetNoiseType(FastNoise::SimplexFractal);
 	noise.SetSeed(Seed);
+
+	// Store the tallest vector index and height
 	float tallestVectorHeight = 0;
 	int tallestVector = 0;
 
+	// For each vertex, get 2 different noise values and apply them to vertex hight at different scales.
 	for (int i = 0; i < Vertices.Num(); i++)
 	{
+		// Get input vector from vertex list and sample noise.
 		auto input = Vertices[i];
-
 		auto result1 = noise.GetNoise(input.X / 1000, input.Y / 1000);
+
+		// Apply to vertex Z position
 		Vertices[i].Z += result1 * 5000;
+
+		// Sample noise again with different scale
 		auto result2 = noise.GetNoise(input.X / 120, input.Y / 120);
+		
+		// Apply to vertex Z position at a different scale
 		Vertices[i].Z += result2 * 2000;
+
+		// Find the tallest vector and store in variables
 		if (Vertices[i].Z > tallestVectorHeight)
 		{
 			tallestVector = i;
@@ -138,11 +136,14 @@ void ALand::CreateMesh()
 		}
 	}
 
+	// Calculate normals
 	UKismetProceduralMeshLibrary::CalculateTangentsForMesh(Vertices, Triangles, UVs, Normals, Tangents);
 
+	// Clear any old data and create mesh section
 	ProcMesh->ClearMeshSection(0);
 	ProcMesh->CreateMeshSection(0, Vertices, Triangles, Normals, UVs, VertexColours, Tangents, true);
 	
+	// Set the material of the mesh depending on type
 	switch (TerrainType)
 	{
 	case Forest:
@@ -165,20 +166,32 @@ void ALand::CreateMesh()
 		break;
 	}
 	/*if (terrainType != Desert)*/
+	
+	// Store list of coordinates for triangulation
 	std::vector<double> coords;
 
+	// For each vertex
 	for (auto vertex : Vertices)
 	{
+		// If vertex is below water level
 		if (vertex.Z < WaterLevel)
 		{
+			// Set new vertex to water level
 			vertex.Z = WaterLevel;
+
+			// Add to water vertices array
 			WaterVertices.Push(vertex);
-			WaterColours.Push(FColor::Blue);\
+			
+			// Set colour to blue
+			WaterColours.Push(FColor::Blue);
+
+			// Push vertex into coordinates list
 			coords.push_back(vertex.X);
 			coords.push_back(vertex.Y);
 		}
 	}
 
+	// If water was generated
 	if (coords.size() > 0)
 	{
 		// Use external library to triangulate
@@ -190,21 +203,29 @@ void ALand::CreateMesh()
 			WaterTriangles.Push(triangle);
 		}
 
+		// Calculate Normals
 		UKismetProceduralMeshLibrary::CalculateTangentsForMesh(WaterVertices, WaterTriangles, UVs, WaterNormals, WaterTangents);
 		
+		// Clear old data, create mesh and set material to water
 		ProcMesh->ClearMeshSection(1);
 		ProcMesh->CreateMeshSection(1, WaterVertices, WaterTriangles, WaterNormals, UVs, WaterColours, WaterTangents, false);
 		ProcMesh->SetMaterial(1, WaterMaterial);
 	}
 	
+	// For each vertex
 	for (auto& vertex : Vertices)
 	{
+		// If the vertex is higher than the water level and noise result is greater than threshold
 		if (vertex.Z > WaterLevel && noise.GetNoise(vertex.X,vertex.Y) > 0.5)
 		{
+			// Get a random mesh
 			int meshNum = FMath::RandRange(0, StaticMeshes.Num() - 1);
+			
+			// Set location to the vertex position
 			FTransform transform;
 			transform.SetLocation(vertex);
 			
+			// Scale differently if mesh is a bush
 			if (meshNum > 6)
 			{
 				transform.SetScale3D(FVector{float(FMath::RandRange(1,2))});
@@ -215,48 +236,76 @@ void ALand::CreateMesh()
 				transform.SetScale3D(FVector{float(FMath::RandRange(2,5))});
 			}
 
+			// Set rotation to 0
 			FQuat Rotation = FVector{ 0,0,0}.ToOrientationQuat();
 			transform.SetRotation(Rotation);
 
+			// Get static mesh from list of meshes
 			auto staticMesh = StaticMeshes[meshNum];
 
+			// Add instance of static mesh in world
 			if(staticMesh){ staticMesh->AddInstance(transform); }			
 		}
 
+		// If terrain isnt too hot or too cold
 		if (TerrainType != Desert && TerrainType != Snowy)
 		{
+			// Sample noise value and compare with threshold
 			if (noise.GetNoise(vertex.X / 10, vertex.Y / 10) > 0.3)
 			{
+				// If vertex is above water level 
 				if (vertex.Z > WaterLevel)
 				{
+					// Get random number to sample mesh list
 					int meshNum = FMath::RandRange(0, FoliageStaticMeshes.Num() - 2);
+					
+					// Set location to vertex position
 					FTransform transform;
 					transform.SetLocation(vertex);
+
+					// Set scale to random value
 					transform.SetScale3D(FVector{ float(FMath::RandRange(1,2)) });
+					
+					// Set rotation to 0
 					FQuat Rotation = FVector{ 0,0,0 }.ToOrientationQuat();
 					transform.SetRotation(Rotation);
 
+					// Get static mesh from foliage mesh list
 					auto staticMesh = FoliageStaticMeshes[meshNum];
 
+					// Set collision to false
 					staticMesh->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
 
+					// Add instance of mesh in world
 					if (staticMesh) { staticMesh->AddInstance(transform); }
 				}
 				else
 				{
+					// Get vertex location and increase slightly
 					auto location = vertex;
 					location.Z = WaterLevel + 5;
+
+					// Get lilypad mesh index
 					int meshNum = FoliageStaticMeshes.Num() - 1;
+					
+					// Set location to new location
 					FTransform transform;
 					transform.SetLocation(location);
+
+					// Scale randomly
 					transform.SetScale3D(FVector{ float(FMath::RandRange(1,2))});
+					
+					// Set rotation to 0
 					FQuat Rotation = FVector{ 0,0,0 }.ToOrientationQuat();
 					transform.SetRotation(Rotation);
 
+					// Get lilypad mesh from mesh list
 					auto staticMesh = FoliageStaticMeshes[meshNum];
 
+					// Set collision to false
 					staticMesh->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
 
+					// Add instance of lilypad into world
 					if (staticMesh) { staticMesh->AddInstance(transform); }
 				}
 			}
@@ -264,23 +313,26 @@ void ALand::CreateMesh()
 		
 	}
 
+	// Clear old data
 	WaterVertices.Empty(); WaterTriangles.Empty(); WaterColours.Empty();
-
-	GeneratedTerrainType = TerrainType;
-	GeneratedScale = Scale;
-	GeneratedSize = Size;
-	GeneratedWaterLevel = WaterLevel;
-	MeshCreated = true;
 }
 
 void ALand::MakeNewMesh()
 {
+	// Get a random seed
 	Seed = FMath::RandRange(0, 999999999);
+
+	// Make new mesh
 	CreateMesh();
 }
 
 void ALand::LoadStaticMeshes()
 {
+
+
+	// Trees in first 6, Bushes after
+
+	// Load asset and store in object
 	ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset1(TEXT("StaticMesh'/Game/LowPolyAssets/CommonTree_1'"));
 	ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset2(TEXT("StaticMesh'/Game/LowPolyAssets/CommonTree_2'"));
 	ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset3(TEXT("StaticMesh'/Game/LowPolyAssets/CommonTree_3'"));
@@ -290,6 +342,7 @@ void ALand::LoadStaticMeshes()
 	ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset7(TEXT("StaticMesh'/Game/LowPolyAssets/Bush_1'"));
 	ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset8(TEXT("StaticMesh'/Game/LowPolyAssets/BushBerries_1'"));
 
+	// Create new instanced SMC and push into vector
 	ForestStaticMeshes.Push(CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("Tree1 Static Mesh")));
 	ForestStaticMeshes.Push(CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("Tree2 Static Mesh")));
 	ForestStaticMeshes.Push(CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("Tree3 Static Mesh")));
@@ -299,6 +352,7 @@ void ALand::LoadStaticMeshes()
 	ForestStaticMeshes.Push(CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("Bush Static Mesh")));
 	ForestStaticMeshes.Push(CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("Berry Bush Static Mesh")));
 
+	// Pull mesh object from objectfinder and set to object created above
 	ForestStaticMeshes[0]->SetStaticMesh(MeshAsset1.Object);
 	ForestStaticMeshes[1]->SetStaticMesh(MeshAsset2.Object);
 	ForestStaticMeshes[2]->SetStaticMesh(MeshAsset3.Object);
@@ -419,6 +473,8 @@ void ALand::LoadStaticMeshes()
 	DesertStaticMeshes[7]->SetStaticMesh(MeshAsset48.Object);
 	DesertStaticMeshes[8]->SetStaticMesh(MeshAsset49.Object);
 
+
+	// Last slot reserved for water foliage
 	ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset51(TEXT("StaticMesh'/Game/LowPolyAssets/Grass'"));
 	ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset52(TEXT("StaticMesh'/Game/LowPolyAssets/Grass_2'"));
 	ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset53(TEXT("StaticMesh'/Game/LowPolyAssets/Grass_Short'"));
@@ -455,18 +511,22 @@ void ALand::LoadStaticMeshes()
 	FoliageStaticMeshes[9]->SetStaticMesh(MeshAsset60.Object);
 	FoliageStaticMeshes[10]->SetStaticMesh(MeshAsset600.Object);
 
+	// Load material and pull from object into material interface
 	ConstructorHelpers::FObjectFinder<UMaterial> waterMaterial(TEXT("M_Water_Lake'/Game/Materials/M_Water_Lake.M_Water_Lake'"));
 	WaterMaterial = waterMaterial.Object;
+
 	ConstructorHelpers::FObjectFinder<UMaterialInstance> forestMaterial(TEXT("M_Terrain_Forest'/Game/Materials/M_Terrain_Forest.M_Terrain_Forest'"));
 	ForestMaterial = forestMaterial.Object;
+
 	ConstructorHelpers::FObjectFinder<UMaterialInstance> desertMaterial(TEXT("M_Terrain_Desert'/Game/Materials/M_Terrain_Desert.M_Terrain_Desert'"));
 	DesertMaterial = desertMaterial.Object;
+
 	ConstructorHelpers::FObjectFinder<UMaterialInstance> mossyMaterial(TEXT("M_Terrain_Mossy'/Game/Materials/M_Terrain_Mossy.M_Terrain_Mossy'"));
 	MossyMaterial = mossyMaterial.Object;
+
 	ConstructorHelpers::FObjectFinder<UMaterialInstance> pineyMaterial(TEXT("M_Terrain_Piney'/Game/Materials/M_Terrain_Piney.M_Terrain_Piney'"));
 	PineyMaterial = pineyMaterial.Object;
+
 	ConstructorHelpers::FObjectFinder<UMaterialInstance> snowyMaterial(TEXT("M_Terrain_Snowy'/Game/Materials/M_Terrain_Snowy.M_Terrain_Snowy'"));
 	SnowyMaterial = snowyMaterial.Object;
-
-	///Script/Engine.MaterialInstanceConstant'/Game/M_Terrain_Desert.M_Terrain_Desert'
 }

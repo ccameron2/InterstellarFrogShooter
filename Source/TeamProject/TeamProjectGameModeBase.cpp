@@ -12,10 +12,14 @@ void ATeamProjectGameModeBase::BeginPlay()
 	PlayerController = Cast<AMainPlayerController>(GetWorld()->GetFirstPlayerController());
 	PlayerPawn = PlayerController->GetPawn();
 
+	PlayerPawn->SetActorLocation({0, 10000, 40000 });
+
 	if (LandClass)
 	{
 		FTransform Transform;
-		LandActor = GetWorld()->SpawnActorDeferred<ALand>(LandClass, Transform);
+		LandActor = GetWorld()->SpawnActor<ALand>(LandClass, Transform);
+		FVector Location = { 0,0,0 };
+		Transform.SetTranslation(Location);
 	}
 }
 
@@ -48,18 +52,21 @@ void ATeamProjectGameModeBase::OnGuiSetValues(FText InSeedString, int InTerrainT
 	UE_LOG(LogTemp, Warning, TEXT("SEED: %d"), seed);
 	UE_LOG(LogTemp, Warning, TEXT("TERRAIN TYPE: %d"), InTerrainType);
 	
-	//initialise the Terrain
-	LandActor->Init(seed,InTerrainType);
+	// If random selected, pick a random type
+	int type = 0;
+	if (InTerrainType == 5) { type = FMath::RandRange(0, 4); }
+	else { type = InTerrainType; }
 
-	FTransform Transform;
-	FVector Location = { 0,0,0 };
-	Transform.SetTranslation(Location);
+	// Initialise the terrain with UI data
+	LandActor->Init(seed, type);
+}
 
-	UGameplayStatics::FinishSpawningActor(LandActor, Transform);
-
+void ATeamProjectGameModeBase::OnStart()
+{
 	if (PlayerCharacterClass)
 	{
-		Location = { 0,0,1000 };
+		FTransform Transform;
+		FVector Location = { 0,0,1000 };
 		Transform.SetTranslation(Location);
 
 		APlayerCharacter* PlayerActor = GetWorld()->SpawnActor<APlayerCharacter>(PlayerCharacterClass, Transform);
@@ -72,5 +79,4 @@ void ATeamProjectGameModeBase::OnGuiSetValues(FText InSeedString, int InTerrainT
 
 		PlayerController->RebindCharacter(PlayerActor);
 	}
-
 }

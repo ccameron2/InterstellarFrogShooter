@@ -1,3 +1,4 @@
+// CCameron
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
@@ -75,23 +76,11 @@ public:
 	UMaterialInterface* PineyMaterial;
 	UMaterialInterface* SnowyMaterial;
 
-
-	int GeneratedSize = 0;
-	int GeneratedScale = 0;
-	int GeneratedWaterLevel = 0;
-	uint64 GeneratedSeed = 0;
-	TEnumAsByte<TerrainTypes> GeneratedTerrainType;
-
-	virtual void OnConstruction(const FTransform& Transform) override;
-
 	void CreateMesh();
 	void ClearMeshInstances();
 
 	UFUNCTION(CallInEditor, Category = "ProcGen")
 		void MakeNewMesh();
-
-	bool MeshCreated = false;
-	bool Initialised = false;
 
 	TArray<FVector> Vertices;
 	TArray<int32> Triangles;
