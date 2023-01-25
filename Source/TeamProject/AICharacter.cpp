@@ -3,8 +3,6 @@
 
 #include "AICharacter.h"
 
-// TODO: Remove DebugHelpers
-#include "DrawDebugHelpers.h"
 
 // Sets default values
 AAICharacter::AAICharacter()
@@ -25,7 +23,6 @@ void AAICharacter::BeginPlay()
 void AAICharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	DrawDebugSphere(GetWorld(), GetActorLocation(), 100, 26, FColor::Red);
 }
 
 // Called to bind functionality to input

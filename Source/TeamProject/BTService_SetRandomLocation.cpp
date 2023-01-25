@@ -16,14 +16,11 @@ void UBTService_SetRandomLocation::TickNode(UBehaviorTreeComponent& OwnerComp, u
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), Waypoints);
+	FVector NewLocation = OwnerComp.GetOwner()->GetActorLocation();
+	NewLocation.X = FMath::RandRange(MinX, MaxX);
+	NewLocation.Y = FMath::RandRange(MinY, MaxY);
 
-	OwnerComp.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), ChooseWaypoint()->GetActorLocation());
+	OwnerComp.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), NewLocation);
 
 }
 
-AActor* UBTService_SetRandomLocation::ChooseWaypoint()
-{
-	int index = FMath::RandRange(0, Waypoints.Num() - 1); // Finds the random waypoint 
-	return Waypoints[index]; // Returns the random value
-}

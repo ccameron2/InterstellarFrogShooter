@@ -21,9 +21,16 @@ protected:
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 	
 private:
-	UFUNCTION()
-		AActor* ChooseWaypoint();
 
-	UPROPERTY()
-		TArray<AActor*> Waypoints;
+	UPROPERTY(EditAnywhere)
+		float MaxX;
+
+	UPROPERTY(EditAnywhere)
+		float MinX;
+
+	UPROPERTY(EditAnywhere)
+		float MaxY;
+
+	UPROPERTY(EditAnywhere)
+		float MinY;
 };

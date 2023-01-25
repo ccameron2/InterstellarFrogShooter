@@ -15,5 +15,4 @@ void AMainAIController::BeginPlay()
 void AMainAIController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	UE_LOG(LogTemp, Warning, TEXT("AI Controller ticking"));
 }
