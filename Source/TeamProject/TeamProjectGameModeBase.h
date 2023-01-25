@@ -43,4 +43,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void OnStart();
 
+
+	UFUNCTION(BlueprintCallable)
+		void OnBack();
 };

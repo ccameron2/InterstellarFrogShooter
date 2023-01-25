@@ -80,3 +80,8 @@ void ATeamProjectGameModeBase::OnStart()
 		PlayerController->RebindCharacter(PlayerActor);
 	}
 }
+
+void ATeamProjectGameModeBase::OnBack()
+{
+	LandActor->Clear();
+}

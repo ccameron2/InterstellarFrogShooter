@@ -64,11 +64,8 @@ void ALand::ClearMeshInstances()
 	}
 }
 
-void ALand::CreateMesh()
+void ALand::Clear()
 {
-	ClearMeshInstances();
-
-	// Clear any old data
 	Vertices.Empty();
 	Triangles.Empty();
 	Normals.Empty();
@@ -76,6 +73,21 @@ void ALand::CreateMesh()
 	WaterVertices.Empty();
 	WaterTriangles.Empty();
 	WaterNormals.Empty();
+
+	ProcMesh->ClearMeshSection(0);
+	ProcMesh->ClearMeshSection(1);
+
+	WaterVertices.Empty();
+	WaterTriangles.Empty(); 
+	WaterColours.Empty();
+
+	ClearMeshInstances();
+}
+
+void ALand::CreateMesh()
+{
+	// Clear any old data
+	Clear();
 
 	Vertices.Init({ 0,0,0 }, Size * Size);
 
@@ -139,8 +151,7 @@ void ALand::CreateMesh()
 	// Calculate normals
 	UKismetProceduralMeshLibrary::CalculateTangentsForMesh(Vertices, Triangles, UVs, Normals, Tangents);
 
-	// Clear any old data and create mesh section
-	ProcMesh->ClearMeshSection(0);
+	// Create mesh section
 	ProcMesh->CreateMeshSection(0, Vertices, Triangles, Normals, UVs, VertexColours, Tangents, true);
 	
 	// Set the material of the mesh depending on type
@@ -206,8 +217,7 @@ void ALand::CreateMesh()
 		// Calculate Normals
 		UKismetProceduralMeshLibrary::CalculateTangentsForMesh(WaterVertices, WaterTriangles, UVs, WaterNormals, WaterTangents);
 		
-		// Clear old data, create mesh and set material to water
-		ProcMesh->ClearMeshSection(1);
+		// Create mesh and set material to water
 		ProcMesh->CreateMeshSection(1, WaterVertices, WaterTriangles, WaterNormals, UVs, WaterColours, WaterTangents, false);
 		ProcMesh->SetMaterial(1, WaterMaterial);
 	}
@@ -312,9 +322,7 @@ void ALand::CreateMesh()
 		}
 		
 	}
-
-	// Clear old data
-	WaterVertices.Empty(); WaterTriangles.Empty(); WaterColours.Empty();
+	
 }
 
 void ALand::MakeNewMesh()

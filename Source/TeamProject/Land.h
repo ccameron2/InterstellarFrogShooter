@@ -78,6 +78,7 @@ public:
 
 	void CreateMesh();
 	void ClearMeshInstances();
+	void Clear();
 
 	UFUNCTION(CallInEditor, Category = "ProcGen")
 		void MakeNewMesh();
