@@ -3,6 +3,9 @@
 
 #include "PlayerCharacter.h"
 
+#include "TestActor.h"
+#include "Kismet/GameplayStatics.h"
+
 // Sets default values
 APlayerCharacter::APlayerCharacter()
 {
@@ -32,6 +35,8 @@ void APlayerCharacter::Tick(float DeltaTime)
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	InputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &APlayerCharacter::FireWeapon);
 }
 
 void APlayerCharacter::MoveForwards(float AxisAmount)
@@ -49,6 +54,41 @@ void APlayerCharacter::Strafe(float AxisAmount)
 void APlayerCharacter::LookUp(float AxisAmount)
 {
 	AddControllerPitchInput(AxisAmount);
+}
+
+void APlayerCharacter::FireWeapon()
+{
+	AController* ControllerReference = GetController();
+
+	FVector Location;
+	FRotator Rotation;
+	FVector End;
+	FHitResult Hit;
+
+	FCollisionQueryParams CollisionParams;
+
+	CollisionParams.AddIgnoredActor(this);
+	ControllerReference->GetPlayerViewPoint(Location, Rotation);
+	End = Location + (Rotation.Vector() * 10000);
+
+	if (DebugWeapons)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Start: %s \n End: %s \n \n "), *Location.ToString(), *End.ToString());
+		DrawDebugLine(GetWorld(), Location, End, FColor(0, 0, 255), true, -1, 0, 12.333);
+	}
+
+
+	bool bRayHit = GetWorld()->LineTraceSingleByChannel(Hit, Location, End, ECC_Visibility, CollisionParams);
+
+
+	if (bRayHit && Hit.GetActor() != nullptr)
+	{
+		if (Cast<ATestActor>(Hit.GetActor()))
+		{
+			ATestActor* TempTestActor = Cast<ATestActor>(Hit.GetActor());
+			TempTestActor->HitByPlayer();
+		}
+	}
 }
 
 //Allows the player to rotate the character left and right

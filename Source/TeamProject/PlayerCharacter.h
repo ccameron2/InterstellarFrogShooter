@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
 
@@ -31,10 +32,15 @@ public:
 	void Strafe(float AxisAmount);
 
 	void LookUp(float AxisAmount);
+	
+	void FireWeapon();
 
 	void Turn(float AxisAmount);
 
 private:
 	UPROPERTY(EditAnywhere)
 		UStaticMeshComponent* PlayerMesh;
+
+	UPROPERTY(EditAnywhere)
+		bool DebugWeapons;
 };
