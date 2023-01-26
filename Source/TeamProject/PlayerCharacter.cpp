@@ -5,6 +5,7 @@
 
 #include "TestActor.h"
 #include "Kismet/GameplayStatics.h"
+#include "AICharacter.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -87,6 +88,17 @@ void APlayerCharacter::FireWeapon()
 		{
 			ATestActor* TempTestActor = Cast<ATestActor>(Hit.GetActor());
 			TempTestActor->HitByPlayer();
+		}
+
+		if (Hit.GetActor()->GetClass()->IsChildOf(AAICharacter::StaticClass()))
+		{
+			UGameplayStatics::ApplyDamage(
+				Hit.GetActor(),
+				10.0f, // Damage Amount 
+				GetInstigatorController(),
+				this,
+				UDamageType::StaticClass()
+			);
 		}
 	}
 }

@@ -29,4 +29,14 @@ public:
 
 private:
 
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+		AController* EventInstigator, AActor* DamageCauser) override;
+
+
+private:
+	UPROPERTY(EditAnywhere)
+		float MaxHealth = 100.0f;
+
+	UPROPERTY(EditAnywhere)
+		float Health;
 };
