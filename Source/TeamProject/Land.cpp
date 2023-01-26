@@ -84,6 +84,31 @@ void ALand::Clear()
 	ClearMeshInstances();
 }
 
+void ALand::CalculateNormals()
+{
+	Normals.Init({ 0,0,0 }, Vertices.Num());
+
+	for (int i = 0; i < Vertices.Num() - 3; i += 3)
+	{
+		auto a = Vertices[Triangles[i]];
+		auto b = Vertices[Triangles[i + 1]];
+		auto c = Vertices[Triangles[i + 2]];
+
+		auto v1 = a - b;
+		auto v2 = c - b;
+		auto n = v1 ^ v2;
+		n.Normalize();
+
+		Normals[i] = n;
+		Normals[i] = n;
+		Normals[i] = n;
+	}
+	for (auto& normal : Normals)
+	{
+		normal.Normalize();
+	}
+}
+
 void ALand::CreateMesh()
 {
 	// Clear any old data
@@ -150,6 +175,10 @@ void ALand::CreateMesh()
 
 	// Calculate normals
 	UKismetProceduralMeshLibrary::CalculateTangentsForMesh(Vertices, Triangles, UVs, Normals, Tangents);
+
+	// Faster normals but broken atm
+	// 
+	// CalculateNormals();
 
 	// Create mesh section
 	ProcMesh->CreateMeshSection(0, Vertices, Triangles, Normals, UVs, VertexColours, Tangents, true);
@@ -222,6 +251,9 @@ void ALand::CreateMesh()
 		ProcMesh->SetMaterial(1, WaterMaterial);
 	}
 	
+
+	// Trees
+	
 	// For each vertex
 	for (auto& vertex : Vertices)
 	{
@@ -238,12 +270,11 @@ void ALand::CreateMesh()
 			// Scale differently if mesh is a bush
 			if (meshNum > 6)
 			{
-				transform.SetScale3D(FVector{float(FMath::RandRange(1,2))});
-
+				transform.SetScale3D(FVector{float(FMath::RandRange(0.8,1.2))});
 			}
 			else
 			{
-				transform.SetScale3D(FVector{float(FMath::RandRange(2,5))});
+				transform.SetScale3D(FVector{float(FMath::RandRange(1,3))});
 			}
 
 			// Set rotation to 0
@@ -256,6 +287,8 @@ void ALand::CreateMesh()
 			// Add instance of static mesh in world
 			if(staticMesh){ staticMesh->AddInstance(transform); }			
 		}
+
+		// Foliage
 
 		// If terrain isnt too hot or too cold
 		if (TerrainType != Desert && TerrainType != Snowy)
@@ -274,7 +307,7 @@ void ALand::CreateMesh()
 					transform.SetLocation(vertex);
 
 					// Set scale to random value
-					transform.SetScale3D(FVector{ float(FMath::RandRange(1,2)) });
+					transform.SetScale3D(FVector{ float(FMath::RandRange(0.8,1.2)) });
 					
 					// Set rotation to 0
 					FQuat Rotation = FVector{ 0,0,0 }.ToOrientationQuat();
@@ -303,7 +336,7 @@ void ALand::CreateMesh()
 					transform.SetLocation(location);
 
 					// Scale randomly
-					transform.SetScale3D(FVector{ float(FMath::RandRange(1,2))});
+					transform.SetScale3D(FVector{ float(FMath::RandRange(0.8,1.2))});
 					
 					// Set rotation to 0
 					FQuat Rotation = FVector{ 0,0,0 }.ToOrientationQuat();

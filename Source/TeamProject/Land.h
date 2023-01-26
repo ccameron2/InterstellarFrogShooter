@@ -61,7 +61,7 @@ public:
 		uint64 Seed = 69420;
 	
 	UPROPERTY(EditAnywhere, Category = "ProcGen")
-		float Scale = 400;
+		float Scale = 225;
 
 	UPROPERTY(EditAnywhere, Category = "ProcGen")
 		int WaterLevel = -2000;
@@ -79,6 +79,7 @@ public:
 	void CreateMesh();
 	void ClearMeshInstances();
 	void Clear();
+	void CalculateNormals();
 
 	UFUNCTION(CallInEditor, Category = "ProcGen")
 		void MakeNewMesh();
