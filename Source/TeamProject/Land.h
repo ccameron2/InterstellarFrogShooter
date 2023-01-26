@@ -81,6 +81,8 @@ public:
 	void Clear();
 	void CalculateNormals();
 
+	int NumTypes = 5;
+
 	UFUNCTION(CallInEditor, Category = "ProcGen")
 		void MakeNewMesh();
 

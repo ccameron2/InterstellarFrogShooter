@@ -12,14 +12,13 @@ void ATeamProjectGameModeBase::BeginPlay()
 	PlayerController = Cast<AMainPlayerController>(GetWorld()->GetFirstPlayerController());
 	PlayerPawn = PlayerController->GetPawn();
 
-	PlayerPawn->SetActorLocation({0, 10000, 40000 });
-
 	if (LandClass)
 	{
 		FTransform Transform;
 		LandActor = GetWorld()->SpawnActor<ALand>(LandClass, Transform);
 		FVector Location = { 0,0,0 };
 		Transform.SetTranslation(Location);
+		LandActor->Init(FMath::RandRange(0, 999), FMath::RandRange(0, LandActor->NumTypes - 1));
 	}
 }
 
@@ -54,7 +53,7 @@ void ATeamProjectGameModeBase::OnGuiSetValues(FText InSeedString, int InTerrainT
 	
 	// If random selected, pick a random type
 	int type = 0;
-	if (InTerrainType == 5) { type = FMath::RandRange(0, 4); }
+	if (InTerrainType == LandActor->NumTypes) { type = FMath::RandRange(0, LandActor->NumTypes - 1); }
 	else { type = InTerrainType; }
 
 	// Initialise the terrain with UI data
@@ -83,5 +82,5 @@ void ATeamProjectGameModeBase::OnStart()
 
 void ATeamProjectGameModeBase::OnBack()
 {
-	LandActor->Clear();
+	//LandActor->Clear();
 }
