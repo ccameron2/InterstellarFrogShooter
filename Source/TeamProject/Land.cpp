@@ -219,7 +219,7 @@ void ALand::CreateMesh()
 		}
 	}
 
-	if (coords.size() > 0)
+	if (coords.size() > 0 || coords.size() % 3 != 0)
 	{
 		// Use external library to triangulate
 		delaunator::Delaunator d(coords);
