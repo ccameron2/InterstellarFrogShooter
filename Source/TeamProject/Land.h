@@ -55,7 +55,7 @@ public:
 	TArray<UInstancedStaticMeshComponent*> FoliageStaticMeshes;
 
 	UPROPERTY(EditAnywhere, Category = "ProcGen")
-		int32 Size = 100;
+		uint32 Size = 100;
 
 	UPROPERTY(EditAnywhere, Category = "ProcGen")
 		uint64 Seed = 69420;

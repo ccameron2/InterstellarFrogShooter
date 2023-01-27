@@ -152,17 +152,11 @@ void ALand::CreateMesh()
 	// For each vertex, get 2 different noise values and apply them to vertex hight at different scales.
 	for (int i = 0; i < Vertices.Num(); i++)
 	{
-		// Get input vector from vertex list and sample noise.
+		// Get input vector from vertex list and sample noise at different levels
 		auto input = Vertices[i];
 		auto result1 = noise.GetNoise(input.X / 1000, input.Y / 1000);
-
-		// Apply to vertex Z position
 		Vertices[i].Z += result1 * 5000;
-
-		// Sample noise again with different scale
 		auto result2 = noise.GetNoise(input.X / 120, input.Y / 120);
-		
-		// Apply to vertex Z position at a different scale
 		Vertices[i].Z += result2 * 2000;
 
 		// Find the tallest vector and store in variables
@@ -210,19 +204,13 @@ void ALand::CreateMesh()
 	// Store list of coordinates for triangulation
 	std::vector<double> coords;
 
-	// For each vertex
 	for (auto vertex : Vertices)
 	{
-		// If vertex is below water level
 		if (vertex.Z < WaterLevel)
 		{
-			// Set new vertex to water level
-			vertex.Z = WaterLevel;
-
-			// Add to water vertices array
+			// Set new vertex to water level and add to array
+			vertex.Z = WaterLevel;			
 			WaterVertices.Push(vertex);
-			
-			// Set colour to blue
 			WaterColours.Push(FColor::Blue);
 
 			// Push vertex into coordinates list
@@ -231,7 +219,6 @@ void ALand::CreateMesh()
 		}
 	}
 
-	// If water was generated
 	if (coords.size() > 0)
 	{
 		// Use external library to triangulate
@@ -266,25 +253,22 @@ void ALand::CreateMesh()
 			// Set location to the vertex position
 			FTransform transform;
 			transform.SetLocation(vertex);
-			
-			// Scale differently if mesh is a bush
+			FQuat Rotation = FVector{ 0,0,0 }.ToOrientationQuat();
+			transform.SetRotation(Rotation);
+
 			if (meshNum > 6)
 			{
+				// Scale Bushes
 				transform.SetScale3D(FVector{float(FMath::RandRange(0.8,1.2))});
 			}
 			else
 			{
+				// Scale Trees
 				transform.SetScale3D(FVector{float(FMath::RandRange(1,3))});
 			}
 
-			// Set rotation to 0
-			FQuat Rotation = FVector{ 0,0,0}.ToOrientationQuat();
-			transform.SetRotation(Rotation);
-
-			// Get static mesh from list of meshes
-			auto staticMesh = StaticMeshes[meshNum];
-
 			// Add instance of static mesh in world
+			auto staticMesh = StaticMeshes[meshNum];
 			if(staticMesh){ staticMesh->AddInstance(transform); }			
 		}
 
@@ -296,30 +280,21 @@ void ALand::CreateMesh()
 			// Sample noise value and compare with threshold
 			if (noise.GetNoise(vertex.X / 10, vertex.Y / 10) > 0.3)
 			{
-				// If vertex is above water level 
 				if (vertex.Z > WaterLevel)
 				{
 					// Get random number to sample mesh list
 					int meshNum = FMath::RandRange(0, FoliageStaticMeshes.Num() - 2);
 					
-					// Set location to vertex position
+					// Set location to vertex position and scale randomly
 					FTransform transform;
 					transform.SetLocation(vertex);
-
-					// Set scale to random value
-					transform.SetScale3D(FVector{ float(FMath::RandRange(0.8,1.2)) });
-					
-					// Set rotation to 0
 					FQuat Rotation = FVector{ 0,0,0 }.ToOrientationQuat();
 					transform.SetRotation(Rotation);
-
-					// Get static mesh from foliage mesh list
+					transform.SetScale3D(FVector{ float(FMath::RandRange(0.8,1.2)) });
+					
+					// Add instance of mesh in world with collision disabled
 					auto staticMesh = FoliageStaticMeshes[meshNum];
-
-					// Set collision to false
 					staticMesh->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
-
-					// Add instance of mesh in world
 					if (staticMesh) { staticMesh->AddInstance(transform); }
 				}
 				else
@@ -331,24 +306,16 @@ void ALand::CreateMesh()
 					// Get lilypad mesh index
 					int meshNum = FoliageStaticMeshes.Num() - 1;
 					
-					// Set location to new location
+					// Set location and scale randomly
 					FTransform transform;
 					transform.SetLocation(location);
-
-					// Scale randomly
 					transform.SetScale3D(FVector{ float(FMath::RandRange(0.8,1.2))});
-					
-					// Set rotation to 0
 					FQuat Rotation = FVector{ 0,0,0 }.ToOrientationQuat();
 					transform.SetRotation(Rotation);
 
-					// Get lilypad mesh from mesh list
+					// Add instance of lilypad into world with collision disabled
 					auto staticMesh = FoliageStaticMeshes[meshNum];
-
-					// Set collision to false
-					staticMesh->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
-
-					// Add instance of lilypad into world
+					staticMesh->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);				
 					if (staticMesh) { staticMesh->AddInstance(transform); }
 				}
 			}
@@ -360,17 +327,12 @@ void ALand::CreateMesh()
 
 void ALand::MakeNewMesh()
 {
-	// Get a random seed
 	Seed = FMath::RandRange(0, 999999999);
-
-	// Make new mesh
 	CreateMesh();
 }
 
 void ALand::LoadStaticMeshes()
 {
-
-
 	// Trees in first 6, Bushes after
 
 	// Load asset and store in object
