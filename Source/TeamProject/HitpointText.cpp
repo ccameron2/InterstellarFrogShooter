@@ -7,7 +7,8 @@
 // Sets default values
 AHitpointText::AHitpointText()
 {
-
+	HitpointsText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Hitpoint Text Box"));
+	HitpointsText->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned

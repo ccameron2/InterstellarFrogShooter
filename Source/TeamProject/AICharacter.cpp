@@ -2,7 +2,8 @@
 
 
 #include "AICharacter.h"
-
+#include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AAICharacter::AAICharacter()
@@ -35,7 +36,20 @@ void AAICharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 float AAICharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	
+
+	FVector SpawnLocation = GetActorLocation();
+	FString DamageString = FString::SanitizeFloat(DamageAmount);
+
+	SpawnLocation.X += UKismetMathLibrary::RandomFloatInRange(-25.0f, 25.0f);
+	SpawnLocation.Y += UKismetMathLibrary::RandomFloatInRange(-25.0f, 25.0f);
+	SpawnLocation.Z += 150.0f;
+
+	FRotator SpawnRotation = UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->GetActorRotation();
+
+	AHitpointText* Hitpoint =  GetWorld()->SpawnActor<AHitpointText>(HitPointText, SpawnLocation, SpawnRotation);
+	Hitpoint->HitpointsText->SetText(FText::FromString(DamageString));
+	Hitpoint->HitpointsText->SetTextRenderColor(FColor::Red);
+
 	Health -= DamageAmount;
 
 	if (Health <= 0.0f)

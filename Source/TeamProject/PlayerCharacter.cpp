@@ -84,12 +84,6 @@ void APlayerCharacter::FireWeapon()
 
 	if (bRayHit && Hit.GetActor() != nullptr)
 	{
-		if (Cast<ATestActor>(Hit.GetActor()))
-		{
-			ATestActor* TempTestActor = Cast<ATestActor>(Hit.GetActor());
-			TempTestActor->HitByPlayer();
-		}
-
 		if (Hit.GetActor()->GetClass()->IsChildOf(AAICharacter::StaticClass()))
 		{
 			UGameplayStatics::ApplyDamage(

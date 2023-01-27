@@ -3,6 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "HitpointText.h"
+
 #include "GameFramework/Character.h"
 #include "AICharacter.generated.h"
 
@@ -34,6 +37,10 @@ private:
 
 
 private:
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<AHitpointText> HitPointText;
+
 	UPROPERTY(EditAnywhere)
 		float MaxHealth = 100.0f;
 

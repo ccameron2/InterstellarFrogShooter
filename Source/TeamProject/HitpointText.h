@@ -4,8 +4,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "Components/TextRenderComponent.h"
+
 #include "GameFramework/Actor.h"
 #include "HitpointText.generated.h"
+
+
 
 UCLASS()
 class TEAMPROJECT_API AHitpointText : public AActor
@@ -15,6 +20,10 @@ class TEAMPROJECT_API AHitpointText : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AHitpointText();
+
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		UTextRenderComponent* HitpointsText;
 
 protected:
 	// Called when the game starts or when spawned
