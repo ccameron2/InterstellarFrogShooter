@@ -254,7 +254,6 @@ void ALand::CreateMesh()
 			CalculateNormals();
 
 			// Create mesh and set material to water
-			ProcMesh->bUseAsyncCooking = false;
 			ProcMesh->CreateMeshSection(1, WaterVertices, WaterTriangles, WaterNormals, UVs, WaterColours, WaterTangents, false);
 			ProcMesh->SetMaterial(1, WaterMaterial);
 		}
