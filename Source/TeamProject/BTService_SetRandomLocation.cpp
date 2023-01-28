@@ -23,4 +23,3 @@ void UBTService_SetRandomLocation::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	OwnerComp.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), NewLocation);
 
 }
-
