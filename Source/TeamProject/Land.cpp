@@ -204,6 +204,11 @@ void ALand::CreateMesh()
 	// Store list of coordinates for triangulation
 	std::vector<double> coords;
 
+	float lastX = 0;
+	float lastY = 0;
+	bool inARowX = false;
+	bool inARowY = false;
+
 	for (auto vertex : Vertices)
 	{
 		if (vertex.Z < WaterLevel)
@@ -216,26 +221,33 @@ void ALand::CreateMesh()
 			// Push vertex into coordinates list
 			coords.push_back(vertex.X);
 			coords.push_back(vertex.Y);
+
+			// Cant triangulate if all triangles are lined up
+			if (vertex.X == lastX) { inARowX = true; }
+			if (vertex.Y == lastY) { inARowY = true; }
 		}
 	}
 
 	if (coords.size() > 0 || coords.size() % 3 != 0)
 	{
-		// Use external library to triangulate
-		delaunator::Delaunator d(coords);
+		if (!inARowX && !inARowY) 
+		{ 
+			// Use external library to triangulate
+			delaunator::Delaunator d(coords);
 
-		// Push resultant triangles into triangles list
-		for (auto& triangle : d.triangles)
-		{
-			WaterTriangles.Push(triangle);
+			// Push resultant triangles into triangles list
+			for (auto& triangle : d.triangles)
+			{
+				WaterTriangles.Push(triangle);
+			}
+
+			// Calculate Normals
+			UKismetProceduralMeshLibrary::CalculateTangentsForMesh(WaterVertices, WaterTriangles, UVs, WaterNormals, WaterTangents);
+
+			// Create mesh and set material to water
+			ProcMesh->CreateMeshSection(1, WaterVertices, WaterTriangles, WaterNormals, UVs, WaterColours, WaterTangents, false);
+			ProcMesh->SetMaterial(1, WaterMaterial);
 		}
-
-		// Calculate Normals
-		UKismetProceduralMeshLibrary::CalculateTangentsForMesh(WaterVertices, WaterTriangles, UVs, WaterNormals, WaterTangents);
-		
-		// Create mesh and set material to water
-		ProcMesh->CreateMeshSection(1, WaterVertices, WaterTriangles, WaterNormals, UVs, WaterColours, WaterTangents, false);
-		ProcMesh->SetMaterial(1, WaterMaterial);
 	}
 	
 
