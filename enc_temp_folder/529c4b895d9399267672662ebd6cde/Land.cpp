@@ -171,7 +171,8 @@ void ALand::CreateMesh()
 	// Calculate normals
 	//UKismetProceduralMeshLibrary::CalculateTangentsForMesh(Vertices, Triangles, UVs, Normals, Tangents);
 
-	// Faster normals
+	// Faster normals but broken atm
+	// 
 	CalculateNormals();
 
 	// Create mesh section
