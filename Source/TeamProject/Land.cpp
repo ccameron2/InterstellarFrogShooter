@@ -242,7 +242,7 @@ void ALand::CreateMesh()
 			}
 
 			// Calculate Normals
-			UKismetProceduralMeshLibrary::CalculateTangentsForMesh(WaterVertices, WaterTriangles, UVs, WaterNormals, WaterTangents);
+			CalculateNormals();
 
 			// Create mesh and set material to water
 			ProcMesh->CreateMeshSection(1, WaterVertices, WaterTriangles, WaterNormals, UVs, WaterColours, WaterTangents, false);
