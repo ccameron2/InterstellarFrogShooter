@@ -12,18 +12,28 @@ void ATeamProjectGameModeBase::BeginPlay()
 	PlayerController = Cast<AMainPlayerController>(GetWorld()->GetFirstPlayerController());
 	PlayerPawn = PlayerController->GetPawn();
 
+	FTransform Transform;
+	FVector Location = { 0,0,0 };
+	Transform.SetTranslation(Location);
+
 	if (LandClass)
 	{
-		FTransform Transform;
 		LandActor = GetWorld()->SpawnActor<ALand>(LandClass, Transform);
-		FVector Location = { 0,0,0 };
-		Transform.SetTranslation(Location);
 		LandActor->Init(FMath::RandRange(0, 999), FMath::RandRange(0, LandActor->NumTypes - 1));
 	}
+
+	Location = { 0,0,1000 };
+	Transform.SetTranslation(Location);
+
+	WaveManager = GetWorld()->SpawnActor<AWaveManager>(WaveManagerClass, Transform);
+	WaveManager->Init(LandActor->Size * LandActor->Scale);
+	WaveManager->SpawnTitleFrogs();
 }
 
 void ATeamProjectGameModeBase::OnGuiSetValues(FText InSeedString, int InTerrainType)
 {
+	WaveManager->ClearFrogs();
+
 	//Initialise a seed for the case when everything fails with generating a seed
 	int seed = 89514156;
 
@@ -78,9 +88,16 @@ void ATeamProjectGameModeBase::OnStart()
 
 		PlayerController->RebindCharacter(PlayerActor);
 	}
+	WaveManager->ClearFrogs();
+	WaveManager->StartWaves();;
 }
 
 void ATeamProjectGameModeBase::OnBack()
 {
-	//LandActor->Clear();
+	WaveManager->SpawnTitleFrogs();
+}
+
+void ATeamProjectGameModeBase::OnPlay()
+{
+	WaveManager->ClearFrogs();
 }

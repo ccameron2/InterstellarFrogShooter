@@ -5,6 +5,8 @@
 #include "Land.h"
 #include <string>
 #include "PlayerCharacter.h"
+#include "WaveManager.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "TeamProjectGameModeBase.generated.h"
@@ -33,9 +35,13 @@ public:
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<APlayerCharacter> PlayerCharacterClass;
 
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<AWaveManager> WaveManagerClass;
+
 	AMainPlayerController* PlayerController;
 	APawn* PlayerPawn;
 	ALand* LandActor;
+	AWaveManager* WaveManager;
 
 	UFUNCTION(BlueprintCallable)
 		void OnGuiSetValues(FText InSeedString, int InTerrainType);
@@ -43,7 +49,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void OnStart();
 
-
 	UFUNCTION(BlueprintCallable)
 		void OnBack();
+
+	UFUNCTION(BlueprintCallable)
+		void OnPlay();
 };

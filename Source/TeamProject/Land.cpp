@@ -206,8 +206,8 @@ void ALand::CreateMesh()
 
 	float lastX = 0;
 	float lastY = 0;
-	bool inARowX = false;
-	bool inARowY = false;
+	bool inARowX = true;
+	bool inARowY = true;
 
 	for (auto vertex : Vertices)
 	{
@@ -223,14 +223,22 @@ void ALand::CreateMesh()
 			coords.push_back(vertex.Y);
 
 			// Cant triangulate if all triangles are lined up
-			if (vertex.X == lastX) { inARowX = true; }
-			if (vertex.Y == lastY) { inARowY = true; }
+			if (lastX == 0 || lastY == 0) 
+			{ 
+				lastX = vertex.X;
+				lastY = vertex.Y; 
+				continue;
+			}
+			if (vertex.X != lastX) { inARowX = false; }
+			if (vertex.Y != lastY) { inARowY = false; }
+			lastX = vertex.X;
+			lastY = vertex.Y;
 		}
 	}
 
-	if (coords.size() > 0 || coords.size() % 3 != 0)
+	if (coords.size() > 6 || coords.size() % 3 == 0)
 	{
-		if (!inARowX || !inARowY) 
+		if (!inARowX && !inARowY) 
 		{ 
 			// Use external library to triangulate
 			delaunator::Delaunator d(coords);

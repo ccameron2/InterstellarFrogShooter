@@ -7,14 +7,12 @@ AWaveManager::AWaveManager()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 // Called when the game starts or when spawned
 void AWaveManager::BeginPlay()
 {
 	Super::BeginPlay();
-	NewWave();
 }
 
 // Called every frame
@@ -25,8 +23,6 @@ void AWaveManager::Tick(float DeltaTime)
 
 void AWaveManager::NewWave()
 {
-	GetWorld()->GetTimerManager().SetTimer(WaveTimerHandle, this, &AWaveManager::NewWave, WaveTime, false, WaveDelay);
-
 	NumFrogs += WaveNum * 2;
 
 	for (int i = 0; i < NumFrogs; i++)
@@ -48,6 +44,31 @@ void AWaveManager::ClearFrogs()
 	for (auto& frog : AICharacters)
 	{
 		frog->Destroy();
+	}
+	AICharacters.Empty();
+}
+
+void AWaveManager::Init(int worldSize)
+{
+	WorldSize = worldSize;
+}
+
+void AWaveManager::StartWaves()
+{
+	GetWorld()->GetTimerManager().SetTimer(WaveTimerHandle, this, &AWaveManager::NewWave, WaveTime, true, WaveDelay);
+}
+
+void AWaveManager::SpawnTitleFrogs()
+{
+	for (int i = 0; i < NumTitleFrogs; i++)
+	{
+		float x = FMath::RandRange(-(100 * 225) / 2, (100 * 225) / 2);
+		float y = FMath::RandRange(-(100 * 225) / 2, (100 * 225) / 2);
+		FTransform Transform;
+		FVector Location = { x,y,3000 };
+		Transform.SetTranslation(Location);
+
+		AICharacters.Push(GetWorld()->SpawnActor<AAICharacter>(AIClass, Transform));
 	}
 }
 

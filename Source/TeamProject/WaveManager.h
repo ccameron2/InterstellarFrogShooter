@@ -27,6 +27,9 @@ public:
 
 	void NewWave();
 	void ClearFrogs();
+	void Init(int worldSize);
+	void StartWaves();
+	void SpawnTitleFrogs();
 
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<AAICharacter> AIClass;
@@ -38,5 +41,7 @@ public:
 	float WaveDelay = 5;
 	int WaveNum = 0;
 	int NumFrogs = 5;
+	int NumTitleFrogs = 15;
+	int WorldSize = 0;
 
 };
