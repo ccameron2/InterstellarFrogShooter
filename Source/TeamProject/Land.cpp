@@ -230,7 +230,7 @@ void ALand::CreateMesh()
 
 	if (coords.size() > 0 || coords.size() % 3 != 0)
 	{
-		if (!inARowX && !inARowY) 
+		if (!inARowX || !inARowY) 
 		{ 
 			// Use external library to triangulate
 			delaunator::Delaunator d(coords);
