@@ -17,6 +17,14 @@ public:
 	// Sets default values for this actor's properties
 	AWaveManager();
 
+	enum WaveDirection
+	{
+		North,
+		South,
+		East,
+		West
+	};
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -37,11 +45,14 @@ public:
 	TArray<AAICharacter*> AICharacters;
 
 	FTimerHandle WaveTimerHandle;
-	float WaveTime = 30;
+	float WaveTime = 10;
 	float WaveDelay = 5;
 	int WaveNum = 0;
 	int NumFrogs = 5;
 	int NumTitleFrogs = 15;
 	int WorldSize = 0;
+	WaveDirection CurrentDirection;
+private:
 
+	FVector GetNewFrogLocation(WaveDirection direction);
 };

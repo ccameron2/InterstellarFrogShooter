@@ -5,7 +5,7 @@
 // Sets default values
 AWaveManager::AWaveManager()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 }
 
@@ -25,17 +25,17 @@ void AWaveManager::NewWave()
 {
 	NumFrogs += WaveNum * 2;
 
+	CurrentDirection = static_cast<WaveDirection>(FMath::RandRange(0, 3));
+
 	for (int i = 0; i < NumFrogs; i++)
 	{
-		float x = FMath::RandRange(-(100 * 225) / 2, (100 * 225) / 2);
-		float y = FMath::RandRange(-(100 * 225) / 2, (100 * 225) / 2);
-		FTransform Transform;
-		FVector Location = { x,y,3000};
-		Transform.SetTranslation(Location);
+		FTransform transform;
+		auto location = GetNewFrogLocation(CurrentDirection);
+		transform.SetTranslation(location);
 
-		AICharacters.Push(GetWorld()->SpawnActor<AAICharacter>(AIClass, Transform));
+		AICharacters.Push(GetWorld()->SpawnActor<AAICharacter>(AIClass, transform));
 	}
-	
+
 	WaveNum++;
 }
 
@@ -62,13 +62,43 @@ void AWaveManager::SpawnTitleFrogs()
 {
 	for (int i = 0; i < NumTitleFrogs; i++)
 	{
-		float x = FMath::RandRange(-(100 * 225) / 2, (100 * 225) / 2);
-		float y = FMath::RandRange(-(100 * 225) / 2, (100 * 225) / 2);
+		float x = FMath::RandRange(-WorldSize / 2, WorldSize / 2);
+		float y = FMath::RandRange(-WorldSize / 2, WorldSize / 2);
 		FTransform Transform;
 		FVector Location = { x,y,3000 };
 		Transform.SetTranslation(Location);
 
 		AICharacters.Push(GetWorld()->SpawnActor<AAICharacter>(AIClass, Transform));
 	}
+}
+
+FVector AWaveManager::GetNewFrogLocation(WaveDirection direction)
+{
+	float x = 0;
+	float y = 0;
+	switch (direction)
+	{
+	case North:
+		x = FMath::RandRange(WorldSize / 3, WorldSize / 2);
+		y = FMath::RandRange(-WorldSize / 2, WorldSize / 2);
+		break;
+	case South:
+		x = FMath::RandRange(-WorldSize / 3, -WorldSize / 2);
+		y = FMath::RandRange(-WorldSize / 2, WorldSize / 2);
+		break;
+	case East:
+		x = FMath::RandRange(-WorldSize / 2, WorldSize / 2);
+		y = FMath::RandRange(WorldSize / 3, WorldSize / 2);
+		break;
+	case West:
+		x = FMath::RandRange(-WorldSize / 2, WorldSize / 2);
+		y = FMath::RandRange(-WorldSize / 3, WorldSize / 2);
+		break;
+	}
+
+
+	FVector location = { x,y,3000 };
+
+	return location;
 }
 
