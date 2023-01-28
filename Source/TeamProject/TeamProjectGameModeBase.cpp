@@ -68,6 +68,10 @@ void ATeamProjectGameModeBase::OnGuiSetValues(FText InSeedString, int InTerrainT
 
 	// Initialise the terrain with UI data
 	LandActor->Init(seed, type);
+
+	// Force rebuild Nav Mesh
+	LandActor->SetActorLocation(FVector{0, 1, 0});
+	LandActor->SetActorLocation(FVector{0, 0, 0});
 }
 
 void ATeamProjectGameModeBase::OnStart()
