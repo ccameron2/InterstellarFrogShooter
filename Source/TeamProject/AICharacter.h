@@ -37,6 +37,9 @@ private:
 
 
 private:
+	UPROPERTY(EditAnywhere)
+		class UNavigationInvokerComponent* NavInvoker;
+
 
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<AHitpointText> HitPointText;
