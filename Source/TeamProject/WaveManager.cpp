@@ -41,11 +41,14 @@ void AWaveManager::NewWave()
 
 void AWaveManager::ClearFrogs()
 {
-	for (auto& frog : AICharacters)
+	if (AICharacters.Num() > 0)
 	{
-		frog->Destroy();
+		for (auto& frog : AICharacters)
+		{
+			frog->Destroy();
+		}
+		AICharacters.Empty();
 	}
-	AICharacters.Empty();
 }
 
 void AWaveManager::Init(int worldSize)
