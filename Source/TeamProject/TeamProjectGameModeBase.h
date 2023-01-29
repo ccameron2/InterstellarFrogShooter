@@ -54,4 +54,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void OnPlay();
+
+	UFUNCTION(BlueprintCallable)
+		void OnDebug();
 };
