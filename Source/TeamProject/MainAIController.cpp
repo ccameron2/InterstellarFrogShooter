@@ -9,7 +9,10 @@ void AMainAIController::BeginPlay()
 {
 	Super::BeginPlay();
 	if (AIBehaviour != nullptr)
+	{
 		RunBehaviorTree(AIBehaviour);
+	}
+
 }
 
 void AMainAIController::Tick(float DeltaTime)
