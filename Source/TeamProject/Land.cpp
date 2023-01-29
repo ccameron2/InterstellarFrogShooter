@@ -14,6 +14,7 @@ ALand::ALand()
 	SetRootComponent(ProcMesh);
 
 	LoadStaticMeshes();
+
 }
 
 // Sets default values
@@ -167,9 +168,6 @@ void ALand::CreateMesh()
 			tallestVectorHeight = Vertices[i].Z;
 		}
 	}
-
-	// Calculate normals
-	//UKismetProceduralMeshLibrary::CalculateTangentsForMesh(Vertices, Triangles, UVs, Normals, Tangents);
 
 	// Faster normals
 	CalculateNormals();
@@ -343,6 +341,32 @@ void ALand::CreateMesh()
 		
 	}
 	
+	for (int i = 0; i < 4; i++)
+	{
+		FTransform transform;
+
+		auto edgeLength = Size * Scale;
+		FVector location;
+		if (i == 0) { location = { edgeLength / 2,0,0 }; }
+		if (i == 1) { location = { 0,edgeLength / 2,0 }; }
+		if (i == 2) { location = { -edgeLength / 2,0,0 }; }
+		if (i == 3) { location = { 0,-edgeLength / 2,0 }; }
+
+		transform.SetLocation(location);
+
+		FQuat rotation;
+		if (i == 0) { rotation = { 0, -0.707, 0, 0.707 }; }
+		if (i == 1) { rotation = { 0, -0.707,  0.707, 0 }; }
+		if (i == 2) { rotation = { 0, 0.707, 0, 0.707 }; }
+		if (i == 3) { rotation = { 0, -0.707, -0.707, 0 }; }
+
+		transform.SetRotation(rotation);
+		transform.SetScale3D(FVector{ Scale, Scale, Scale});
+
+		EdgeBlockers.Push(GetWorld()->SpawnActor<ABlocker>(BlockerClass, transform));
+		EdgeBlockers[i]->SetActorHiddenInGame(true);
+	}
+
 }
 
 void ALand::MakeNewMesh()

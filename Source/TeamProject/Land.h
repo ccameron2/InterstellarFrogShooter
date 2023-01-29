@@ -5,6 +5,7 @@
 
 #include <ProceduralMeshComponent.h>
 #include "Components/InstancedStaticMeshComponent.h" 
+#include "Blocker.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
@@ -46,6 +47,12 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "ProcGen")
 		TEnumAsByte<TerrainTypes> TerrainType = Forest;
+
+	UPROPERTY(EditAnywhere, Category = "ProcGen")
+		TSubclassOf<ABlocker> BlockerClass;
+
+	UPROPERTY(EditAnywhere, Category = "ProcGen")
+		TArray<ABlocker*> EdgeBlockers;
 
 	TArray<UInstancedStaticMeshComponent*> ForestStaticMeshes;
 	TArray<UInstancedStaticMeshComponent*> SnowyStaticMeshes;
