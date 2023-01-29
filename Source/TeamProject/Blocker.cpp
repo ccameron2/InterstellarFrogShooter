@@ -11,6 +11,7 @@ ABlocker::ABlocker()
 
 	BlockerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BlockerMesh"));
 	BlockerMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	SetRootComponent(BlockerMesh);
 }
 
 // Called when the game starts or when spawned
