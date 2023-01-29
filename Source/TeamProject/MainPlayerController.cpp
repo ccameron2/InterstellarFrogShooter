@@ -39,7 +39,6 @@ void AMainPlayerController::SetupInputComponent()
 	InputComponent->BindAxis(TEXT("Turn"), this, &AMainPlayerController::CallTurn);
 	InputComponent->BindAxis(TEXT("Look Up"), this, &AMainPlayerController::CallLookUp);
 	InputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AMainPlayerController::CallJump);
-	InputComponent->BindAction(TEXT("BuildMode"), IE_Pressed, this, &AMainPlayerController::SpawnDrone);
 }
 
 void AMainPlayerController::CallMoveForwards(float AxisAmount)
@@ -133,6 +132,7 @@ void AMainPlayerController::WidgetLoader(int index)
 		HUD->RemoveFromParent();
 		SkillTree->RemoveFromParent();
 		PauseWidget->RemoveFromParent();
+		
 	}
 	else if (index == 3)
 	{
@@ -141,6 +141,12 @@ void AMainPlayerController::WidgetLoader(int index)
 		HUD->RemoveFromParent();
 		Settings->RemoveFromParent();
 		PauseWidget->RemoveFromParent();
+		FInputModeGameAndUI temp = FInputModeGameAndUI();
+		temp.SetHideCursorDuringCapture(false);
+		SetInputMode(temp);
+		SetShowMouseCursor(true);
+		
+		
 	}
 	else if (index == 4)
 	{
@@ -149,7 +155,7 @@ void AMainPlayerController::WidgetLoader(int index)
 		HUD->RemoveFromParent();
 		Settings->RemoveFromParent();
 		SkillTree->RemoveFromParent();
-
+		
 	}
 }
 
@@ -164,24 +170,12 @@ void AMainPlayerController::SpawnDrone()
 		FRotator SpawnRotation = Character->GetActorRotation();
 
 		//Spawn the drone 
-		Drone = GetWorld()->SpawnActor<ADroneCharacter>(DronePawn, SpawnVector, SpawnRotation);
-
-		//Check if the Drone was correctly spawned and then possess the new drone
-		if (Drone)
-		{			
-			UnPossess();
-			Possess(Drone);
-		}		
+		Drone = GetWorld()->SpawnActor<ADroneCharacter>(DronePawn, SpawnVector, SpawnRotation);	
 	}
 
 	//Check if we are in build mode and then Possess the player's character while destroying the Drone actor that was palced in the world
 	if (BuildMode)
 	{
-
-		UnPossess();
-		if(Character)
-			Possess(Character);
-
 		if(Drone)
 			Drone->Destroy();
 

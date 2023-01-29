@@ -48,10 +48,14 @@ public:
 
 	ADroneCharacter* Drone;
 
-	bool BuildMode = false;
+	UPROPERTY()
+		bool BuildMode = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool IsInGame = false;
 
 	UPROPERTY(BlueprintReadWrite)
-		bool IsInGame = false;
+		bool SkillTreeOpen = false;
 
 private:
 

@@ -37,10 +37,16 @@ public:
 
 	void Turn(float AxisAmount);
 
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int AvailableSkillPoints = 0;
+
 private:
 	UPROPERTY(EditAnywhere)
 		UStaticMeshComponent* PlayerMesh;
 
 	UPROPERTY(EditAnywhere)
 		bool DebugWeapons;
+
 };
