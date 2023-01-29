@@ -105,3 +105,9 @@ void ATeamProjectGameModeBase::OnPlay()
 {
 	WaveManager->ClearFrogs();
 }
+
+void ATeamProjectGameModeBase::OnDebug()
+{
+	WaveManager->ClearFrogs();
+	LandActor->Clear();
+}
