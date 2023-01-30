@@ -42,7 +42,7 @@ public:
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<AAICharacter> AIClass;
 	
-	TArray<AAICharacter*> AICharacters;
+	TArray<AAICharacter*> EnemyFrogs;
 
 	FTimerHandle WaveTimerHandle;
 	float WaveTime = 25;

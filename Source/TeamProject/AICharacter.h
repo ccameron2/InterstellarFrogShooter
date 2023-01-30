@@ -30,6 +30,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UPROPERTY(EditAnywhere)
+		float Health;
+
 private:
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
@@ -47,6 +50,5 @@ private:
 	UPROPERTY(EditAnywhere)
 		float MaxHealth = 100.0f;
 
-	UPROPERTY(EditAnywhere)
-		float Health;
+
 };

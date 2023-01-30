@@ -83,6 +83,15 @@ void ALand::Clear()
 	WaterColours.Empty();
 
 	ClearMeshInstances();
+
+	if (EdgeBlockers.Num() > 0)
+	{
+		for (auto& blocker : EdgeBlockers)
+		{
+			blocker->Destroy();
+		}
+		EdgeBlockers.Empty();
+	}
 }
 
 void ALand::CalculateNormals()

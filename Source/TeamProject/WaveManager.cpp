@@ -19,6 +19,13 @@ void AWaveManager::BeginPlay()
 void AWaveManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	for (int i = 0; i < EnemyFrogs.Num(); i++)
+	{
+		if (EnemyFrogs[i] == nullptr || EnemyFrogs[i]->Health <= 0)
+		{
+ 			EnemyFrogs.RemoveAt(i);
+		}
+	}
 }
 
 void AWaveManager::NewWave()
@@ -33,7 +40,7 @@ void AWaveManager::NewWave()
 		auto location = GetNewFrogLocation(CurrentDirection);
 		transform.SetTranslation(location);
 
-		AICharacters.Push(GetWorld()->SpawnActor<AAICharacter>(AIClass, transform));
+		EnemyFrogs.Push(GetWorld()->SpawnActor<AAICharacter>(AIClass, transform));
 	}
 
 	WaveNum++;
@@ -41,13 +48,13 @@ void AWaveManager::NewWave()
 
 void AWaveManager::ClearFrogs()
 {
-	if (AICharacters.Num() > 0)
+	if (EnemyFrogs.Num() > 0)
 	{
-		for (auto& frog : AICharacters)
+		for (auto& frog : EnemyFrogs)
 		{
 			frog->Destroy();
 		}
-		AICharacters.Empty();
+		EnemyFrogs.Empty();
 	}
 }
 
@@ -67,11 +74,19 @@ void AWaveManager::SpawnTitleFrogs()
 	{
 		float x = FMath::RandRange(-WorldSize / 2, WorldSize / 2);
 		float y = FMath::RandRange(-WorldSize / 2, WorldSize / 2);
-		FTransform Transform;
-		FVector Location = { x,y,3000 };
-		Transform.SetTranslation(Location);
+		FTransform transform;
+		FHitResult Hit;
+		FVector Start = FVector{ x,y,5000 };
+		FVector End = FVector{ x,y,-5000 };
+		ECollisionChannel Channel = ECC_Visibility;
+		FCollisionQueryParams Params;
+		GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, Params);
+		//DrawDebugLine(GetWorld(), Start, Hit.Location, FColor(125, 18, 255), true, -1, 0, 20);
+		FVector location = Hit.Location;
+		location.Z += 50;
+		transform.SetTranslation(location);
 
-		AICharacters.Push(GetWorld()->SpawnActor<AAICharacter>(AIClass, Transform));
+		EnemyFrogs.Push(GetWorld()->SpawnActor<AAICharacter>(AIClass, transform));
 	}
 }
 
@@ -99,8 +114,15 @@ FVector AWaveManager::GetNewFrogLocation(WaveDirection direction)
 		break;
 	}
 
-
-	FVector location = { x,y,3000 };
+	FHitResult Hit;
+	FVector Start = FVector{ x,y,5000 };
+	FVector End = FVector{ x,y,-5000 };
+	ECollisionChannel Channel = ECC_Visibility;
+	FCollisionQueryParams Params;
+	GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, Params);
+	DrawDebugLine(GetWorld(), Start, Hit.Location, FColor(125, 18, 255), true, -1, 0, 20);
+	FVector location = Hit.Location;
+	location.Z += 50;
 
 	return location;
 }
