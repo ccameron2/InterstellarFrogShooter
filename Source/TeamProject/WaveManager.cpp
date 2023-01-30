@@ -85,8 +85,8 @@ void AWaveManager::SpawnTitleFrogs()
 		FVector location = Hit.Location;
 		location.Z += 50;
 		transform.SetTranslation(location);
-
-		EnemyFrogs.Push(GetWorld()->SpawnActor<AAICharacter>(AIClass, transform));
+		auto newFrog = GetWorld()->SpawnActor<AAICharacter>(AIClass, transform);
+		if(newFrog) EnemyFrogs.Push(newFrog);
 	}
 }
 
