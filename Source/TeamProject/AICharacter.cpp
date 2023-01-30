@@ -20,6 +20,7 @@ void AAICharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	Health = MaxHealth;
+	
 }
 
 // Called every frame
