@@ -341,10 +341,12 @@ void ALand::CreateMesh()
 		
 	}
 	
+	// Create blockers
 	for (int i = 0; i < 4; i++)
 	{
 		FTransform transform;
 
+		// Set location to each side of mesh
 		auto edgeLength = Size * Scale;
 		FVector location;
 		if (i == 0) { location = { edgeLength / 2,0,0 }; }
@@ -354,15 +356,16 @@ void ALand::CreateMesh()
 
 		transform.SetLocation(location);
 
+		// Set rotation to face inwards
 		FQuat rotation;
 		if (i == 0) { rotation = { 0, -0.707, 0, 0.707 }; }
 		if (i == 1) { rotation = { 0, -0.707,  0.707, 0 }; }
 		if (i == 2) { rotation = { 0, 0.707, 0, 0.707 }; }
 		if (i == 3) { rotation = { 0, -0.707, -0.707, 0 }; }
-
 		transform.SetRotation(rotation);
 		transform.SetScale3D(FVector{ Scale, Scale, Scale});
 
+		// Spawn actor and make invisible
 		EdgeBlockers.Push(GetWorld()->SpawnActor<ABlocker>(BlockerClass, transform));
 		EdgeBlockers[i]->SetActorHiddenInGame(true);
 	}
