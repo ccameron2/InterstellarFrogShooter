@@ -15,6 +15,7 @@ APlayerCharacter::APlayerCharacter()
 
 	PlayerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Player Mesh"));
 	PlayerMesh->SetupAttachment(RootComponent);
+	LevelComponent = CreateDefaultSubobject<ULevellingUpComponent>(TEXT("Level Component"));
 
 }
 
@@ -38,6 +39,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	InputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &APlayerCharacter::FireWeapon);
+	InputComponent->BindAction(TEXT("Hit"), IE_Pressed, this, &APlayerCharacter::TakeDamage);
 }
 
 void APlayerCharacter::MoveForwards(float AxisAmount)
@@ -88,12 +90,24 @@ void APlayerCharacter::FireWeapon()
 		{
 			UGameplayStatics::ApplyDamage(
 				Hit.GetActor(),
-				10.0f, // Damage Amount 
+				BaseDamage * LevelComponent->DamageMultiplier, // Damage Amount 
 				GetInstigatorController(),
 				this,
 				UDamageType::StaticClass()
 			);
 		}
+	}
+}
+
+void APlayerCharacter::TakeDamage()
+{
+	PlayerHealth -= 10.0f;
+	
+	UE_LOG(LogTemp, Warning, TEXT("Player Health: %f"), PlayerHealth);
+
+	if (PlayerHealth <= 0.0f)
+	{
+		PlayerHealth = 0.0f;
 	}
 }
 

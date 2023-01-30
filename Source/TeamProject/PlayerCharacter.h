@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 
+#include "LevellingUpComponent.h"
+
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
 
@@ -35,12 +37,24 @@ public:
 	
 	void FireWeapon();
 
+	void TakeDamage();
+
 	void Turn(float AxisAmount);
 
 
 public:
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		ULevellingUpComponent* LevelComponent;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		int AvailableSkillPoints = 0;
+		float PlayerHealth = 100.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int PlayerMaxHealth = 100;
+
+	UPROPERTY(EditAnywhere)
+		float BaseDamage = 10.0f;
 
 private:
 	UPROPERTY(EditAnywhere)

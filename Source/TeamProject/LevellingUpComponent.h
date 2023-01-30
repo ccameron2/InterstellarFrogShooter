@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "Components/ActorComponent.h"
 #include "LevellingUpComponent.generated.h"
 
@@ -54,6 +55,9 @@ public:
 	//The starting level up requirement 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		float BaseMaxXP = 83.0f;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		float DamageMultiplier = 1.0f;
 
 	//Function to calculate the current XP percentage for the progress bars in the XP widgets 
 	UFUNCTION()
