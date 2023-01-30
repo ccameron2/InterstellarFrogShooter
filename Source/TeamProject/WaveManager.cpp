@@ -86,7 +86,7 @@ FVector AWaveManager::GetNewFrogLocation(WaveDirection direction)
 		y = FMath::RandRange(-WorldSize / 2, WorldSize / 2);
 		break;
 	case South:
-		x = FMath::RandRange(-WorldSize / 3, -WorldSize / 2);
+		x = FMath::RandRange(-WorldSize / 2, -WorldSize / 3);
 		y = FMath::RandRange(-WorldSize / 2, WorldSize / 2);
 		break;
 	case East:
@@ -95,7 +95,7 @@ FVector AWaveManager::GetNewFrogLocation(WaveDirection direction)
 		break;
 	case West:
 		x = FMath::RandRange(-WorldSize / 2, WorldSize / 2);
-		y = FMath::RandRange(-WorldSize / 3, WorldSize / 2);
+		y = FMath::RandRange(-WorldSize / 2, -WorldSize / 3);
 		break;
 	}
 

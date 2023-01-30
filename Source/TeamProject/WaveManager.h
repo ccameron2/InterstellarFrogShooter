@@ -45,11 +45,11 @@ public:
 	TArray<AAICharacter*> AICharacters;
 
 	FTimerHandle WaveTimerHandle;
-	float WaveTime = 10;
+	float WaveTime = 25;
 	float WaveDelay = 5;
 	int WaveNum = 0;
 	int NumFrogs = 5;
-	int NumTitleFrogs = 15;
+	int NumTitleFrogs = 25;
 	int WorldSize = 0;
 	WaveDirection CurrentDirection;
 private:
