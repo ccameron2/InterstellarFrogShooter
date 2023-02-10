@@ -6,6 +6,7 @@
 #include <ProceduralMeshComponent.h>
 #include "Components/InstancedStaticMeshComponent.h" 
 #include "Blocker.h"
+#include "LandObject.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
@@ -42,6 +43,12 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = "ProcGen")
 		UProceduralMeshComponent* ProcMesh;
+
+	UPROPERTY(VisibleAnywhere, Category = "ProcGen")
+		TArray<ALandObject*> LandObjects;
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<ALandObject> LandObjectClass;
 
 	TArray<UInstancedStaticMeshComponent*> StaticMeshes;
 

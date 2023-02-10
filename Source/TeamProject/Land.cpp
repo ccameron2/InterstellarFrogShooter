@@ -92,6 +92,16 @@ void ALand::Clear()
 		}
 		EdgeBlockers.Empty();
 	}
+
+	if (LandObjects.Num() > 0)
+	{
+		for (auto& object : LandObjects)
+		{
+			object->Destroy();
+		}
+		LandObjects.Empty();
+	}
+
 }
 
 void ALand::CalculateNormals()
@@ -295,8 +305,15 @@ void ALand::CreateMesh()
 			}
 
 			// Add instance of static mesh in world
+
+
+			// Spawn actor
+			FActorSpawnParameters params;
+			auto object = GetWorld()->SpawnActor<ALandObject>(LandObjectClass, transform);		
 			auto staticMesh = StaticMeshes[meshNum];
-			if(staticMesh){ staticMesh->AddInstance(transform); }			
+			object->ObjectMesh = staticMesh;
+			object->SpawnMesh(transform);
+			LandObjects.Push(object);
 		}
 
 		// Foliage
