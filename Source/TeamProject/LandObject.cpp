@@ -3,6 +3,9 @@
 
 #include "LandObject.h"
 
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Perception/AISense_Sight.h"
+
 // Sets default values
 ALandObject::ALandObject()
 {
@@ -10,13 +13,20 @@ ALandObject::ALandObject()
 	PrimaryActorTick.bCanEverTick = false;
 
 	//ObjectMesh = CreateDefaultSubobject<UInstancedStaticMeshComponent>("Object Mesh");
+	
+	StimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("Stimuli Source"));
+
+	// Does not work in C++, needs to be done in the blueprint  (https://forums.unrealengine.com/t/cant-register-uaisense-sight-with-uaiperceptionstimulisourcecomponent/149852)
+	//StimuliSourceComponent->bAutoRegister = true;
+	//StimuliSourceComponent->RegisterForSense(TSubclassOf<UAISense_Sight>());
+
+	Tags.Add("Cover");
 }
 
 // Called when the game starts or when spawned
 void ALandObject::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame

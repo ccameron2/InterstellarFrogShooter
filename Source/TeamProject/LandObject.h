@@ -29,4 +29,7 @@ public:
 
 	void SpawnMesh(FTransform transform);
 
+private:
+		UPROPERTY(EditAnywhere)
+			class UAIPerceptionStimuliSourceComponent* StimuliSourceComponent;
 };

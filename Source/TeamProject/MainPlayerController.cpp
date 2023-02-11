@@ -6,15 +6,17 @@
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
 
+
 AMainPlayerController::AMainPlayerController()
 {
-
+	 
+	
 }
 
 void AMainPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 	Menu = CreateWidget(this, MainMenuWidget);
 	HUD = CreateWidget(this, HUDWidget);
 	Settings = CreateWidget(this, SettingsWidget);
