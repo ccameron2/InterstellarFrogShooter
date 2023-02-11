@@ -20,6 +20,7 @@ void AMainPlayerController::BeginPlay()
 	Settings = CreateWidget(this, SettingsWidget);
 	SkillTree = CreateWidget(this, SkillTreeWidget);
 	PauseWidget = CreateWidget(this, PauseUserWidget);
+	CreditsWidget = CreateWidget(this, CreditsUserWidgets);
 
 	Menu->AddToViewport();
 	SetInputMode(FInputModeUIOnly());
@@ -115,6 +116,7 @@ void AMainPlayerController::WidgetLoader(int index)
 		Settings->RemoveFromParent();
 		SkillTree->RemoveFromParent();
 		PauseWidget->RemoveFromParent();
+		CreditsWidget->RemoveFromParent();
 	}
 	else if (index == 1)
 	{
@@ -123,7 +125,7 @@ void AMainPlayerController::WidgetLoader(int index)
 		Settings->RemoveFromParent();
 		SkillTree->RemoveFromParent();
 		PauseWidget->RemoveFromParent();
-		
+		CreditsWidget->RemoveFromParent();
 	}
 	else if (index == 2)
 	{
@@ -132,7 +134,7 @@ void AMainPlayerController::WidgetLoader(int index)
 		HUD->RemoveFromParent();
 		SkillTree->RemoveFromParent();
 		PauseWidget->RemoveFromParent();
-		
+		CreditsWidget->RemoveFromParent();
 	}
 	else if (index == 3)
 	{
@@ -145,7 +147,7 @@ void AMainPlayerController::WidgetLoader(int index)
 		temp.SetHideCursorDuringCapture(false);
 		SetInputMode(temp);
 		SetShowMouseCursor(true);
-		
+		CreditsWidget->RemoveFromParent();
 		
 	}
 	else if (index == 4)
@@ -155,7 +157,17 @@ void AMainPlayerController::WidgetLoader(int index)
 		HUD->RemoveFromParent();
 		Settings->RemoveFromParent();
 		SkillTree->RemoveFromParent();
-		
+		CreditsWidget->RemoveFromParent();
+	}
+
+	else if (index == 5)
+	{
+		CreditsWidget->AddToViewport();
+		PauseWidget->RemoveFromParent();
+		Menu->RemoveFromParent();
+		HUD->RemoveFromParent();
+		Settings->RemoveFromParent();
+		SkillTree->RemoveFromParent();
 	}
 }
 

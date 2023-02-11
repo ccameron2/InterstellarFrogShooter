@@ -74,6 +74,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<UUserWidget> PauseUserWidget;
+	
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<UUserWidget> CreditsUserWidgets;
 
 	UPROPERTY()
 		UUserWidget* Menu;
@@ -89,4 +92,7 @@ private:
 
 	UPROPERTY()
 		UUserWidget* PauseWidget;
+
+	UPROPERTY()
+		UUserWidget* CreditsWidget;
 };
