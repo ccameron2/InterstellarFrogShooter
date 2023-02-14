@@ -27,6 +27,7 @@ void AAICharacter::BeginPlay()
 void AAICharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	//UE_LOG(LogTemp, Warning, TEXT("Forward Dir %s"), *GetActorForwardVector().ToString());
 }
 
 // Called to bind functionality to input

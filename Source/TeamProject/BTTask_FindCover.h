@@ -32,6 +32,9 @@ private:
 	UPROPERTY()
 		float CurrentDistance;
 
-	UPROPERTY()
+	
 		FVector CoverLocation;
+
+	UPROPERTY()
+		AActor* CoverActor;
 };
