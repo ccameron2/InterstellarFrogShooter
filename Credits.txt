@@ -5,3 +5,6 @@ Settings Icon: 		  https://icons8.com/icon/9SPgCX6EQMCK/settings
 Play Icon: 		  https://icons8.com/icon/EhGBqlGKPOmj/play
 Power Off Button Icon: 	  https://icons8.com/icon/9seksX3sPpIT/power-off-button
 Info Icon:		  https://icons8.com/icon/AqxR8HVzKNDb/info
+Keyboard Icon: 		  https://icons8.com/icon/ppqg6ozxjXqw/keyboard
+Video Card Icon: 	  https://icons8.com/icon/GgfGlggOax9C/video-card
+Audio Icon: 		  https://icons8.com/icon/OC2elREGfQ1m/audio
