@@ -34,9 +34,6 @@ private:
 	UFUNCTION()
 		void OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
 
-	UFUNCTION()
-		virtual void OnPossess(APawn* pawn) override;
-
 private:
 	UPROPERTY(EditAnywhere)
 		UBehaviorTree* AIBehaviour;
