@@ -90,6 +90,8 @@ public:
 	UMaterialInterface* PineyMaterial;
 	UMaterialInterface* SnowyMaterial;
 
+	void CalculateWaterNormals();
+
 	void CreateMesh();
 	void ClearMeshInstances();
 	void Clear();
