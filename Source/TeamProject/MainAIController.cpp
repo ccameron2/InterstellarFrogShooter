@@ -75,21 +75,21 @@ void AMainAIController::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors
 		ETeamAttitude::Type type = GetTeamAttitudeTowards(*Actor);
 		if(type == ETeamAttitude::Friendly) 
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Friendly Actor: %s"), *Actor->GetName());
+			//UE_LOG(LogTemp, Warning, TEXT("Friendly Actor: %s"), *Actor->GetName());
 		}
 		else if(type == ETeamAttitude::Hostile)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Hostile Actor: %s"), *Actor->GetName());
+			//UE_LOG(LogTemp, Warning, TEXT("Hostile Actor: %s"), *Actor->GetName());
 		}
 		else if(type == ETeamAttitude::Neutral)
 		{
 			if(Actor->ActorHasTag("Cover"))
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Cover Actor: %s"), *Actor->GetName());
+				//UE_LOG(LogTemp, Warning, TEXT("Cover Actor: %s"), *Actor->GetName());
 			}
 			else
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Neutral Actor: %s"), *Actor->GetName());
+				//UE_LOG(LogTemp, Warning, TEXT("Neutral Actor: %s"), *Actor->GetName());
 			}
 		}
 	}

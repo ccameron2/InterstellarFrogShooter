@@ -9,6 +9,15 @@
 #include "GameFramework/Character.h"
 #include "AICharacter.generated.h"
 
+UENUM()
+enum class EAIState : uint8
+{
+	Patrol = 0, // Default State
+	FindCover,
+	Run,
+	Chase,
+	Shoot
+};
 
 UCLASS()
 class TEAMPROJECT_API AAICharacter : public ACharacter
@@ -36,9 +45,13 @@ private:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 		AController* EventInstigator, AActor* DamageCauser) override;
 
+
 public:
 	UPROPERTY(EditAnywhere)
 		float Health;
+
+	UPROPERTY(EditAnywhere)
+		EAIState State;
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -51,5 +64,5 @@ private:
 	UPROPERTY(EditAnywhere)
 		float MaxHealth = 100.0f;
 
-
+	
 };

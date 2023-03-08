@@ -20,7 +20,8 @@ void AAICharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	Health = MaxHealth;
-	
+
+	State = EAIState::Patrol;
 }
 
 // Called every frame
@@ -28,6 +29,7 @@ void AAICharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	//UE_LOG(LogTemp, Warning, TEXT("Forward Dir %s"), *GetActorForwardVector().ToString());
+	
 }
 
 // Called to bind functionality to input
@@ -41,6 +43,8 @@ float AAICharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
+	State = EAIState::FindCover;
+	
 	FVector SpawnLocation = GetActorLocation();
 	FString DamageString = FString::SanitizeFloat(DamageAmount);
 
