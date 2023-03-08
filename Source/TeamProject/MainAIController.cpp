@@ -99,11 +99,3 @@ void AMainAIController::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors
 void AMainAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
 }
-
-void AMainAIController::OnPossess(APawn* pawn)
-{
-	Super::OnPossess(pawn);
-	
-	
-
-}

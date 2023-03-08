@@ -130,6 +130,33 @@ void ALand::CalculateNormals()
 	}
 }
 
+//Lazy will be removed
+void ALand::CalculateWaterNormals()
+{
+	WaterNormals.Init({ 0,0,0 }, WaterVertices.Num());
+
+	for (int i = 0; i < WaterTriangles.Num() - 3; i += 3)
+	{
+		auto a = WaterVertices[WaterTriangles[i]];
+		auto b = WaterVertices[WaterTriangles[i + 1]];
+		auto c = WaterVertices[WaterTriangles[i + 2]];
+
+		auto v1 = a - b;
+		auto v2 = c - b;
+		auto n = v1 ^ v2;
+		n.Normalize();
+
+		WaterNormals[WaterTriangles[i]] += n;
+		WaterNormals[WaterTriangles[i + 1]] += n;
+		WaterNormals[WaterTriangles[i + 2]] += n;
+	}
+
+	for (auto& normal : WaterNormals)
+	{
+		normal.Normalize();
+	}
+}
+
 void ALand::CreateMesh()
 {
 	// Clear any old data
@@ -266,8 +293,13 @@ void ALand::CreateMesh()
 				WaterTriangles.Push(triangle);
 			}
 
+			for (auto& vertex : WaterVertices)
+			{
+				vertex.Z += 50 * FMath::PerlinNoise2D(FVector2D{ vertex.X,vertex.Y } / 100);
+			}
+
 			// Calculate Normals
-			CalculateNormals();
+			CalculateWaterNormals();
 
 			// Create mesh and set material to water
 			ProcMesh->CreateMeshSection(1, WaterVertices, WaterTriangles, WaterNormals, UVs, WaterColours, WaterTangents, false);
@@ -277,7 +309,6 @@ void ALand::CreateMesh()
 	
 
 	// Trees
-	
 	// For each vertex
 	for (auto& vertex : Vertices)
 	{
@@ -588,7 +619,7 @@ void ALand::LoadStaticMeshes()
 	FoliageStaticMeshes[10]->SetStaticMesh(MeshAsset600.Object);
 
 	// Load material and pull from object into material interface
-	ConstructorHelpers::FObjectFinder<UMaterial> waterMaterial(TEXT("M_Water_Lake'/Game/Materials/M_Water_Lake.M_Water_Lake'"));
+	ConstructorHelpers::FObjectFinder<UMaterial> waterMaterial(TEXT("M_Water_Master'/Game/Materials/M_Water_Master.M_Water_Master'"));
 	WaterMaterial = waterMaterial.Object;
 
 	ConstructorHelpers::FObjectFinder<UMaterialInstance> forestMaterial(TEXT("M_Terrain_Forest'/Game/Materials/M_Terrain_Forest.M_Terrain_Forest'"));

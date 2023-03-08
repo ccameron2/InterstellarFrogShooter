@@ -42,6 +42,9 @@ public:
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<AAICharacter> AIClass;
 	
+	UPROPERTY(EditAnywhere)
+		int MaxWaves = 5;
+
 	TArray<AAICharacter*> EnemyFrogs;
 
 	FTimerHandle WaveTimerHandle;
