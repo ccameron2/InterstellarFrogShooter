@@ -2,9 +2,15 @@
 
 
 #include "AICharacter.h"
+
+#include "AIController.h"
+#include "AIHelpers.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "NavigationInvokerComponent.h"
+#include "PlayerCharacter.h"
+#include "Perception/AIPerceptionComponent.h"
+#include "Perception/AISense_Sight.h"
 
 // Sets default values
 AAICharacter::AAICharacter()
@@ -21,14 +27,17 @@ void AAICharacter::BeginPlay()
 	Super::BeginPlay();
 	Health = MaxHealth;
 
-	State = EAIState::Patrol;
+	State = EAIState::Decision;
+	Reasons = EDecisionReasons::None;
 }
 
 // Called every frame
 void AAICharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	//UE_LOG(LogTemp, Warning, TEXT("Forward Dir %s"), *GetActorForwardVector().ToString());
+
+	
+	
 	
 }
 
@@ -39,11 +48,38 @@ void AAICharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 }
 
+void AAICharacter::Shoot(AActor* TargetActor)
+{
+	if(TargetActor)
+	{
+		FVector Location;
+		FRotator Rotation;
+		GetActorEyesViewPoint(Location, Rotation);
+
+		FHitResult Hit;
+		FCollisionQueryParams Params;
+		Params.AddIgnoredActor(this);
+		Params.AddIgnoredActor(GetOwner());
+
+		bool bSuccess = GetWorld()->LineTraceSingleByChannel(Hit, Location, TargetActor->GetActorLocation(), ECollisionChannel::ECC_GameTraceChannel1, Params);
+
+		if(bSuccess)
+		{
+			AActor* HitActor = Hit.GetActor();
+			if(HitActor != nullptr)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Hit Player"));
+			}
+		}
+	}
+}
+
 float AAICharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	State = EAIState::FindCover;
+	State = EAIState::Decision;
+	Reasons = EDecisionReasons::BeingShot;
 	
 	FVector SpawnLocation = GetActorLocation();
 	FString DamageString = FString::SanitizeFloat(DamageAmount);

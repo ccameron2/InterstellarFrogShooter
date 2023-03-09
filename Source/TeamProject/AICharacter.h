@@ -12,11 +12,21 @@
 UENUM()
 enum class EAIState : uint8
 {
-	Patrol = 0, // Default State
+	Decision = 0, // Default State
+	Patrol, 
 	FindCover,
 	Run,
 	Chase,
 	Shoot
+};
+
+UENUM()
+enum class EDecisionReasons
+{
+	None = 0,
+	CoverNotFound,
+	BeingShot,
+	PlayerNotFound
 };
 
 UCLASS()
@@ -39,7 +49,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-
+	UFUNCTION()
+		void Shoot(AActor* TargetActor);
+	
 private:
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
@@ -52,6 +64,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		EAIState State;
+
+	UPROPERTY(EditAnywhere)
+		EDecisionReasons Reasons;
 
 private:
 	UPROPERTY(EditAnywhere)
