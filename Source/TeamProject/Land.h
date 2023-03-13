@@ -7,6 +7,7 @@
 #include "Components/InstancedStaticMeshComponent.h" 
 #include "Blocker.h"
 #include "LandObject.h"
+#include "External/FastNoise.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
@@ -31,7 +32,7 @@ public:
 	// Sets default values for this actor's properties
 	ALand();
 
-	void Init(int seed, int type);
+	void Init(int type, FastNoise* noise);
 
 protected:
 	// Called when the game starts or when spawned
@@ -70,9 +71,6 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "ProcGen")
 		int32 Size = 100;
-
-	UPROPERTY(EditAnywhere, Category = "ProcGen")
-		uint64 Seed = 69420;
 	
 	UPROPERTY(EditAnywhere, Category = "ProcGen")
 		float Scale = 225;
@@ -90,12 +88,12 @@ public:
 	UMaterialInterface* PineyMaterial;
 	UMaterialInterface* SnowyMaterial;
 
-	void CalculateWaterNormals();
+	void CalculateNormals(TArray<FVector> vertices,TArray<int32> triangles,TArray<FVector>& normals);
 
-	void CreateMesh();
+	void PlaceObjects(FastNoise* noise);
+	void CreateMesh(FastNoise* noise);
 	void ClearMeshInstances();
 	void Clear();
-	void CalculateNormals();
 
 	int NumTypes = 5;
 
@@ -109,6 +107,7 @@ public:
 	TArray<FVector2D> UV1s;
 	TArray<FColor> VertexColours;
 	TArray<FProcMeshTangent> Tangents;
+
 	TArray<FVector> WaterVertices;
 	TArray<int32> WaterTriangles;
 	TArray<FVector> WaterNormals;

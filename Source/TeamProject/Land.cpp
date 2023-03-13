@@ -1,7 +1,6 @@
 // CCameron
 #include "Land.h"
 #include "KismetProceduralMeshLibrary.h"
-#include "External/FastNoise.h"
 #include "External/Delaunator.hpp"
 #include "UObject/ConstructorHelpers.h" 
 
@@ -18,11 +17,10 @@ ALand::ALand()
 }
 
 // Sets default values
-void ALand::Init(int seed, int type)
+void ALand::Init(int type, FastNoise* noise)
 {
-	Seed = seed;
 	TerrainType = TEnumAsByte<TerrainTypes>(type);
-	CreateMesh();
+	CreateMesh(noise);
 }
 
 // Called when the game starts or when spawned
@@ -101,63 +99,158 @@ void ALand::Clear()
 		}
 		LandObjects.Empty();
 	}
-
 }
 
-void ALand::CalculateNormals()
+void ALand::CalculateNormals(TArray<FVector> vertices, TArray<int32> triangles, TArray<FVector>& normals)
 {
-	Normals.Init({ 0,0,0 }, Vertices.Num());
+	normals.Init({ 0,0,0 }, vertices.Num());
 
-	for (int i = 0; i < Triangles.Num() - 3; i += 3)
+	for (int i = 0; i < triangles.Num() - 3; i += 3)
 	{
-		auto a = Vertices[Triangles[i]];
-		auto b = Vertices[Triangles[i + 1]];
-		auto c = Vertices[Triangles[i + 2]];
+		auto a = vertices[triangles[i]];
+		auto b = vertices[triangles[i + 1]];
+		auto c = vertices[triangles[i + 2]];
 
 		auto v1 = a - b;
 		auto v2 = c - b;
 		auto n = v1 ^ v2;
 		n.Normalize();
 
-		Normals[Triangles[i]] += n;
-		Normals[Triangles[i + 1]] += n;
-		Normals[Triangles[i + 2]] += n;
+		normals[triangles[i]] += n;
+		normals[triangles[i + 1]] += n;
+		normals[triangles[i + 2]] += n;
 	}
 
-	for (auto& normal : Normals)
+	for (auto& normal : normals)
 	{
 		normal.Normalize();
 	}
 }
 
-//Lazy will be removed
-void ALand::CalculateWaterNormals()
+void ALand::PlaceObjects(FastNoise* noise)
 {
-	WaterNormals.Init({ 0,0,0 }, WaterVertices.Num());
-
-	for (int i = 0; i < WaterTriangles.Num() - 3; i += 3)
+	// Trees
+	// For each vertex
+	for (auto& vertex : Vertices)
 	{
-		auto a = WaterVertices[WaterTriangles[i]];
-		auto b = WaterVertices[WaterTriangles[i + 1]];
-		auto c = WaterVertices[WaterTriangles[i + 2]];
+		// If the vertex is higher than the water level and noise result is greater than threshold
+		if (vertex.Z > WaterLevel && noise->GetNoise(vertex.X, vertex.Y) > 0.5)
+		{
+			// Get a random mesh
+			int meshNum = FMath::RandRange(0, StaticMeshes.Num() - 1);
 
-		auto v1 = a - b;
-		auto v2 = c - b;
-		auto n = v1 ^ v2;
-		n.Normalize();
+			// Set location to the vertex position
+			FTransform transform;
+			transform.SetLocation(vertex);
+			FQuat Rotation = FVector{ 0,0,0 }.ToOrientationQuat();
+			transform.SetRotation(Rotation);
 
-		WaterNormals[WaterTriangles[i]] += n;
-		WaterNormals[WaterTriangles[i + 1]] += n;
-		WaterNormals[WaterTriangles[i + 2]] += n;
+			if (meshNum > 6)
+			{
+				// Scale Bushes
+				transform.SetScale3D(FVector{ float(FMath::RandRange(0.8,1.2)) });
+			}
+			else
+			{
+				// Scale Trees
+				transform.SetScale3D(FVector{ float(FMath::RandRange(1,3)) });
+			}
+
+			// Add instance of static mesh in world
+
+
+			// Spawn actor
+			FActorSpawnParameters params;
+			auto object = GetWorld()->SpawnActor<ALandObject>(LandObjectClass, transform);
+			auto staticMesh = StaticMeshes[meshNum];
+			object->ObjectMesh = staticMesh;
+			object->SpawnMesh(transform);
+			LandObjects.Push(object);
+		}
+
+		// Foliage
+
+		// If terrain isnt too hot or too cold
+		if (TerrainType != Desert && TerrainType != Snowy)
+		{
+			// Sample noise value and compare with threshold
+			if (noise->GetNoise(vertex.X / 10, vertex.Y / 10) > 0.3)
+			{
+				if (vertex.Z > WaterLevel)
+				{
+					// Get random number to sample mesh list
+					int meshNum = FMath::RandRange(0, FoliageStaticMeshes.Num() - 2);
+
+					// Set location to vertex position and scale randomly
+					FTransform transform;
+					transform.SetLocation(vertex);
+					FQuat Rotation = FVector{ 0,0,0 }.ToOrientationQuat();
+					transform.SetRotation(Rotation);
+					transform.SetScale3D(FVector{ float(FMath::RandRange(0.8,1.2)) });
+
+					// Add instance of mesh in world with collision disabled
+					auto staticMesh = FoliageStaticMeshes[meshNum];
+					staticMesh->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+					if (staticMesh) { staticMesh->AddInstance(transform); }
+				}
+				else
+				{
+					// Get vertex location and increase slightly
+					auto location = vertex;
+					location.Z = WaterLevel + 5;
+
+					// Get lilypad mesh index
+					int meshNum = FoliageStaticMeshes.Num() - 1;
+
+					// Set location and scale randomly
+					FTransform transform;
+					transform.SetLocation(location);
+					transform.SetScale3D(FVector{ float(FMath::RandRange(0.8,1.2)) });
+					FQuat Rotation = FVector{ 0,0,0 }.ToOrientationQuat();
+					transform.SetRotation(Rotation);
+
+					// Add instance of lilypad into world with collision disabled
+					auto staticMesh = FoliageStaticMeshes[meshNum];
+					staticMesh->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+					if (staticMesh) { staticMesh->AddInstance(transform); }
+				}
+			}
+		}
+
 	}
 
-	for (auto& normal : WaterNormals)
+	// Create blockers
+	for (int i = 0; i < 4; i++)
 	{
-		normal.Normalize();
+		FTransform transform;
+
+		// Set location to each side of mesh
+		auto edgeLength = Size * Scale;
+		FVector location;
+		if (i == 0) { location = { edgeLength / 2,0,0 }; }
+		if (i == 1) { location = { 0,edgeLength / 2,0 }; }
+		if (i == 2) { location = { -edgeLength / 2,0,0 }; }
+		if (i == 3) { location = { 0,-edgeLength / 2,0 }; }
+
+		transform.SetLocation(location);
+
+		// Set rotation to face inwards
+		FQuat rotation;
+		if (i == 0) { rotation = { 0, -0.707, 0, 0.707 }; }
+		if (i == 1) { rotation = { 0, -0.707,  0.707, 0 }; }
+		if (i == 2) { rotation = { 0, 0.707, 0, 0.707 }; }
+		if (i == 3) { rotation = { 0, -0.707, -0.707, 0 }; }
+		transform.SetRotation(rotation);
+		transform.SetScale3D(FVector{ Scale, Scale, Scale });
+
+		// Spawn actor and make invisible
+		EdgeBlockers.Push(GetWorld()->SpawnActor<ABlocker>(BlockerClass, transform));
+		EdgeBlockers[i]->SetActorHiddenInGame(true);
 	}
+
 }
 
-void ALand::CreateMesh()
+void ALand::CreateMesh(FastNoise* noise)
 {
 	// Clear any old data
 	Clear();
@@ -188,11 +281,6 @@ void ALand::CreateMesh()
 	// Generate triangles for grid of vertices
 	UKismetProceduralMeshLibrary::CreateGridMeshTriangles(Size, Size, false, Triangles);
 
-	// Create noise object, set noise type to fractal and set seed.
-	FastNoise noise;
-	noise.SetNoiseType(FastNoise::SimplexFractal);
-	noise.SetSeed(Seed);
-
 	// Store the tallest vector index and height
 	float tallestVectorHeight = 0;
 	int tallestVector = 0;
@@ -202,9 +290,9 @@ void ALand::CreateMesh()
 	{
 		// Get input vector from vertex list and sample noise at different levels
 		auto input = Vertices[i];
-		auto result1 = noise.GetNoise(input.X / 1000, input.Y / 1000);
+		auto result1 = noise->GetNoise(input.X / 1000, input.Y / 1000);
 		Vertices[i].Z += result1 * 5000;
-		auto result2 = noise.GetNoise(input.X / 120, input.Y / 120);
+		auto result2 = noise->GetNoise(input.X / 120, input.Y / 120);
 		Vertices[i].Z += result2 * 2000;
 
 		// Find the tallest vector and store in variables
@@ -216,7 +304,7 @@ void ALand::CreateMesh()
 	}
 
 	// Faster normals
-	CalculateNormals();
+	CalculateNormals(Vertices,Triangles,Normals);
 
 	// Create mesh section
 	ProcMesh->CreateMeshSection(0, Vertices, Triangles, Normals, UVs, VertexColours, Tangents, true);
@@ -299,140 +387,24 @@ void ALand::CreateMesh()
 			}
 
 			// Calculate Normals
-			CalculateWaterNormals();
+			CalculateNormals(WaterVertices,WaterTriangles,WaterNormals);
 
 			// Create mesh and set material to water
 			ProcMesh->CreateMeshSection(1, WaterVertices, WaterTriangles, WaterNormals, UVs, WaterColours, WaterTangents, false);
 			ProcMesh->SetMaterial(1, WaterMaterial);
 		}
-	}
-	
-
-	// Trees
-	// For each vertex
-	for (auto& vertex : Vertices)
-	{
-		// If the vertex is higher than the water level and noise result is greater than threshold
-		if (vertex.Z > WaterLevel && noise.GetNoise(vertex.X,vertex.Y) > 0.5)
-		{
-			// Get a random mesh
-			int meshNum = FMath::RandRange(0, StaticMeshes.Num() - 1);
-			
-			// Set location to the vertex position
-			FTransform transform;
-			transform.SetLocation(vertex);
-			FQuat Rotation = FVector{ 0,0,0 }.ToOrientationQuat();
-			transform.SetRotation(Rotation);
-
-			if (meshNum > 6)
-			{
-				// Scale Bushes
-				transform.SetScale3D(FVector{float(FMath::RandRange(0.8,1.2))});
-			}
-			else
-			{
-				// Scale Trees
-				transform.SetScale3D(FVector{float(FMath::RandRange(1,3))});
-			}
-
-			// Add instance of static mesh in world
-
-
-			// Spawn actor
-			FActorSpawnParameters params;
-			auto object = GetWorld()->SpawnActor<ALandObject>(LandObjectClass, transform);		
-			auto staticMesh = StaticMeshes[meshNum];
-			object->ObjectMesh = staticMesh;
-			object->SpawnMesh(transform);
-			LandObjects.Push(object);
-		}
-
-		// Foliage
-
-		// If terrain isnt too hot or too cold
-		if (TerrainType != Desert && TerrainType != Snowy)
-		{
-			// Sample noise value and compare with threshold
-			if (noise.GetNoise(vertex.X / 10, vertex.Y / 10) > 0.3)
-			{
-				if (vertex.Z > WaterLevel)
-				{
-					// Get random number to sample mesh list
-					int meshNum = FMath::RandRange(0, FoliageStaticMeshes.Num() - 2);
-					
-					// Set location to vertex position and scale randomly
-					FTransform transform;
-					transform.SetLocation(vertex);
-					FQuat Rotation = FVector{ 0,0,0 }.ToOrientationQuat();
-					transform.SetRotation(Rotation);
-					transform.SetScale3D(FVector{ float(FMath::RandRange(0.8,1.2)) });
-					
-					// Add instance of mesh in world with collision disabled
-					auto staticMesh = FoliageStaticMeshes[meshNum];
-					staticMesh->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
-					if (staticMesh) { staticMesh->AddInstance(transform); }
-				}
-				else
-				{
-					// Get vertex location and increase slightly
-					auto location = vertex;
-					location.Z = WaterLevel + 5;
-
-					// Get lilypad mesh index
-					int meshNum = FoliageStaticMeshes.Num() - 1;
-					
-					// Set location and scale randomly
-					FTransform transform;
-					transform.SetLocation(location);
-					transform.SetScale3D(FVector{ float(FMath::RandRange(0.8,1.2))});
-					FQuat Rotation = FVector{ 0,0,0 }.ToOrientationQuat();
-					transform.SetRotation(Rotation);
-
-					// Add instance of lilypad into world with collision disabled
-					auto staticMesh = FoliageStaticMeshes[meshNum];
-					staticMesh->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);				
-					if (staticMesh) { staticMesh->AddInstance(transform); }
-				}
-			}
-		}
-		
-	}
-	
-	// Create blockers
-	for (int i = 0; i < 4; i++)
-	{
-		FTransform transform;
-
-		// Set location to each side of mesh
-		auto edgeLength = Size * Scale;
-		FVector location;
-		if (i == 0) { location = { edgeLength / 2,0,0 }; }
-		if (i == 1) { location = { 0,edgeLength / 2,0 }; }
-		if (i == 2) { location = { -edgeLength / 2,0,0 }; }
-		if (i == 3) { location = { 0,-edgeLength / 2,0 }; }
-
-		transform.SetLocation(location);
-
-		// Set rotation to face inwards
-		FQuat rotation;
-		if (i == 0) { rotation = { 0, -0.707, 0, 0.707 }; }
-		if (i == 1) { rotation = { 0, -0.707,  0.707, 0 }; }
-		if (i == 2) { rotation = { 0, 0.707, 0, 0.707 }; }
-		if (i == 3) { rotation = { 0, -0.707, -0.707, 0 }; }
-		transform.SetRotation(rotation);
-		transform.SetScale3D(FVector{ Scale, Scale, Scale});
-
-		// Spawn actor and make invisible
-		EdgeBlockers.Push(GetWorld()->SpawnActor<ABlocker>(BlockerClass, transform));
-		EdgeBlockers[i]->SetActorHiddenInGame(true);
-	}
-
+	}	
+	PlaceObjects(noise);	
 }
 
 void ALand::MakeNewMesh()
 {
-	Seed = FMath::RandRange(0, 999999999);
-	CreateMesh();
+	// Create noise object, set noise type to fractal and set seed.
+	FastNoise noise;
+	noise.SetNoiseType(FastNoise::SimplexFractal);
+	noise.SetSeed(FMath::RandRange(0, 999999999));
+
+	CreateMesh(&noise);
 }
 
 void ALand::LoadStaticMeshes()

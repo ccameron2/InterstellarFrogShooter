@@ -3,6 +3,8 @@
 #pragma once
 #include "MainPlayerController.h"
 #include "Land.h"
+#include "BackLand.h"
+
 #include <string>
 #include "PlayerCharacter.h"
 #include "WaveManager.h"
@@ -33,6 +35,9 @@ public:
 		TSubclassOf<ALand> LandClass;
 
 	UPROPERTY(EditAnywhere)
+		TSubclassOf<ABackLand> BackLandClass;
+
+	UPROPERTY(EditAnywhere)
 		TSubclassOf<APlayerCharacter> PlayerCharacterClass;
 
 	UPROPERTY(EditAnywhere)
@@ -41,6 +46,7 @@ public:
 	AMainPlayerController* PlayerController;
 	APawn* PlayerPawn;
 	ALand* LandActor;
+	TArray<ABackLand*> BackLandActors;
 	AWaveManager* WaveManager;
 
 	UFUNCTION(BlueprintCallable)

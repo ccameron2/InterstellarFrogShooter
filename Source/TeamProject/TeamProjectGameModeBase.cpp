@@ -12,20 +12,51 @@ void ATeamProjectGameModeBase::BeginPlay()
 	PlayerController = Cast<AMainPlayerController>(GetWorld()->GetFirstPlayerController());
 	PlayerPawn = PlayerController->GetPawn();
 
-	FTransform Transform;
+	FTransform transform;
 	FVector Location = { 0,0,0 };
-	Transform.SetTranslation(Location);
+	transform.SetTranslation(Location);
 
+	// Create noise object, set noise type to fractal and set seed.
+	FastNoise noise;
+	noise.SetNoiseType(FastNoise::SimplexFractal);
+	noise.SetSeed(FMath::RandRange(0, 999));
+
+	int type = 0;
 	if (LandClass)
 	{
-		LandActor = GetWorld()->SpawnActor<ALand>(LandClass, Transform);
-		LandActor->Init(FMath::RandRange(0, 999), FMath::RandRange(0, LandActor->NumTypes - 1));
+		LandActor = GetWorld()->SpawnActor<ALand>(LandClass, transform);
+		type = FMath::RandRange(0, LandActor->NumTypes - 1);
+		LandActor->Init(type, &noise);
+	}
+
+	auto location = FVector{ 0 };
+	auto size = LandActor->Size * LandActor->Scale;
+	auto scale = LandActor->Scale;
+
+	if (BackLandClass)
+	{
+		for (int i = 0; i < 8; i++)
+		{
+			if(i == 0) location = FVector{-size + scale,size - scale ,0};
+			if(i == 1) location = FVector{0,size - scale,0};
+			if(i == 2) location = FVector{size - scale,size - scale,0};
+			if(i == 3) location = FVector{-size + scale,0,0};
+			if(i == 4) location = FVector{size - scale,0,0};
+			if(i == 5) location = FVector{-size + scale,-size + scale,0};
+			if(i == 6) location = FVector{0,-size + scale,0};
+			if(i == 7) location = FVector{size - scale,-size + scale,0};
+			transform.SetLocation(location);
+
+			auto backLandActor = GetWorld()->SpawnActor<ABackLand>(BackLandClass, transform);
+			backLandActor->Init(type, &noise);
+			BackLandActors.Push(backLandActor);
+		}
 	}
 
 	Location = { 0,0,1000 };
-	Transform.SetTranslation(Location);
+	transform.SetTranslation(Location);
 
-	WaveManager = GetWorld()->SpawnActor<AWaveManager>(WaveManagerClass, Transform);
+	WaveManager = GetWorld()->SpawnActor<AWaveManager>(WaveManagerClass, transform);
 	WaveManager->Init(LandActor->Size * LandActor->Scale);
 	WaveManager->SpawnTitleFrogs();
 }
@@ -66,8 +97,18 @@ void ATeamProjectGameModeBase::OnGuiSetValues(FText InSeedString, int InTerrainT
 	if (InTerrainType == LandActor->NumTypes) { type = FMath::RandRange(0, LandActor->NumTypes - 1); }
 	else { type = InTerrainType; }
 
+	// Create noise object, set noise type to fractal and set seed.
+	FastNoise noise;
+	noise.SetNoiseType(FastNoise::SimplexFractal);
+	noise.SetSeed(seed);
+
 	// Initialise the terrain with UI data
-	LandActor->Init(seed, type);
+	LandActor->Init(type, &noise);
+
+	for (auto& backLand : BackLandActors)
+	{
+		backLand->Init(type, &noise);
+	}
 
 	// Force rebuild Nav Mesh
 	LandActor->SetActorLocation(FVector{0, 1, 0});
