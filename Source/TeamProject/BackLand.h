@@ -5,18 +5,19 @@
 #include "Components/InstancedStaticMeshComponent.h" 
 #include "External/FastNoise.h"
 
+
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "BackLand.generated.h"
 
 UENUM()
-enum BackTerrainTypes
+enum TerrainTypes
 {
-	BForest,
-	BSnowy,
-	BMossy,
-	BPiney,
-	BDesert,
+	Forest,
+	Snowy,
+	Mossy,
+	Piney,
+	Desert,
 };
 
 UCLASS()
@@ -36,16 +37,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
-	void Init(int type, FastNoise* noise);
-	void Clear();
-	void CreateMesh(FastNoise* noise);
-	void LoadStaticMeshes();
-	void CalculateNormals(TArray<FVector> vertices, TArray<int32> triangles, TArray<FVector>& normals);
-
-	TArray<UInstancedStaticMeshComponent*> StaticMeshes;
+	virtual void Init(int type, FastNoise* noise);
+	virtual void Clear();
+	virtual void CreateMesh(FastNoise* noise);
+	virtual void LoadStaticMeshes();
+	virtual void CalculateNormals(TArray<FVector> vertices, TArray<int32> triangles, TArray<FVector>& normals);
 
 	UPROPERTY(EditAnywhere, Category = "ProcGen")
-		TEnumAsByte<BackTerrainTypes> TerrainType = BForest;
+		TEnumAsByte<TerrainTypes> TerrainType = Forest;
 
 	UPROPERTY(VisibleAnywhere, Category = "ProcGen")
 		UProceduralMeshComponent* ProcMesh;

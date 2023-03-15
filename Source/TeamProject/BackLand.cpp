@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "BackLand.h"
 #include "KismetProceduralMeshLibrary.h"
-//#include "External/Delaunator.hpp"
+#include "External/Delaunator.hpp"
 
 // Sets default values
 ABackLand::ABackLand()
@@ -32,7 +32,7 @@ void ABackLand::Tick(float DeltaTime)
 // Sets default values
 void ABackLand::Init(int type, FastNoise* noise)
 {
-	TerrainType = TEnumAsByte<BackTerrainTypes>(type);
+	TerrainType = TEnumAsByte<TerrainTypes>(type);
 	CreateMesh(noise);
 }
 
@@ -88,9 +88,9 @@ void ABackLand::CreateMesh(FastNoise* noise)
 		// Get input vector from vertex list and sample noise at different levels
 		auto input = Vertices[i] + GetActorLocation();
 		auto result1 = noise->GetNoise(input.X / 1000, input.Y / 1000);
-		Vertices[i].Z += result1 * 5000;
+		Vertices[i].Z += result1 * 2000;
 		auto result2 = noise->GetNoise(input.X / 120, input.Y / 120);
-		Vertices[i].Z += result2 * 2000;
+		Vertices[i].Z += result2 * 1500;
 
 		// Find the tallest vector and store in variables
 		if (Vertices[i].Z > tallestVectorHeight)
@@ -109,19 +109,19 @@ void ABackLand::CreateMesh(FastNoise* noise)
 	// Set the material of the mesh depending on type
 	switch (TerrainType)
 	{
-	case BForest:
+	case Forest:
 		ProcMesh->SetMaterial(0, ForestMaterial);
 		break;
-	case BMossy:
+	case Mossy:
 		ProcMesh->SetMaterial(0, MossyMaterial);
 		break;
-	case BPiney:
+	case Piney:
 		ProcMesh->SetMaterial(0, PineyMaterial);
 		break;
-	case BDesert:
+	case Desert:
 		ProcMesh->SetMaterial(0, DesertMaterial);
 		break;
-	case BSnowy:
+	case Snowy:
 		ProcMesh->SetMaterial(0, SnowyMaterial);
 		break;
 	default:
@@ -165,32 +165,32 @@ void ABackLand::CreateMesh(FastNoise* noise)
 		}
 	}
 
-	//if (coords.size() > 6 || coords.size() % 3 == 0)
-	//{
-	//	if (!inARowX && !inARowY)
-	//	{
-	//		// Use external library to triangulate
-	//		delaunator::Delaunator d(coords);
+	if (coords.size() > 6 || coords.size() % 3 == 0)
+	{
+		if (!inARowX && !inARowY)
+		{
+			// Use external library to triangulate
+			delaunator::Delaunator d(coords);
 
-	//		// Push resultant triangles into triangles list
-	//		for (auto& triangle : d.triangles)
-	//		{
-	//			WaterTriangles.Push(triangle);
-	//		}
+			// Push resultant triangles into triangles list
+			for (auto& triangle : d.triangles)
+			{
+				WaterTriangles.Push(triangle);
+			}
 
-	//		for (auto& vertex : WaterVertices)
-	//		{
-	//			vertex.Z += 50 * FMath::PerlinNoise2D(FVector2D{ vertex.X,vertex.Y } / 100);
-	//		}
+			for (auto& vertex : WaterVertices)
+			{
+				vertex.Z += 50 * FMath::PerlinNoise2D(FVector2D{ vertex.X,vertex.Y } / 100);
+			}
 
-	//		// Calculate Normals
-	//		CalculateNormals(WaterVertices, WaterTriangles, WaterNormals);
+			// Calculate Normals
+			CalculateNormals(WaterVertices, WaterTriangles, WaterNormals);
 
-	//		// Create mesh and set material to water
-	//		ProcMesh->CreateMeshSection(1, WaterVertices, WaterTriangles, WaterNormals, UVs, WaterColours, WaterTangents, false);
-	//		ProcMesh->SetMaterial(1, WaterMaterial);
-	//	}
-	//}
+			// Create mesh and set material to water
+			ProcMesh->CreateMeshSection(1, WaterVertices, WaterTriangles, WaterNormals, UVs, WaterColours, WaterTangents, false);
+			ProcMesh->SetMaterial(1, WaterMaterial);
+		}
+	}
 }
 
 void ABackLand::CalculateNormals(TArray<FVector> vertices, TArray<int32> triangles, TArray<FVector>& normals)
