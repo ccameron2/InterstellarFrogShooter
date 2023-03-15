@@ -111,6 +111,21 @@ void APlayerCharacter::TakeDamage()
 	}
 }
 
+float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
+	AActor* DamageCauser)
+{
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	PlayerHealth -= DamageAmount;
+
+	if (PlayerHealth <= 0.0f)
+	{
+		Destroy();
+	}
+
+	return PlayerHealth;
+}
+
 //Allows the player to rotate the character left and right
 void APlayerCharacter::Turn(float AxisAmount)
 {

@@ -5,6 +5,7 @@
 
 
 #include "AIController.h"
+#include "BehaviorTree/BTCompositeNode.h"
 
 UBTDecorator_DetectFail::UBTDecorator_DetectFail()
 {
@@ -14,14 +15,19 @@ UBTDecorator_DetectFail::UBTDecorator_DetectFail()
 
 void UBTDecorator_DetectFail::OnNodeProcessed(FBehaviorTreeSearchData& SearchData, EBTNodeResult::Type& NodeResult)
 {
-	//Super::OnNodeProcessed(SearchData, NodeResult);
+	Super::OnNodeProcessed(SearchData, NodeResult);
+	
 	
 	if(NodeResult == EBTNodeResult::Failed)
 	{
 		if(AAICharacter* Character = Cast<AAICharacter>(SearchData.OwnerComp.GetAIOwner()->GetPawn()))
 		{
-			Character->State = State;
-			Character->Reasons = Reason;
+			UE_LOG(LogTemp, Warning, TEXT("NodeProcessed %s"), *UEnum::GetValueAsString(Character->Reasons));
+			if(Character->Reasons == EDecisionReasons::Clear) // Only Changes the reason if cleared
+			{
+				Character->State = State;
+				Character->Reasons = Reason;
+			}
 		}
 	}
 	

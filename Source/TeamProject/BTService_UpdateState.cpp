@@ -19,5 +19,6 @@ void UBTService_UpdateState::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 
 	// Allows the AI Blackboard state to be updated by current ai state, which causes the current ai state decorator to abort the sequence
 	// If the blackboard gets updated
+	
 	OwnerComp.GetBlackboardComponent()->SetValueAsEnum(GetSelectedBlackboardKey(), static_cast<uint8>(Character->State));
 }

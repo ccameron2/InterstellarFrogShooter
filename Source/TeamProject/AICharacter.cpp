@@ -68,7 +68,11 @@ void AAICharacter::Shoot(AActor* TargetActor)
 			AActor* HitActor = Hit.GetActor();
 			if(HitActor != nullptr)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Hit Player"));
+				if(HitActor->GetClass()->IsChildOf(APlayerCharacter::StaticClass()))
+				{
+					UGameplayStatics::ApplyDamage(HitActor, Damage,
+						GetInstigatorController(), this, UDamageType::StaticClass());
+				}
 			}
 		}
 	}
@@ -77,9 +81,11 @@ void AAICharacter::Shoot(AActor* TargetActor)
 float AAICharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-
+	
 	State = EAIState::Decision;
 	Reasons = EDecisionReasons::BeingShot;
+	
+	UE_LOG(LogTemp, Warning, TEXT("TakingDamage"));
 	
 	FVector SpawnLocation = GetActorLocation();
 	FString DamageString = FString::SanitizeFloat(DamageAmount);

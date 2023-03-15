@@ -26,7 +26,9 @@ enum class EDecisionReasons
 	None = 0,
 	CoverNotFound,
 	BeingShot,
-	PlayerNotFound
+	PlayerNotFound,
+
+	Clear
 };
 
 UCLASS()
@@ -68,6 +70,10 @@ public:
 	UPROPERTY(EditAnywhere)
 		EDecisionReasons Reasons;
 
+public:
+	UPROPERTY(EditAnywhere)
+		float RunAwayDistance = 2000.0f;
+
 private:
 	UPROPERTY(EditAnywhere)
 		class UNavigationInvokerComponent* NavInvoker;
@@ -79,5 +85,6 @@ private:
 	UPROPERTY(EditAnywhere)
 		float MaxHealth = 100.0f;
 
-	
+	UPROPERTY(EditAnywhere)
+		float Damage = 10.0f;
 };

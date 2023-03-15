@@ -39,6 +39,9 @@ public:
 
 	void TakeDamage();
 
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+		AController* EventInstigator, AActor* DamageCauser) override;
+
 	void Turn(float AxisAmount);
 
 
