@@ -9,6 +9,13 @@
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
 
+UENUM() enum WeaponType
+{
+	Cannons,
+	Energy,
+	Rocket
+};
+
 UCLASS()
 class TEAMPROJECT_API APlayerCharacter : public ACharacter
 {
@@ -34,8 +41,7 @@ public:
 	void Strafe(float AxisAmount);
 
 	void LookUp(float AxisAmount);
-	
-	void FireWeapon();
+
 
 	void TakeDamage();
 
@@ -43,7 +49,6 @@ public:
 		AController* EventInstigator, AActor* DamageCauser) override;
 
 	void Turn(float AxisAmount);
-
 
 public:
 
@@ -56,14 +61,39 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int PlayerMaxHealth = 100;
 
+	WeaponType Weapon = Cannons;
+
 	UPROPERTY(EditAnywhere)
-		float BaseDamage = 10.0f;
+		float CannonBaseDamage = 2.0f;
+	UPROPERTY(EditAnywhere)
+		float CannonRange = 5000.0f;
+	UPROPERTY(EditAnywhere)
+		float CannonCooldown = 0.01f;
+
+	UPROPERTY(EditAnywhere)
+		float EnergyBaseDamage = 10.0f;
+	UPROPERTY(EditAnywhere)
+		float EnergyCooldown = 2.0f;
+	UPROPERTY(EditAnywhere)
+		float EnergyRange = 10000.0f;
 
 private:
 	UPROPERTY(EditAnywhere)
-		UStaticMeshComponent* PlayerMesh;
+		UStaticMeshComponent* CannonMesh1;
+
+	UPROPERTY(EditAnywhere)
+		UStaticMeshComponent* CannonMesh2;
 
 	UPROPERTY(EditAnywhere)
 		bool DebugWeapons;
 
+	FTimerHandle WeaponCooldownTimer;
+	bool OnCooldown = false;
+	bool Firing = false;
+
+	void FireWeapon();
+	void StartFireWeapon();
+	void StopFireWeapon();
+	void ChangeWeapon();
+	void CooldownTimerUp();
 };

@@ -13,8 +13,11 @@ APlayerCharacter::APlayerCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	PlayerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Player Mesh"));
-	PlayerMesh->SetupAttachment(RootComponent);
+	CannonMesh1 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Cannon Mesh 1"));
+	CannonMesh1->SetupAttachment(RootComponent);
+	CannonMesh2 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Cannon Mesh 2"));
+	CannonMesh2->SetupAttachment(RootComponent);
+
 	LevelComponent = CreateDefaultSubobject<ULevellingUpComponent>(TEXT("Level Component"));
 
 }
@@ -30,7 +33,7 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	if (Firing && !OnCooldown) FireWeapon();
 }
 
 // Called to bind functionality to input
@@ -38,8 +41,11 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	InputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &APlayerCharacter::FireWeapon);
+	InputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &APlayerCharacter::StartFireWeapon);
+	InputComponent->BindAction(TEXT("Fire"), IE_Released, this, &APlayerCharacter::StopFireWeapon);
 	InputComponent->BindAction(TEXT("Hit"), IE_Pressed, this, &APlayerCharacter::TakeDamage);
+	InputComponent->BindAction(TEXT("ChangeWeapon"), IE_Pressed, this, &APlayerCharacter::ChangeWeapon);
+
 }
 
 void APlayerCharacter::MoveForwards(float AxisAmount)
@@ -61,6 +67,23 @@ void APlayerCharacter::LookUp(float AxisAmount)
 
 void APlayerCharacter::FireWeapon()
 {
+	int damage = 0;
+	int range = 0;
+	if (Weapon == Cannons)
+	{
+		GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, CannonCooldown, false);
+		damage = CannonBaseDamage;
+		range = CannonRange;
+		CannonMesh1->AddLocalRotation(FVector{ 0,0,0.1 }.Rotation());
+		CannonMesh2->AddLocalRotation(FVector{ 0,0,-0.1 }.Rotation());
+	}
+	else if (Weapon == Energy)
+	{
+		GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, EnergyCooldown, false);
+		damage = EnergyBaseDamage;
+		range = EnergyRange;
+	}
+
 	AController* ControllerReference = GetController();
 
 	FVector Location;
@@ -72,7 +95,7 @@ void APlayerCharacter::FireWeapon()
 
 	CollisionParams.AddIgnoredActor(this);
 	ControllerReference->GetPlayerViewPoint(Location, Rotation);
-	End = Location + (Rotation.Vector() * 10000);
+	End = Location + (Rotation.Vector() * range);
 
 	if (DebugWeapons)
 	{
@@ -80,9 +103,7 @@ void APlayerCharacter::FireWeapon()
 		DrawDebugLine(GetWorld(), Location, End, FColor(0, 0, 255), true, -1, 0, 12.333);
 	}
 
-
 	bool bRayHit = GetWorld()->LineTraceSingleByChannel(Hit, Location, End, ECC_Visibility, CollisionParams);
-
 
 	if (bRayHit && Hit.GetActor() != nullptr)
 	{
@@ -90,13 +111,32 @@ void APlayerCharacter::FireWeapon()
 		{
 			UGameplayStatics::ApplyDamage(
 				Hit.GetActor(),
-				BaseDamage * LevelComponent->DamageMultiplier, // Damage Amount 
+				damage * LevelComponent->DamageMultiplier, // Damage Amount 
 				GetInstigatorController(),
 				this,
 				UDamageType::StaticClass()
 			);
 		}
 	}
+
+	
+	OnCooldown = true;
+}
+
+void APlayerCharacter::StartFireWeapon()
+{
+	Firing = true;
+}
+
+void APlayerCharacter::StopFireWeapon()
+{
+	Firing = false;
+}
+
+void APlayerCharacter::ChangeWeapon()
+{
+	if (Weapon == Cannons) Weapon = Energy;
+	else if (Weapon == Energy) Weapon = Cannons;
 }
 
 void APlayerCharacter::TakeDamage()
@@ -130,5 +170,10 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 void APlayerCharacter::Turn(float AxisAmount)
 {
 	AddControllerYawInput(AxisAmount);
+}
+
+void APlayerCharacter::CooldownTimerUp()
+{
+	OnCooldown = false;
 }
 
