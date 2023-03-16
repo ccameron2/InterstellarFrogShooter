@@ -70,6 +70,7 @@ void AAICharacter::Shoot(AActor* TargetActor)
 			{
 				if(HitActor->GetClass()->IsChildOf(APlayerCharacter::StaticClass()))
 				{
+					UE_LOG(LogTemp, Warning, TEXT("Player Shot"));
 					UGameplayStatics::ApplyDamage(HitActor, Damage,
 						GetInstigatorController(), this, UDamageType::StaticClass());
 				}
@@ -81,10 +82,13 @@ void AAICharacter::Shoot(AActor* TargetActor)
 float AAICharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	
-	State = EAIState::Decision;
-	Reasons = EDecisionReasons::BeingShot;
-	
+
+	if(State != EAIState::Run) // Allows the AI to keep running when being shot
+	{
+		State = EAIState::Decision;
+		Reasons = EDecisionReasons::BeingShot;
+	}
+		
 	UE_LOG(LogTemp, Warning, TEXT("TakingDamage"));
 	
 	FVector SpawnLocation = GetActorLocation();

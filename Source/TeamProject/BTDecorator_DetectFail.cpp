@@ -22,7 +22,6 @@ void UBTDecorator_DetectFail::OnNodeProcessed(FBehaviorTreeSearchData& SearchDat
 	{
 		if(AAICharacter* Character = Cast<AAICharacter>(SearchData.OwnerComp.GetAIOwner()->GetPawn()))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("NodeProcessed %s"), *UEnum::GetValueAsString(Character->Reasons));
 			if(Character->Reasons == EDecisionReasons::Clear) // Only Changes the reason if cleared
 			{
 				Character->State = State;

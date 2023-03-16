@@ -14,7 +14,6 @@ EBTNodeResult::Type UBTTask_DecisionTask::ExecuteTask(UBehaviorTreeComponent& Ow
 {
 	if(AAICharacter* Character = Cast<AAICharacter>(Owner.GetAIOwner()->GetPawn()))
 	{
-		
 		UE_LOG(LogTemp, Warning, TEXT("Making new Decision %s"), *UEnum::GetValueAsString(Character->Reasons));
 		if(Character->Reasons == EDecisionReasons::None)
 		{
@@ -28,29 +27,37 @@ EBTNodeResult::Type UBTTask_DecisionTask::ExecuteTask(UBehaviorTreeComponent& Ow
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Making new Decision"));
 			// Run or Find Cover or Shoot
-			Character->State = EAIState::Shoot;
 			
 			if (Character->Health > 60)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Decided Shoot"));
 				Character->State = EAIState::Shoot;
+			}	
 			
 			if (Character->Health  > 40 && Character->Health < 60)
-			 	Character->State = EAIState::FindCover;
-
-			if (Character->Health < 40)
-				Character->State = EAIState::Run;
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Decided Find Cover"));
+				Character->State = EAIState::FindCover;
+			}
 			
+			if (Character->Health < 40)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Decided Run"));
+				Character->State = EAIState::Run;
+			}
+			
+			Character->Reasons = EDecisionReasons::Clear; // Clears the reason
 		}
 		else if(Character->Reasons == EDecisionReasons::PlayerNotFound)
 		{
 			Character->State = EAIState::Run;
 		}
+		else
+		{
+			Character->State = EAIState::Patrol;
+		}
 
-		Character->Reasons = EDecisionReasons::Clear; // Clears the reason
 	}
-	else
-	{
-		return EBTNodeResult::Failed;
-	}
-	
+
 	return EBTNodeResult::Succeeded;
 }

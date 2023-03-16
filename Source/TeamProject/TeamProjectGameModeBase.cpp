@@ -56,9 +56,12 @@ void ATeamProjectGameModeBase::BeginPlay()
 	Location = { 0,0,1000 };
 	transform.SetTranslation(Location);
 
-	WaveManager = GetWorld()->SpawnActor<AWaveManager>(WaveManagerClass, transform);
-	WaveManager->Init(LandActor->Size * LandActor->Scale);
-	WaveManager->SpawnTitleFrogs();
+	if(EnableWaveManager)
+	{
+		WaveManager = GetWorld()->SpawnActor<AWaveManager>(WaveManagerClass, transform);
+		WaveManager->Init(LandActor->Size * LandActor->Scale);
+		WaveManager->SpawnTitleFrogs();
+	}
 }
 
 void ATeamProjectGameModeBase::Tick(float DeltaTime)
@@ -78,7 +81,8 @@ void ATeamProjectGameModeBase::Tick(float DeltaTime)
 
 void ATeamProjectGameModeBase::OnGuiSetValues(FText InSeedString, int InTerrainType)
 {
-	WaveManager->ClearFrogs();
+	if(EnableWaveManager)
+		WaveManager->ClearFrogs();
 
 	//Initialise a seed for the case when everything fails with generating a seed
 	int seed = 89514156;
@@ -149,22 +153,30 @@ void ATeamProjectGameModeBase::OnStart()
 
 		PlayerController->RebindCharacter(PlayerActor);
 	}
-	WaveManager->ClearFrogs();
-	WaveManager->StartWaves();;
+	
+	if(EnableWaveManager)
+	{
+		WaveManager->ClearFrogs();
+		WaveManager->StartWaves();;
+	}
 }
 
 void ATeamProjectGameModeBase::OnBack()
 {
-	WaveManager->SpawnTitleFrogs();
+	if(EnableWaveManager)
+		WaveManager->SpawnTitleFrogs();
 }
 
 void ATeamProjectGameModeBase::OnPlay()
 {
-	WaveManager->ClearFrogs();
+	if(EnableWaveManager)
+		WaveManager->ClearFrogs();
 }
 
 void ATeamProjectGameModeBase::OnDebug()
 {
-	WaveManager->ClearFrogs();
+	if(EnableWaveManager)
+		WaveManager->ClearFrogs();
+	
 	LandActor->Clear();
 }

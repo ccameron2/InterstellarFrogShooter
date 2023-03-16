@@ -65,4 +65,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void OnDebug();
+
+private:
+	UPROPERTY(EditAnywhere)
+		bool EnableWaveManager = true;
 };

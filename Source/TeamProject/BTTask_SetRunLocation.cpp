@@ -29,11 +29,9 @@ EBTNodeResult::Type UBTTask_SetRunLocation::ExecuteTask(UBehaviorTreeComponent& 
 		AActor* Player = nullptr;
 		if(!OutActors.IsEmpty())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("OutAcots founds"));
 			for(auto Actor : OutActors) // Will only ever be one
 			{
 				Player = Actor;
-				UE_LOG(LogTemp, Warning, TEXT("PlayerFound"));
 			}
 		}
 
