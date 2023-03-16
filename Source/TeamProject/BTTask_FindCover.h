@@ -23,12 +23,9 @@ protected:
 	//virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
 private:
-	void CalculateClosestActor(APawn* Owner);
+	void CalculateClosestActor(APawn* Owner, TArray<AActor*> OutActors);
 	
 private:
-	UPROPERTY()
-		TArray<AActor*> OutActors;
-		
 	UPROPERTY()
 		float CurrentDistance;
 

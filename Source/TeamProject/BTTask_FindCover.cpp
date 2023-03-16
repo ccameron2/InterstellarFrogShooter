@@ -22,8 +22,9 @@ EBTNodeResult::Type UBTTask_FindCover::ExecuteTask(UBehaviorTreeComponent& Owner
 	AAIController* Controller = Owner.GetAIOwner();
 	if(Controller->PerceptionComponent)
 	{
+		TArray<AActor*> OutActors;
 		Controller->PerceptionComponent->GetCurrentlyPerceivedActors(TSubclassOf<UAISense_Sight>(), OutActors);
-		CalculateClosestActor(Controller->GetPawn());
+		CalculateClosestActor(Controller->GetPawn(), OutActors);
 		//Owner.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), CoverLocation);
 		if(CoverActor != nullptr)
 		{
@@ -35,20 +36,22 @@ EBTNodeResult::Type UBTTask_FindCover::ExecuteTask(UBehaviorTreeComponent& Owner
 	return EBTNodeResult::Succeeded;
 }
 
-void UBTTask_FindCover::CalculateClosestActor(APawn* Owner)
+void UBTTask_FindCover::CalculateClosestActor(APawn* Owner, TArray<AActor*> OutActors)
 {
 	CurrentDistance = -1;
 	CoverActor = nullptr;
-	for(auto actor : OutActors)
+	
+	
+	for(auto Actor : OutActors)
 	{
-		if(actor->ActorHasTag("Cover"))
+		if(Actor->ActorHasTag("Cover"))
 		{
-			float distance = FVector::Distance(Owner->GetActorLocation(), actor->GetActorLocation());
+			float distance = FVector::Distance(Owner->GetActorLocation(), Actor->GetActorLocation());
 			if(CurrentDistance == -1)
 			{
 				CurrentDistance = distance;
 				//CoverLocation = actor->GetActorLocation();
-				CoverActor = actor;
+				CoverActor = Actor;
 			}
 			else
 			{
@@ -56,7 +59,7 @@ void UBTTask_FindCover::CalculateClosestActor(APawn* Owner)
 				{
 					CurrentDistance = distance;
 					//CoverLocation = actor->GetActorLocation();
-					CoverActor = actor;
+					CoverActor = Actor;
 				}
 			}
 		}
