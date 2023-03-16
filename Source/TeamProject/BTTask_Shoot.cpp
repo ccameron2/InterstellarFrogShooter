@@ -37,8 +37,9 @@ EBTNodeResult::Type UBTTask_Shoot::ExecuteTask(UBehaviorTreeComponent& Owner, ui
 		{
 			return EBTNodeResult::Failed;
 		}
-		
-		Character->Shoot(Target);
+
+		if(Target != nullptr)
+			Character->Shoot(Target);
 	}
 	else
 	{

@@ -9,8 +9,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "NavigationInvokerComponent.h"
 #include "PlayerCharacter.h"
+#include "Engine/DamageEvents.h"
 #include "Perception/AIPerceptionComponent.h"
-#include "Perception/AISense_Sight.h"
 
 // Sets default values
 AAICharacter::AAICharacter()
@@ -88,7 +88,9 @@ float AAICharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 		State = EAIState::Decision;
 		Reasons = EDecisionReasons::BeingShot;
 	}
-		
+	
+	ShootFromLocation = DamageCauser->GetActorLocation(); // Would Rather detect the direction that the shoot came from rather than get the players position
+	
 	UE_LOG(LogTemp, Warning, TEXT("TakingDamage"));
 	
 	FVector SpawnLocation = GetActorLocation();

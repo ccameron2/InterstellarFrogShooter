@@ -40,7 +40,7 @@ void AMainAIController::BeginPlay()
 
 	AIPerception->OnPerceptionUpdated.AddDynamic(this, &AMainAIController::OnPerceptionUpdated);
 	AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &AMainAIController::OnTargetPerceptionUpdated);
-
+	
 }
 
 void AMainAIController::Tick(float DeltaTime)

@@ -70,6 +70,9 @@ public:
 	UPROPERTY(EditAnywhere)
 		EDecisionReasons Reasons;
 
+	UPROPERTY()
+		FVector ShootFromLocation; 
+
 public:
 	UPROPERTY(EditAnywhere)
 		float RunAwayDistance = 2000.0f;
@@ -87,4 +90,6 @@ private:
 
 	UPROPERTY(EditAnywhere)
 		float Damage = 10.0f;
+
+	
 };
