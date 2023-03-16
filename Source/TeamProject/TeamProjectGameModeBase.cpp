@@ -4,7 +4,7 @@
 
 ATeamProjectGameModeBase::ATeamProjectGameModeBase()
 {
-	
+	PrimaryActorTick.bCanEverTick = true;
 }
 
 void ATeamProjectGameModeBase::BeginPlay()
@@ -59,6 +59,21 @@ void ATeamProjectGameModeBase::BeginPlay()
 	WaveManager = GetWorld()->SpawnActor<AWaveManager>(WaveManagerClass, transform);
 	WaveManager->Init(LandActor->Size * LandActor->Scale);
 	WaveManager->SpawnTitleFrogs();
+}
+
+void ATeamProjectGameModeBase::Tick(float DeltaTime)
+{
+	if (GameStart)
+	{
+		TArray<AActor*> FoundActors;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerCharacter::StaticClass(), FoundActors);
+
+		if (FoundActors.Num() <= 0)
+		{
+			GameStart = false;
+			UGameplayStatics::OpenLevel(GetWorld(), "OpenWorld_3", true);
+		}
+	}
 }
 
 void ATeamProjectGameModeBase::OnGuiSetValues(FText InSeedString, int InTerrainType)
@@ -117,6 +132,7 @@ void ATeamProjectGameModeBase::OnGuiSetValues(FText InSeedString, int InTerrainT
 
 void ATeamProjectGameModeBase::OnStart()
 {
+	GameStart = true;
 	if (PlayerCharacterClass)
 	{
 		FTransform Transform;

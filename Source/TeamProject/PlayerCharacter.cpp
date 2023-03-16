@@ -33,6 +33,7 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (PlayerHealth <= 0) Destroy();
 	if (Firing && !OnCooldown) FireWeapon();
 }
 
