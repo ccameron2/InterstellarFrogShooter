@@ -71,8 +71,19 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void AddXP(float XPToAdd);
 
+	UFUNCTION(BlueprintCallable)
+		bool MiniMapUnlocked() const {return bMiniMap;}
+
+	UFUNCTION(BlueprintCallable)
+		void UnlockMiniMap() {bMiniMap = true;}
+
 	//Function to level up the player
 	UFUNCTION()
 		void LevelUP();
+
+private:
+
+	UPROPERTY()
+		bool bMiniMap = false;
 		
 };

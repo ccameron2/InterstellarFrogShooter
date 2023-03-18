@@ -63,6 +63,9 @@ public:
 
 	WeaponType Weapon = Cannons;
 
+	UFUNCTION(BlueprintCallable)
+		WeaponType GetWeaponType() const {return Weapon;} 
+
 	UPROPERTY(EditAnywhere)
 		float CannonBaseDamage = 2.0f;
 	UPROPERTY(EditAnywhere)
