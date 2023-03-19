@@ -95,7 +95,7 @@ public:
 		float EnergyRange = 10000.0f;
 
 	UPROPERTY(EditAnywhere)
-		float RocketCooldown = 1.0f;
+		float RocketCooldown = 10.0f;
 	
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<ARocket> RocketClass;

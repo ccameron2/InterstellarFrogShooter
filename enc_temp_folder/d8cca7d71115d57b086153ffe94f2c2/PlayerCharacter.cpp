@@ -102,12 +102,10 @@ void APlayerCharacter::FireWeapon()
 	}
 	else if (Weapon == Rocket)
 	{
+		FTransform transform;
 		GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, RocketCooldown, false);
 
-		FTransform transform;
-		transform.SetLocation(GetActorLocation() + FVector{ 0,0,0 });
-		transform.SetRotation(GetActorRotation().Quaternion());
-
+		transform.SetLocation(GetActorLocation() + FVector{ 0,50,100 });
 		GetWorld()->SpawnActor<ARocket>(RocketClass, transform);
 	}
 
