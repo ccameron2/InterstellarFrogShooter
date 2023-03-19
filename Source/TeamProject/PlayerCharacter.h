@@ -81,6 +81,12 @@ public:
 		float CannonRange = 5000.0f;
 	UPROPERTY(EditAnywhere)
 		float CannonCooldown = 0.01f;
+	UPROPERTY(EditAnywhere)
+		float CannonHeat = 0.0f;
+	UPROPERTY(EditAnywhere)
+		float MaxCannonHeat = 100.0f;
+	UPROPERTY(EditAnywhere)
+		float HeatDissipationRate = 0.1f;
 
 	UPROPERTY(EditAnywhere)
 		float EnergyBaseDamage = 10.0f;
@@ -113,6 +119,9 @@ private:
 	bool OnCooldown = false;
 	bool Firing = false;
 
+	FTimerHandle HeatCooldownTimer;
+
+
 	UPROPERTY()
 		bool bUnlockedEnergyWeapon = false;
 
@@ -121,4 +130,6 @@ private:
 	void StopFireWeapon();
 	void ChangeWeapon();
 	void CooldownTimerUp();
+	void HeatTimerUp();
+
 };

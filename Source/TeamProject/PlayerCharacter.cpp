@@ -26,7 +26,8 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	GetWorld()->GetTimerManager().SetTimer(HeatCooldownTimer, this, &APlayerCharacter::HeatTimerUp, HeatDissipationRate, true);
+
 }
 
 // Called every frame
@@ -75,7 +76,9 @@ void APlayerCharacter::FireWeapon()
 	int damage = 0;
 	int range = 0;
 	if (Weapon == Cannons)
-	{
+	{		
+		if(CannonHeat > MaxCannonHeat) return;
+		CannonHeat++;
 		GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, CannonCooldown, false);
 		damage = CannonBaseDamage;
 		range = CannonRange;
@@ -183,5 +186,10 @@ void APlayerCharacter::CooldownTimerUp()
 	bShowEnergyCooldown = false;
 	OnCooldown = false;
 	EnergyCooldownUI = 1.0f;
+}
+
+void APlayerCharacter::HeatTimerUp()
+{
+	if(CannonHeat > 0) CannonHeat--;
 }
 
