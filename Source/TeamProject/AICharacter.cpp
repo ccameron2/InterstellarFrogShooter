@@ -110,6 +110,8 @@ float AAICharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 
 	if (Health <= 0.0f)
 	{
+		XPAmount = UKismetMathLibrary::RandomFloatInRange(MinXPAmount, MaxXPAmount);
+		Cast<APlayerCharacter>(DamageCauser)->LevelComponent->AddXP(XPAmount);
 		Destroy();
 	}
 

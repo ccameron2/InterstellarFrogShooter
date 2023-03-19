@@ -72,10 +72,15 @@ public:
 
 	UPROPERTY()
 		FVector ShootFromLocation; 
-
-public:
+	
 	UPROPERTY(EditAnywhere)
 		float RunAwayDistance = 2000.0f;
+
+	UPROPERTY(EditAnywhere)
+		float MinXPAmount = 10.0f;
+
+	UPROPERTY(EditAnywhere)
+		float MaxXPAmount = 15.0f;
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -91,5 +96,6 @@ private:
 	UPROPERTY(EditAnywhere)
 		float Damage = 10.0f;
 
-	
+	UPROPERTY()
+		float XPAmount = 0.0f;  
 };

@@ -50,10 +50,15 @@ public:
 
 	void Turn(float AxisAmount);
 
-public:
 
+	//------------------------//
+	//		Levelling Up	  //
+	//------------------------//
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		ULevellingUpComponent* LevelComponent;
+
+	UFUNCTION(BlueprintCallable)
+		void UnlockEnergyWeapon() {bUnlockedEnergyWeapon = true;}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float PlayerHealth = 100.0f;
@@ -93,6 +98,9 @@ private:
 	FTimerHandle WeaponCooldownTimer;
 	bool OnCooldown = false;
 	bool Firing = false;
+
+	UPROPERTY()
+		bool bUnlockedEnergyWeapon = false;
 
 	void FireWeapon();
 	void StartFireWeapon();

@@ -136,7 +136,7 @@ void APlayerCharacter::StopFireWeapon()
 
 void APlayerCharacter::ChangeWeapon()
 {
-	if (Weapon == Cannons) Weapon = Energy;
+	if (Weapon == Cannons && bUnlockedEnergyWeapon) Weapon = Energy;
 	else if (Weapon == Energy) Weapon = Cannons;
 }
 
