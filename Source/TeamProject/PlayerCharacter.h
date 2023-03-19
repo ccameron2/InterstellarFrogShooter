@@ -42,9 +42,6 @@ public:
 
 	void LookUp(float AxisAmount);
 
-
-	void TakeDamage();
-
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 		AController* EventInstigator, AActor* DamageCauser) override;
 
@@ -84,6 +81,8 @@ public:
 	UPROPERTY(EditAnywhere)
 		float CannonHeat = 0.0f;
 	UPROPERTY(EditAnywhere)
+		float CannonHeatIncrement = 1.0f;
+	UPROPERTY(EditAnywhere)
 		float MaxCannonHeat = 100.0f;
 	UPROPERTY(EditAnywhere)
 		float HeatDissipationRate = 0.1f;
@@ -111,6 +110,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 		bool bShowCannonCooldown = true;
 
+	UPROPERTY(BlueprintReadOnly)
+		bool bShowHitIndicator = false;
+
 private:
 	UPROPERTY(EditAnywhere)
 		UStaticMeshComponent* CannonMesh1;
@@ -127,6 +129,9 @@ private:
 
 	FTimerHandle HeatCooldownTimer;
 
+
+	UFUNCTION()
+		void ResetPlayerHitIndicator();
 
 	UPROPERTY()
 		bool bUnlockedEnergyWeapon = false;

@@ -49,7 +49,6 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 	InputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &APlayerCharacter::StartFireWeapon);
 	InputComponent->BindAction(TEXT("Fire"), IE_Released, this, &APlayerCharacter::StopFireWeapon);
-	InputComponent->BindAction(TEXT("Hit"), IE_Pressed, this, &APlayerCharacter::TakeDamage);
 	InputComponent->BindAction(TEXT("ChangeWeapon"), IE_Pressed, this, &APlayerCharacter::ChangeWeapon);
 
 }
@@ -71,6 +70,11 @@ void APlayerCharacter::LookUp(float AxisAmount)
 	AddControllerPitchInput(AxisAmount);
 }
 
+void APlayerCharacter::ResetPlayerHitIndicator()
+{
+	bShowHitIndicator = false;
+}
+
 void APlayerCharacter::FireWeapon()
 {
 	int damage = 0;
@@ -78,7 +82,7 @@ void APlayerCharacter::FireWeapon()
 	if (Weapon == Cannons)
 	{		
 		if(CannonHeat > MaxCannonHeat) return;
-		CannonHeat++;
+		CannonHeat += CannonHeatIncrement;
 		GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, CannonCooldown, false);
 		damage = CannonBaseDamage;
 		range = CannonRange;
@@ -158,22 +162,14 @@ void APlayerCharacter::ChangeWeapon()
 	}
 }
 
-void APlayerCharacter::TakeDamage()
-{
-	PlayerHealth -= 10.0f;
-	
-	UE_LOG(LogTemp, Warning, TEXT("Player Health: %f"), PlayerHealth);
-
-	if (PlayerHealth <= 0.0f)
-	{
-		PlayerHealth = 0.0f;
-	}
-}
-
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
 	AActor* DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	bShowHitIndicator = true;
+	FTimerHandle UnusedHandle;
+	GetWorld()->GetTimerManager().SetTimer(UnusedHandle, this, &APlayerCharacter::ResetPlayerHitIndicator, .2f, false);
 
 	PlayerHealth -= DamageAmount;
 
