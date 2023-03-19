@@ -57,6 +57,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void UnlockEnergyWeapon() {bUnlockedEnergyWeapon = true;}
 
+	UFUNCTION(BlueprintCallable)
+		void UnlockRocketLauncherWeapon() {bUnlockedRocketLauncher = true;}
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float PlayerHealth = 100.0f;
 
@@ -141,6 +144,9 @@ private:
 
 	UPROPERTY()
 		bool bUnlockedEnergyWeapon = false;
+
+	UPROPERTY()
+		bool bUnlockedRocketLauncher = false;
 
 	void FireWeapon();
 	void StartFireWeapon();

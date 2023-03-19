@@ -131,7 +131,7 @@ void APlayerCharacter::ChangeWeapon()
 		Weapon = Energy;
 		bShowCannonCooldown = false;
 	}
-	else if (Weapon == Energy)
+	else if (Weapon == Energy && bUnlockedRocketLauncher)
 	{
 		Weapon = Rocket;
 		bShowCannonCooldown = true;
@@ -146,7 +146,7 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 
 	bShowHitIndicator = true;
 	FTimerHandle UnusedHandle;
-	GetWorld()->GetTimerManager().SetTimer(UnusedHandle, this, &APlayerCharacter::ResetPlayerHitIndicator, .2f, false);
+	GetWorld()->GetTimerManager().SetTimer(UnusedHandle, this, &APlayerCharacter::ResetPlayerHitIndicator, 0.3f, false);
 
 	PlayerHealth -= DamageAmount;
 
