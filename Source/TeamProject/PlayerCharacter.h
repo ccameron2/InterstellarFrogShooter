@@ -105,6 +105,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		float EnergyCooldownUI = 1.0f;
 
+	UFUNCTION(BlueprintCallable)
+		float GetCannonHeatUI() const {return CannonHeat / MaxCannonHeat;}
+
+	UPROPERTY(BlueprintReadOnly)
+		bool bShowCannonCooldown = true;
+
 private:
 	UPROPERTY(EditAnywhere)
 		UStaticMeshComponent* CannonMesh1;

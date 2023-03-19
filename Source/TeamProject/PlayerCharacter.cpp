@@ -82,11 +82,13 @@ void APlayerCharacter::FireWeapon()
 		GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, CannonCooldown, false);
 		damage = CannonBaseDamage;
 		range = CannonRange;
+		bShowCannonCooldown = true;
 		CannonMesh1->AddLocalRotation(FVector{ 0,0,0.1 }.Rotation());
 		CannonMesh2->AddLocalRotation(FVector{ 0,0,-0.1 }.Rotation());
 	}
 	else if (Weapon == Energy)
 	{
+		
 		GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, EnergyCooldown, false);
 		bShowEnergyCooldown = true;
 		damage = EnergyBaseDamage;
@@ -144,8 +146,16 @@ void APlayerCharacter::StopFireWeapon()
 
 void APlayerCharacter::ChangeWeapon()
 {
-	if (Weapon == Cannons && bUnlockedEnergyWeapon) Weapon = Energy;
-	else if (Weapon == Energy) Weapon = Cannons;
+	if (Weapon == Cannons && bUnlockedEnergyWeapon)
+	{
+		Weapon = Energy;
+		bShowCannonCooldown = false;
+	}
+	else if (Weapon == Energy)
+	{
+		Weapon = Cannons;
+		bShowCannonCooldown = true;
+	}
 }
 
 void APlayerCharacter::TakeDamage()
