@@ -33,8 +33,12 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (PlayerHealth <= 0) Destroy();
-	if (Firing && !OnCooldown) FireWeapon();
+	if (PlayerHealth <= 0)
+		Destroy();
+	if (Firing && !OnCooldown)
+		FireWeapon();
+	if (bShowEnergyCooldown)
+		EnergyCooldownUI -= (DeltaTime / 2);
 }
 
 // Called to bind functionality to input
@@ -81,6 +85,7 @@ void APlayerCharacter::FireWeapon()
 	else if (Weapon == Energy)
 	{
 		GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, EnergyCooldown, false);
+		bShowEnergyCooldown = true;
 		damage = EnergyBaseDamage;
 		range = EnergyRange;
 	}
@@ -175,6 +180,8 @@ void APlayerCharacter::Turn(float AxisAmount)
 
 void APlayerCharacter::CooldownTimerUp()
 {
+	bShowEnergyCooldown = false;
 	OnCooldown = false;
+	EnergyCooldownUI = 1.0f;
 }
 

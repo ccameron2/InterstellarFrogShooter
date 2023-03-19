@@ -66,6 +66,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int PlayerMaxHealth = 100;
 
+
+	//------------------//
+	//		Weapons		//
+	//------------------//
 	WeaponType Weapon = Cannons;
 
 	UFUNCTION(BlueprintCallable)
@@ -84,6 +88,16 @@ public:
 		float EnergyCooldown = 2.0f;
 	UPROPERTY(EditAnywhere)
 		float EnergyRange = 10000.0f;
+
+	//----------------------//
+	//		Weapon UI		//
+	//----------------------//
+
+	UPROPERTY(BlueprintReadOnly)
+		bool bShowEnergyCooldown = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float EnergyCooldownUI = 1.0f;
 
 private:
 	UPROPERTY(EditAnywhere)
