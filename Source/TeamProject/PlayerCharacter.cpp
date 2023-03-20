@@ -6,6 +6,7 @@
 #include "TestActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "AICharacter.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -87,27 +88,27 @@ void APlayerCharacter::ResetPlayerHitIndicator()
 
 void APlayerCharacter::FireWeapon()
 {
-	int damage = 0;
-	int range = 0;
+	int Damage;
+	int Range;
 	if (Weapon == Cannons)
 	{		
 		if(CannonHeat > MaxCannonHeat) return;
 		CannonHeat += CannonHeatIncrement;
 		GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, CannonCooldown, false);
-		damage = CannonBaseDamage;
-		range = CannonRange;
+		Damage = CannonBaseDamage;
+		Range = CannonRange;
 		bShowCannonCooldown = true;
 		CannonMesh1->AddLocalRotation(FVector{ 0,0,0.1 }.Rotation());
 		CannonMesh2->AddLocalRotation(FVector{ 0,0,-0.1 }.Rotation());
-		Raycast(damage, range);
+		Raycast(Damage, Range);
 	}
 	else if (Weapon == Energy)
 	{
 		GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, EnergyCooldown, false);
 		bShowEnergyCooldown = true;
-		damage = EnergyBaseDamage;
-		range = EnergyRange;
-		Raycast(damage, range);
+		Damage = EnergyBaseDamage;
+		Range = EnergyRange;
+		Raycast(Damage, Range);
 	}
 	else if (Weapon == Rocket)
 	{
@@ -169,7 +170,10 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	FTimerHandle UnusedHandle;
 	GetWorld()->GetTimerManager().SetTimer(UnusedHandle, this, &APlayerCharacter::ResetPlayerHitIndicator, 0.3f, false);
 
-	PlayerHealth -= DamageAmount;
+	DamageAmount *= DamageReduction;
+	
+	if(UKismetMathLibrary::RandomFloatInRange(0.0f, 1.0f) > DodgeChance)
+		PlayerHealth -= DamageAmount;
 
 	if (PlayerHealth <= 0.0f)
 	{
@@ -183,6 +187,24 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 void APlayerCharacter::Turn(float AxisAmount)
 {
 	AddControllerYawInput(AxisAmount);
+}
+
+void APlayerCharacter::RegenerateHealth()
+{
+	if(PlayerHealth < PlayerMaxHealth)
+		PlayerHealth += HealthRegenAmount;
+}
+
+void APlayerCharacter::IncreaseDamageReduction(float Amount)
+{
+	if((Amount > 0.0f && Amount <= 1.0f) || DamageReduction > 0.0f)
+		DamageReduction -= Amount;
+}
+
+void APlayerCharacter::IncreaseDodgeChance(float Amount)
+{
+	if((Amount > 0.0f && Amount < 1.0f) || DodgeChance < 1.0f)
+		DodgeChance += Amount;
 }
 
 void APlayerCharacter::CooldownTimerUp()

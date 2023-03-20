@@ -62,13 +62,42 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void UnlockRocketLauncherWeapon() {bUnlockedRocketLauncher = true;}
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Health")
 		float PlayerHealth = 100.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Health")
 		int PlayerMaxHealth = 100;
 
+	UPROPERTY(EditAnywhere, Category="Health")
+		float HealthRegenTimer = 2.5f;
 
+	UPROPERTY(EditAnywhere, Category="Health")
+		float HealthRegenAmount = 1.0f;
+
+	UPROPERTY()
+		FTimerHandle HealthRegenTimerHandle;
+
+	UFUNCTION(BlueprintCallable)
+		void UnlockHealthRegen() {GetWorld()->GetTimerManager().SetTimer(HealthRegenTimerHandle, this, &APlayerCharacter::RegenerateHealth, HealthRegenTimer, true);}
+
+	UFUNCTION()
+		void RegenerateHealth();
+	
+	UFUNCTION(BlueprintCallable)
+		float GetPlayerHealthPercentage() const {return PlayerHealth / PlayerMaxHealth;}
+	
+	UPROPERTY(EditAnywhere, Category="Damage")
+		float DamageReduction = 1.0f;
+
+	UFUNCTION(BlueprintCallable)
+		void IncreaseDamageReduction(float Amount);
+
+	UPROPERTY(EditAnywhere, Category="Damage")
+		float DodgeChance = 0.0f;
+
+	UFUNCTION(BlueprintCallable)
+		void IncreaseDodgeChance(float Amount);
+	
 	//------------------//
 	//		Weapons		//
 	//------------------//
@@ -88,35 +117,35 @@ public:
 		UE_LOG(LogTemp, Warning, TEXT("Increased Rockets"));
 	}
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Weapons")
 		float CannonBaseDamage = 2.0f;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Weapons")
 		float CannonRange = 5000.0f;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Weapons")
 		float CannonCooldown = 0.01f;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Weapons")
 		float CannonHeat = 0.0f;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Weapons")
 		float CannonHeatIncrement = 1.0f;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Weapons")
 		float MaxCannonHeat = 100.0f;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Weapons")
 		float HeatDissipationRate = 0.1f;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Weapons")
 		float EnergyBaseDamage = 10.0f;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Weapons")
 		float EnergyCooldown = 2.0f;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Weapons")
 		float EnergyRange = 10000.0f;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Weapons")
 		float RocketCooldown = 1.0f;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Weapons")
 		int MaxRocketAmount = 1;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Weapons")
 		int CurrentRocketAmount = MaxRocketAmount;
 	
 	UPROPERTY(EditAnywhere)
@@ -131,13 +160,13 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 		bool bShowEnergyCooldown = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly)
 		float EnergyCooldownUI = 1.0f;
 
 	UPROPERTY(BlueprintReadOnly)
 		bool bShowRocketLauncherCooldown = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly)
 		float RocketLauncherCooldownUI = 1.0f;
 
 	UFUNCTION(BlueprintCallable)
@@ -167,7 +196,9 @@ private:
 	bool Firing = false;
 
 	FTimerHandle HeatCooldownTimer;
-	ADrone* DroneRef;
+	
+	UPROPERTY()
+		ADrone* DroneRef;
 
 	UFUNCTION()
 		void ResetPlayerHitIndicator();
