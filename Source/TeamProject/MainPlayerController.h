@@ -44,6 +44,8 @@ public:
 
 	void SpawnDrone();
 
+	void PauseGame();
+
 	APlayerCharacter* Character;
 
 	ADroneCharacter* Drone;

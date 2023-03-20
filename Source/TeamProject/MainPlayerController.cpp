@@ -42,6 +42,7 @@ void AMainPlayerController::SetupInputComponent()
 	InputComponent->BindAxis(TEXT("Turn"), this, &AMainPlayerController::CallTurn);
 	InputComponent->BindAxis(TEXT("Look Up"), this, &AMainPlayerController::CallLookUp);
 	InputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AMainPlayerController::CallJump);
+	InputComponent->BindAction(TEXT("Pause"), IE_Pressed, this, &AMainPlayerController::PauseGame);
 }
 
 void AMainPlayerController::CallMoveForwards(float AxisAmount)
@@ -122,6 +123,7 @@ void AMainPlayerController::WidgetLoader(int index)
 	}
 	else if (index == 1)
 	{
+		UGameplayStatics::SetGamePaused(GetWorld(), false);
 		HUD->AddToViewport();
 		Menu->RemoveFromParent();
 		Settings->RemoveFromParent();
@@ -197,5 +199,18 @@ void AMainPlayerController::SpawnDrone()
 	}
 	
 	BuildMode = !BuildMode;
+}
+
+void AMainPlayerController::PauseGame()
+{
+	if(UGameplayStatics::IsGamePaused(GetWorld()))
+	{
+		WidgetLoader(1);
+	}
+	else
+	{
+		WidgetLoader(4);
+		UGameplayStatics::SetGamePaused(GetWorld(), true);
+	}
 }
 
