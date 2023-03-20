@@ -27,7 +27,7 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	GetWorld()->GetTimerManager().SetTimer(HeatCooldownTimer, this, &APlayerCharacter::HeatTimerUp, HeatDissipationRate, true);
-
+	SpawnDrone();
 }
 
 // Called every frame
@@ -68,6 +68,14 @@ void APlayerCharacter::Strafe(float AxisAmount)
 void APlayerCharacter::LookUp(float AxisAmount)
 {
 	AddControllerPitchInput(AxisAmount);
+}
+
+void APlayerCharacter::SpawnDrone()
+{
+	FTransform transform;
+	transform.SetLocation(GetActorLocation() + FVector{ -100,50,500 });
+	DroneRef = GetWorld()->SpawnActor<ADrone>(DroneClass, transform);
+	DroneRef->AttachToActor(this,FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 void APlayerCharacter::ResetPlayerHitIndicator()

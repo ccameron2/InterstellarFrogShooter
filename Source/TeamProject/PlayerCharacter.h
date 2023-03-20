@@ -6,6 +6,8 @@
 
 #include "LevellingUpComponent.h"
 #include "Rocket.h"
+#include "Drone.h"
+
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
 
@@ -103,6 +105,8 @@ public:
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<ARocket> RocketClass;
 
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<ADrone> DroneClass;
 	//----------------------//
 	//		Weapon UI		//
 	//----------------------//
@@ -115,6 +119,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		float GetCannonHeatUI() const {return CannonHeat / MaxCannonHeat;}
+	
+	UFUNCTION(BlueprintCallable)
+		void SpawnDrone();
 
 	UPROPERTY(BlueprintReadOnly)
 		bool bShowCannonCooldown = true;
@@ -137,7 +144,7 @@ private:
 	bool Firing = false;
 
 	FTimerHandle HeatCooldownTimer;
-
+	ADrone* DroneRef;
 
 	UFUNCTION()
 		void ResetPlayerHitIndicator();

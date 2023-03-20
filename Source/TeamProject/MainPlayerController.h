@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "PlayerCharacter.h"
-#include "DroneCharacter.h"
 #include "GameFramework/PlayerController.h"
 #include "MainPlayerController.generated.h"
 
@@ -20,8 +19,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	UPROPERTY(EditAnywhere, Category = "Drone")
-		TSubclassOf<ADroneCharacter> DronePawn;
 
 	AMainPlayerController();
 
@@ -42,13 +39,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void WidgetLoader(int index);
 
-	void SpawnDrone();
-
 	void PauseGame();
 
 	APlayerCharacter* Character;
-
-	ADroneCharacter* Drone;
 
 	UPROPERTY()
 		bool BuildMode = false;

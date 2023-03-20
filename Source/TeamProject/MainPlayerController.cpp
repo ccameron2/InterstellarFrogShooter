@@ -51,10 +51,6 @@ void AMainPlayerController::CallMoveForwards(float AxisAmount)
 	{
 		Character->MoveForwards(AxisAmount);
 	}
-	if (Drone)
-	{
-		Drone->MoveForwards(AxisAmount);
-	}
 }
 
 //Allows the player to move the character left and right
@@ -63,10 +59,6 @@ void AMainPlayerController::CallStrafe(float AxisAmount)
 	if (Character)
 	{
 		Character->Strafe(AxisAmount);
-	}
-	if (Drone)
-	{
-		Drone->Strafe(AxisAmount);
 	}
 }
 
@@ -77,10 +69,6 @@ void AMainPlayerController::CallLookUp(float AxisAmount)
 	{
 		Character->LookUp(AxisAmount);
 	}
-	if (Drone)
-	{
-		Drone->LookUp(AxisAmount);
-	}
 }
 
 //Allows the player to rotate the character left and right
@@ -89,10 +77,6 @@ void AMainPlayerController::CallTurn(float AxisAmount)
 	if (Character)
 	{
 		Character->Turn(AxisAmount);
-	}
-	if (Drone)
-	{
-		Drone->Turn(AxisAmount);
 	}
 }
 
@@ -175,32 +159,6 @@ void AMainPlayerController::WidgetLoader(int index)
 	}
 }
 
-void AMainPlayerController::SpawnDrone()
-{
-
-	//Check if the drone doesn't exist so that we can correctly spawn it 
-	if (!Drone)
-	{
-		//Current spawn parameters for the drone
-		FVector SpawnVector = Character->GetActorLocation() + FVector{0.0f, 0.0f, 100.0f};
-		FRotator SpawnRotation = Character->GetActorRotation();
-
-		//Spawn the drone 
-		Drone = GetWorld()->SpawnActor<ADroneCharacter>(DronePawn, SpawnVector, SpawnRotation);	
-	}
-
-	//Check if we are in build mode and then Possess the player's character while destroying the Drone actor that was palced in the world
-	if (BuildMode)
-	{
-		if(Drone)
-			Drone->Destroy();
-
-		Drone = nullptr;
-	}
-	
-	BuildMode = !BuildMode;
-}
-
 void AMainPlayerController::PauseGame()
 {
 	if(UGameplayStatics::IsGamePaused(GetWorld()))
@@ -213,4 +171,3 @@ void AMainPlayerController::PauseGame()
 		UGameplayStatics::SetGamePaused(GetWorld(), true);
 	}
 }
-
