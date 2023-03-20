@@ -34,7 +34,7 @@ void UMyBTService_FollowLocation::TickNode(UBehaviorTreeComponent& OwnerComp, ui
 			{
 				OwnerComp.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), actor->GetActorLocation());
 				UE_LOG(LogTemp, Warning, TEXT("Updating player follow location"));
-				//break; // There is only one hostile actor so should instantly leave after finding
+				break; // There is only one hostile actor so should instantly leave after finding
 			}
 		}
 

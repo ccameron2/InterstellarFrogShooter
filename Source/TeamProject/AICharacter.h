@@ -70,6 +70,9 @@ public:
 	UPROPERTY(EditAnywhere)
 		EDecisionReasons Reasons;
 
+	UPROPERTY(EditAnywhere)
+		float Damage = 2.0f;
+	
 	UPROPERTY()
 		FVector ShootFromLocation; 
 	
@@ -92,9 +95,6 @@ private:
 
 	UPROPERTY(EditAnywhere)
 		float MaxHealth = 100.0f;
-
-	UPROPERTY(EditAnywhere)
-		float Damage = 10.0f;
 
 	UPROPERTY()
 		float XPAmount = 0.0f;  
