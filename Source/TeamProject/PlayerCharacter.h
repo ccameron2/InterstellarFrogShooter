@@ -118,9 +118,9 @@ public:
 	}
 	
 	UPROPERTY(EditAnywhere, Category="Weapons")
-		float CannonBaseDamage = 2.0f;
+		float CannonBaseDamage = 5.0f;
 	UPROPERTY(EditAnywhere, Category="Weapons")
-		float CannonRange = 5000.0f;
+		float CannonRange = 8000.0f;
 	UPROPERTY(EditAnywhere, Category="Weapons")
 		float CannonCooldown = 0.01f;
 	UPROPERTY(EditAnywhere, Category="Weapons")
@@ -133,11 +133,11 @@ public:
 		float HeatDissipationRate = 0.1f;
 
 	UPROPERTY(EditAnywhere, Category="Weapons")
-		float EnergyBaseDamage = 10.0f;
+		float EnergyBaseDamage = 50.0f;
 	UPROPERTY(EditAnywhere, Category="Weapons")
 		float EnergyCooldown = 2.0f;
 	UPROPERTY(EditAnywhere, Category="Weapons")
-		float EnergyRange = 10000.0f;
+		float EnergyRange = 16000.0f;
 
 	UPROPERTY(EditAnywhere, Category="Weapons")
 		float RocketCooldown = 1.0f;

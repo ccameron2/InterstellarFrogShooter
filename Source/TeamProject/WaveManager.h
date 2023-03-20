@@ -48,11 +48,11 @@ public:
 	TArray<AAICharacter*> EnemyFrogs;
 
 	FTimerHandle WaveTimerHandle;
-	float WaveTime = 25;
+	float WaveTime = 55;
 	float WaveDelay = 5;
 	int WaveNum = 0;
 	int NumFrogs = 5;
-	int NumTitleFrogs = 25;
+	int NumTitleFrogs = 35;
 	int WorldSize = 0;
 	WaveDirection CurrentDirection;
 private:
