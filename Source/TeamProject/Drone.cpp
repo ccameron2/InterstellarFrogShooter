@@ -27,8 +27,8 @@ void ADrone::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (Up) FloatingComponent->AddInputVector(FVector{ 0,0,0.1 });
-	else FloatingComponent->AddInputVector(FVector{ 0,0,-0.1 });
+	if (Up) SetActorLocation(GetActorLocation() + FVector{ 0,0,0.5 });
+	else SetActorLocation(GetActorLocation() + FVector{ 0,0,-0.5 });
 }
 
 void ADrone::DirTimerUp()
