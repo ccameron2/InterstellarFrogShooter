@@ -77,6 +77,17 @@ public:
 	UFUNCTION(BlueprintCallable)
 		WeaponType GetWeaponType() const {return Weapon;} 
 
+	UFUNCTION(BlueprintCallable)
+		void ReduceEnergyCooldown(const float ReductionAmount) {EnergyCooldown -= ReductionAmount;}
+
+	UFUNCTION(BlueprintCallable)
+		void IncreaseNumberOfRockets(const int Amount)
+	{
+		MaxRocketAmount += Amount;
+		CurrentRocketAmount = MaxRocketAmount;
+		UE_LOG(LogTemp, Warning, TEXT("Increased Rockets"));
+	}
+	
 	UPROPERTY(EditAnywhere)
 		float CannonBaseDamage = 2.0f;
 	UPROPERTY(EditAnywhere)
@@ -103,6 +114,12 @@ public:
 		float RocketCooldown = 1.0f;
 	
 	UPROPERTY(EditAnywhere)
+		int MaxRocketAmount = 1;
+
+	UPROPERTY(EditAnywhere)
+		int CurrentRocketAmount = MaxRocketAmount;
+	
+	UPROPERTY(EditAnywhere)
 		TSubclassOf<ARocket> RocketClass;
 
 	UPROPERTY(EditAnywhere)
@@ -116,6 +133,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		float EnergyCooldownUI = 1.0f;
+
+	UPROPERTY(BlueprintReadOnly)
+		bool bShowRocketLauncherCooldown = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float RocketLauncherCooldownUI = 1.0f;
 
 	UFUNCTION(BlueprintCallable)
 		float GetCannonHeatUI() const {return CannonHeat / MaxCannonHeat;}

@@ -27,7 +27,7 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	GetWorld()->GetTimerManager().SetTimer(HeatCooldownTimer, this, &APlayerCharacter::HeatTimerUp, HeatDissipationRate, true);
-	SpawnDrone();
+	//SpawnDrone();
 }
 
 // Called every frame
@@ -39,7 +39,9 @@ void APlayerCharacter::Tick(float DeltaTime)
 	if (Firing && !OnCooldown)
  		FireWeapon();
 	if (bShowEnergyCooldown)
-		EnergyCooldownUI -= (DeltaTime / 2);
+		EnergyCooldownUI -= (DeltaTime / EnergyCooldown);
+	if(bShowRocketLauncherCooldown)
+		RocketLauncherCooldownUI -= (DeltaTime / RocketCooldown);
 }
 
 // Called to bind functionality to input
@@ -101,7 +103,6 @@ void APlayerCharacter::FireWeapon()
 	}
 	else if (Weapon == Energy)
 	{
-		
 		GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, EnergyCooldown, false);
 		bShowEnergyCooldown = true;
 		damage = EnergyBaseDamage;
@@ -110,13 +111,18 @@ void APlayerCharacter::FireWeapon()
 	}
 	else if (Weapon == Rocket)
 	{
-		GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, RocketCooldown, false);
+		if(CurrentRocketAmount > 0)
+		{
+			GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, RocketCooldown, false);
 
-		FTransform transform;
-		transform.SetLocation(GetActorLocation() + FVector{ 0,0,0 });
-		transform.SetRotation(GetActorRotation().Quaternion());
+			FTransform transform;
+			transform.SetLocation(GetActorLocation() + FVector{ 0,0,0 });
+			transform.SetRotation(GetActorRotation().Quaternion());
 
-		GetWorld()->SpawnActor<ARocket>(RocketClass, transform);
+			GetWorld()->SpawnActor<ARocket>(RocketClass, transform);
+			CurrentRocketAmount -= 1;
+			bShowRocketLauncherCooldown = true;
+		}
 	}
 
 	OnCooldown = true;
@@ -182,8 +188,11 @@ void APlayerCharacter::Turn(float AxisAmount)
 void APlayerCharacter::CooldownTimerUp()
 {
 	bShowEnergyCooldown = false;
+	bShowRocketLauncherCooldown = false;
 	OnCooldown = false;
 	EnergyCooldownUI = 1.0f;
+	RocketLauncherCooldownUI = 1.0f;
+	CurrentRocketAmount = MaxRocketAmount; 
 }
 
 void APlayerCharacter::HeatTimerUp()
