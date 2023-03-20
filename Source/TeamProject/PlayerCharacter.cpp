@@ -131,9 +131,16 @@ void APlayerCharacter::ChangeWeapon()
 		Weapon = Energy;
 		bShowCannonCooldown = false;
 	}
-	else if (Weapon == Energy && bUnlockedRocketLauncher)
+	else if (Weapon == Energy)
 	{
-		Weapon = Rocket;
+		if (bUnlockedRocketLauncher)
+		{
+			Weapon = Rocket;
+		}
+		else
+		{
+			Weapon = Cannons;
+		}
 		bShowCannonCooldown = true;
 	}
 	else if (Weapon == Rocket) Weapon = Cannons;
