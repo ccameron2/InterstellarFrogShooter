@@ -19,18 +19,5 @@ public:
 
 protected:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& Owner, uint8* NodeMemory) override;
-
-private:
-
-	UPROPERTY(EditAnywhere)
-		float MaxX;
-
-	UPROPERTY(EditAnywhere)
-		float MinX;
-
-	UPROPERTY(EditAnywhere)
-		float MaxY;
-
-	UPROPERTY(EditAnywhere)
-		float MinY;
+	
 };

@@ -2,6 +2,9 @@
 
 
 #include "BTTask_SetRandomLocation.h"
+
+#include "AICharacter.h"
+#include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 UBTTask_SetRandomLocation::UBTTask_SetRandomLocation()
@@ -14,10 +17,13 @@ EBTNodeResult::Type UBTTask_SetRandomLocation::ExecuteTask(UBehaviorTreeComponen
 	Super::ExecuteTask(Owner, NodeMemory);
 
 	FVector NewLocation = Owner.GetOwner()->GetActorLocation();
-	NewLocation.X = FMath::RandRange(MinX, MaxX);
-	NewLocation.Y = FMath::RandRange(MinY, MaxY);
+	if(AAICharacter* Character = Cast<AAICharacter>(Owner.GetAIOwner()->GetPawn()))
+	{
+		NewLocation.X = FMath::RandRange(Character->MinWorldX, Character->MaxWorldX);
+		NewLocation.Y = FMath::RandRange(Character->MinWorldY, Character->MaxWorldY);
+	}
 
 	Owner.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), NewLocation);
-
+	
 	return EBTNodeResult::Succeeded;
 }

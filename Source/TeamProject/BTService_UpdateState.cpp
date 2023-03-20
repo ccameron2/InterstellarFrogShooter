@@ -6,9 +6,11 @@
 #include "AICharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
+// Most nodes, decorators and services, cast to the character, now the character will just get set in this service and called in the other classes
+
 UBTService_UpdateState::UBTService_UpdateState()
 {
-	NodeName = "Update AI State";
+	NodeName = "Update AI States";
 }
 
 void UBTService_UpdateState::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
@@ -21,4 +23,5 @@ void UBTService_UpdateState::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 	// If the blackboard gets updated
 	
 	OwnerComp.GetBlackboardComponent()->SetValueAsEnum(GetSelectedBlackboardKey(), static_cast<uint8>(Character->State));
+	OwnerComp.GetBlackboardComponent()->SetValueAsFloat("ShootTimer", Character->ShootTimer);
 }

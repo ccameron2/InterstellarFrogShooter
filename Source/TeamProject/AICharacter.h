@@ -70,20 +70,36 @@ public:
 	UPROPERTY(EditAnywhere)
 		EDecisionReasons Reasons;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "AI Settings")
 		float Damage = 2.0f;
+	
+	UPROPERTY(EditAnywhere, Category = "AI Settings")
+		float RunAwayDistance = 2000.0f;
+
+	UPROPERTY(EditAnywhere, Category = "AI Settings")
+		float MinXPAmount = 10.0f;
+
+	UPROPERTY(EditAnywhere, Category = "AI Settings")
+		float MaxXPAmount = 15.0f;
+
+	UPROPERTY(EditAnywhere, Category = "AI Settings")
+		float MaxWorldX = 5000.0f;
+
+	UPROPERTY(EditAnywhere, Category = "AI Settings")
+		float MinWorldX = -5000.0f;
+
+	UPROPERTY(EditAnywhere, Category = "AI Settings")
+		float MaxWorldY = 5000.0f;
+
+	UPROPERTY(EditAnywhere, Category = "AI Settings")
+		float MinWorldY = -5000.0f;
+
+	UPROPERTY(EditAnywhere, Category = "AI Settings")
+		float ShootTimer = 2.0f;
 	
 	UPROPERTY()
 		FVector ShootFromLocation; 
 	
-	UPROPERTY(EditAnywhere)
-		float RunAwayDistance = 2000.0f;
-
-	UPROPERTY(EditAnywhere)
-		float MinXPAmount = 10.0f;
-
-	UPROPERTY(EditAnywhere)
-		float MaxXPAmount = 15.0f;
 
 private:
 	UPROPERTY(EditAnywhere)
