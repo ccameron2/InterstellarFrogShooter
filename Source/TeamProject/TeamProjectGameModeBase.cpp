@@ -147,6 +147,7 @@ void ATeamProjectGameModeBase::OnStart()
 		PlayerController->UnPossess();
 		PlayerController->AutoReceiveInput = EAutoReceiveInput::Player0;
 		PlayerController->Possess((PlayerActor));
+		PlayerActor->UpdateDeveloperMode(PlayerController->bDeveloperMode);
 
 		PlayerPawn->Destroy();
 		PlayerPawn = PlayerActor;

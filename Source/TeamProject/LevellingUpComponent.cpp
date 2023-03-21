@@ -89,6 +89,14 @@ void ULevellingUpComponent::LevelUP()
 		CurrentXP = 0;
 		BufferXP = 0;
 		AvailableSkillPoints++;
+		bLevelledUp = true;
+		FTimerHandle UnusedTimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(UnusedTimerHandle, this, &ULevellingUpComponent::ResetLevelledUpBool, 2.0f, false);
 	}
+}
+
+void ULevellingUpComponent::ResetLevelledUpBool()
+{
+	bLevelledUp = false;
 }
 

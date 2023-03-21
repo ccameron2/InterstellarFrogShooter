@@ -52,6 +52,12 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 		bool SkillTreeOpen = false;
 
+	UFUNCTION()
+		void UpdateDeveloperMode();
+
+	UPROPERTY(BlueprintReadOnly)
+		bool bDeveloperMode = false;
+	
 private:
 
 

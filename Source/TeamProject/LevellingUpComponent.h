@@ -33,6 +33,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		int LevelCap = 10;
 
+	UPROPERTY(BlueprintReadOnly)
+		bool bLevelledUp = false;
+
 	//The current XP of the player
 	UPROPERTY(BlueprintReadonly, EditAnywhere)
 		float CurrentXP = 0.0f;
@@ -80,6 +83,9 @@ public:
 	//Function to level up the player
 	UFUNCTION()
 		void LevelUP();
+
+	UFUNCTION()
+		void ResetLevelledUpBool();
 
 private:
 

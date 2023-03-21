@@ -25,7 +25,7 @@ void AMainPlayerController::BeginPlay()
 	CreditsWidget = CreateWidget(this, CreditsUserWidgets);
 
 	Menu->AddToViewport();
-	SetInputMode(FInputModeUIOnly());
+	SetInputMode(FInputModeGameAndUI());
 	bShowMouseCursor = true;
 
 	Character = Cast<APlayerCharacter>(GetPawn());
@@ -40,9 +40,11 @@ void AMainPlayerController::SetupInputComponent()
 	InputComponent->BindAxis(TEXT("Move Forward"), this, &AMainPlayerController::CallMoveForwards);
 	InputComponent->BindAxis(TEXT("Strafe"), this, &AMainPlayerController::CallStrafe);
 	InputComponent->BindAxis(TEXT("Turn"), this, &AMainPlayerController::CallTurn);
-	InputComponent->BindAxis(TEXT("Look Up"), this, &AMainPlayerController::CallLookUp);
+	InputComponent->BindAxis(TEXT("Look up"), this, &AMainPlayerController::CallLookUp);
 	InputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AMainPlayerController::CallJump);
 	InputComponent->BindAction(TEXT("Pause"), IE_Pressed, this, &AMainPlayerController::PauseGame);
+	InputComponent->BindAction(TEXT("CheatsMode"), IE_Pressed, this, &AMainPlayerController::UpdateDeveloperMode);
+
 }
 
 void AMainPlayerController::CallMoveForwards(float AxisAmount)
@@ -170,4 +172,10 @@ void AMainPlayerController::PauseGame()
 		WidgetLoader(4);
 		UGameplayStatics::SetGamePaused(GetWorld(), true);
 	}
+}
+
+void AMainPlayerController::UpdateDeveloperMode()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Updated Developer Mode"));
+	bDeveloperMode = !bDeveloperMode;
 }

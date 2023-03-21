@@ -53,7 +53,6 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	InputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &APlayerCharacter::StartFireWeapon);
 	InputComponent->BindAction(TEXT("Fire"), IE_Released, this, &APlayerCharacter::StopFireWeapon);
 	InputComponent->BindAction(TEXT("ChangeWeapon"), IE_Pressed, this, &APlayerCharacter::ChangeWeapon);
-
 }
 
 void APlayerCharacter::MoveForwards(float AxisAmount)
@@ -137,6 +136,11 @@ void APlayerCharacter::StartFireWeapon()
 void APlayerCharacter::StopFireWeapon()
 {
 	Firing = false;
+}
+
+void APlayerCharacter::UpdateDeveloperMode(bool Value)
+{
+	bDeveloperMode = Value;
 }
 
 void APlayerCharacter::ChangeWeapon()

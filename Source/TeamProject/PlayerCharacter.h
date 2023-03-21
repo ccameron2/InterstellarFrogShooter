@@ -97,6 +97,17 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void IncreaseDodgeChance(float Amount);
+
+	//--------------------------//
+	//		Developer Mode		//
+	//--------------------------//
+
+	UFUNCTION()
+		void UpdateDeveloperMode(bool Value);
+
+	UPROPERTY(BlueprintReadOnly)
+		bool bDeveloperMode = false;
+
 	
 	//------------------//
 	//		Weapons		//
