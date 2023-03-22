@@ -57,6 +57,25 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 		bool bDeveloperMode = false;
+
+	//--------------------------//
+	//		Mouse Settings		//
+	//--------------------------//
+
+	UPROPERTY(BlueprintReadWrite)
+		float InvertMouseXValue = 1.0f;
+
+	UPROPERTY(BlueprintReadWrite)
+		float InvertMouseYValue = 1.0f;
+
+	UPROPERTY(BlueprintReadWrite)
+		float MouseSensitivity = 1.0f;
+
+	UFUNCTION(BlueprintCallable)
+		void InvertMouseX() {InvertMouseXValue *= -1;} 
+
+	UFUNCTION(BlueprintCallable)
+		void InvertMouseY() {InvertMouseYValue *= -1;} 
 	
 private:
 

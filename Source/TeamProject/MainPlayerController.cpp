@@ -58,6 +58,7 @@ void AMainPlayerController::CallMoveForwards(float AxisAmount)
 //Allows the player to move the character left and right
 void AMainPlayerController::CallStrafe(float AxisAmount)
 {
+	
 	if (Character)
 	{
 		Character->Strafe(AxisAmount);
@@ -67,18 +68,22 @@ void AMainPlayerController::CallStrafe(float AxisAmount)
 //Allows the player to rotate the character up and down
 void AMainPlayerController::CallLookUp(float AxisAmount)
 {
+	float RotationAmount = AxisAmount * InvertMouseYValue * MouseSensitivity;
+	UE_LOG(LogTemp, Warning, TEXT("Rotation Amount: %f, InvertMouseYSense: %f"), RotationAmount, InvertMouseYValue)
 	if (Character)
 	{
-		Character->LookUp(AxisAmount);
+		Character->LookUp(RotationAmount);
 	}
 }
 
 //Allows the player to rotate the character left and right
 void AMainPlayerController::CallTurn(float AxisAmount)
 {
+	float RotationAmount = AxisAmount * InvertMouseXValue * MouseSensitivity;
+	UE_LOG(LogTemp, Warning, TEXT("Rotation Amount: %f, InvertMouseXSense: %f"), RotationAmount, InvertMouseXValue)
 	if (Character)
 	{
-		Character->Turn(AxisAmount);
+		Character->Turn(RotationAmount);
 	}
 }
 

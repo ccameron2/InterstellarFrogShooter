@@ -72,6 +72,12 @@ void APlayerCharacter::LookUp(float AxisAmount)
 	AddControllerPitchInput(AxisAmount);
 }
 
+//Allows the player to rotate the character left and right
+void APlayerCharacter::Turn(float AxisAmount)
+{
+	AddControllerYawInput(AxisAmount);
+}
+
 void APlayerCharacter::SpawnDrone()
 {
 	FTransform transform;
@@ -188,11 +194,7 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	return PlayerHealth;
 }
 
-//Allows the player to rotate the character left and right
-void APlayerCharacter::Turn(float AxisAmount)
-{
-	AddControllerYawInput(AxisAmount);
-}
+
 
 void APlayerCharacter::RegenerateHealth()
 {

@@ -48,8 +48,7 @@ public:
 		AController* EventInstigator, AActor* DamageCauser) override;
 
 	void Turn(float AxisAmount);
-
-
+	
 	//------------------------//
 	//		Levelling Up	  //
 	//------------------------//
