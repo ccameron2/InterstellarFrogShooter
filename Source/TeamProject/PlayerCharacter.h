@@ -86,13 +86,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 		float GetPlayerHealthPercentage() const {return PlayerHealth / PlayerMaxHealth;}
 	
-	UPROPERTY(EditAnywhere, Category="Damage")
+	UPROPERTY(EditAnywhere, Category="Damage", BlueprintReadOnly)
 		float DamageReduction = 1.0f;
 
 	UFUNCTION(BlueprintCallable)
 		void IncreaseDamageReduction(float Amount);
 
-	UPROPERTY(EditAnywhere, Category="Damage")
+	UPROPERTY(EditAnywhere, Category="Damage", BlueprintReadWrite)
 		float DodgeChance = 0.0f;
 
 	UFUNCTION(BlueprintCallable)
@@ -128,7 +128,7 @@ public:
 		UE_LOG(LogTemp, Warning, TEXT("Increased Rockets"));
 	}
 	
-	UPROPERTY(EditAnywhere, Category="Weapons")
+	UPROPERTY(EditAnywhere, Category="Weapons", BlueprintReadOnly)
 		float CannonBaseDamage = 5.0f;
 	UPROPERTY(EditAnywhere, Category="Weapons")
 		float CannonRange = 8000.0f;
@@ -143,17 +143,17 @@ public:
 	UPROPERTY(EditAnywhere, Category="Weapons")
 		float HeatDissipationRate = 0.1f;
 
-	UPROPERTY(EditAnywhere, Category="Weapons")
+	UPROPERTY(EditAnywhere, Category="Weapons", BlueprintReadOnly)
 		float EnergyBaseDamage = 50.0f;
-	UPROPERTY(EditAnywhere, Category="Weapons")
+	UPROPERTY(EditAnywhere, Category="Weapons", BlueprintReadOnly)
 		float EnergyCooldown = 2.0f;
 	UPROPERTY(EditAnywhere, Category="Weapons")
 		float EnergyRange = 16000.0f;
 
-	UPROPERTY(EditAnywhere, Category="Weapons")
+	UPROPERTY(EditAnywhere, Category="Weapons", BlueprintReadOnly)
 		float RocketCooldown = 1.0f;
 	
-	UPROPERTY(EditAnywhere, Category="Weapons")
+	UPROPERTY(EditAnywhere, Category="Weapons", BlueprintReadOnly)
 		int MaxRocketAmount = 1;
 
 	UPROPERTY(EditAnywhere, Category="Weapons")
@@ -192,6 +192,12 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 		bool bShowHitIndicator = false;
 
+	UPROPERTY(BlueprintReadOnly)
+		bool bUnlockedEnergyWeapon = false;
+
+	UPROPERTY(BlueprintReadOnly)
+		bool bUnlockedRocketLauncher = false;
+
 private:
 	UPROPERTY(EditAnywhere)
 		UStaticMeshComponent* CannonMesh1;
@@ -213,12 +219,6 @@ private:
 
 	UFUNCTION()
 		void ResetPlayerHitIndicator();
-
-	UPROPERTY()
-		bool bUnlockedEnergyWeapon = false;
-
-	UPROPERTY()
-		bool bUnlockedRocketLauncher = false;
 
 	void FireWeapon();
 	void StartFireWeapon();

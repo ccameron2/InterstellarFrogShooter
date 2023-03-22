@@ -175,6 +175,7 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	GetWorld()->GetTimerManager().SetTimer(UnusedHandle, this, &APlayerCharacter::ResetPlayerHitIndicator, 0.3f, false);
 
 	DamageAmount *= DamageReduction;
+	UE_LOG(LogTemp, Warning, TEXT("Damage Reduction: %f"), DamageAmount);
 	
 	if(UKismetMathLibrary::RandomFloatInRange(0.0f, 1.0f) > DodgeChance)
 		PlayerHealth -= DamageAmount;
