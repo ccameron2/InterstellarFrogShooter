@@ -28,7 +28,6 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	GetWorld()->GetTimerManager().SetTimer(HeatCooldownTimer, this, &APlayerCharacter::HeatTimerUp, HeatDissipationRate, true);
-	//SpawnDrone();
 }
 
 // Called every frame
@@ -43,16 +42,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 		EnergyCooldownUI -= (DeltaTime / EnergyCooldown);
 	if(bShowRocketLauncherCooldown)
 		RocketLauncherCooldownUI -= (DeltaTime / RocketCooldown);
-}
-
-// Called to bind functionality to input
-void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	InputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &APlayerCharacter::StartFireWeapon);
-	InputComponent->BindAction(TEXT("Fire"), IE_Released, this, &APlayerCharacter::StopFireWeapon);
-	InputComponent->BindAction(TEXT("ChangeWeapon"), IE_Pressed, this, &APlayerCharacter::ChangeWeapon);
 }
 
 void APlayerCharacter::MoveForwards(float AxisAmount)
@@ -97,7 +86,12 @@ void APlayerCharacter::FireWeapon()
 	int Range;
 	if (Weapon == Cannons)
 	{		
-		if(CannonHeat > MaxCannonHeat) return;
+		if(CannonHeat >= MaxCannonHeat)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Overheated"));
+			GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, CannonOverheatCooldown, false);
+			return;
+		}
 		CannonHeat += CannonHeatIncrement;
 		GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, CannonCooldown, false);
 		Damage = CannonBaseDamage;

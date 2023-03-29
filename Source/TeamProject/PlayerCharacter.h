@@ -34,10 +34,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	
 	void MoveForwards(float AxisAmount);
 
 	void Strafe(float AxisAmount);
@@ -138,10 +135,12 @@ public:
 	UPROPERTY(EditAnywhere, Category="Weapons")
 		float CannonCooldown = 0.01f;
 	UPROPERTY(EditAnywhere, Category="Weapons")
+		float CannonOverheatCooldown = 1.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapons")
 		float CannonHeat = 0.0f;
 	UPROPERTY(EditAnywhere, Category="Weapons")
 		float CannonHeatIncrement = 1.0f;
-	UPROPERTY(EditAnywhere, Category="Weapons")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapons")
 		float MaxCannonHeat = 100.0f;
 	UPROPERTY(EditAnywhere, Category="Weapons")
 		float HeatDissipationRate = 0.1f;
@@ -207,12 +206,12 @@ public:
 	UFUNCTION()
 		void IncrementKillCount() {++NumberOfKills;}
 
-private:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UStaticMeshComponent* CannonMesh1;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UStaticMeshComponent* CannonMesh2;
+private:
 
 	UPROPERTY(EditAnywhere)
 		bool DebugWeapons;
