@@ -48,14 +48,37 @@ public:
 	TArray<AAICharacter*> EnemyFrogs;
 
 	FTimerHandle WaveTimerHandle;
-	float WaveTime = 55;
-	float WaveDelay = 5;
-	int WaveNum = 0;
-	int NumFrogs = 5;
-	int NumTitleFrogs = 35;
-	int WorldSize = 0;
+	FTimerHandle WaveDisplayTimerHandle;
+
+	UPROPERTY(EditAnywhere)
+		float WaveTime = 55;
+
+	UPROPERTY(EditAnywhere)
+		float WaveDisplayTime = 2.0f;
+
+	UPROPERTY(EditAnywhere)
+		float WaveDelay = 5;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		int WaveNum = 0;
+
+	UPROPERTY(EditAnywhere)
+		int NumFrogs = 5;
+
+	UPROPERTY(EditAnywhere)
+		int NumTitleFrogs = 35;
+
+	UPROPERTY(EditAnywhere)
+		int WorldSize = 0;
+
+	UPROPERTY(BlueprintReadOnly)
+		bool WaveChanged = false;
+	
 	WaveDirection CurrentDirection;
 private:
+
+	UFUNCTION()
+		void ResetWaveChanged() { WaveChanged = false; }
 
 	FVector GetNewFrogLocation(WaveDirection direction);
 };

@@ -201,6 +201,12 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 		bool bUnlockedRocketLauncher = false;
 
+	UPROPERTY(BlueprintReadOnly)
+		int NumberOfKills = 0;
+
+	UFUNCTION()
+		void IncrementKillCount() {++NumberOfKills;}
+
 private:
 	UPROPERTY(EditAnywhere)
 		UStaticMeshComponent* CannonMesh1;
