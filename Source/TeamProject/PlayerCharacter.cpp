@@ -6,6 +6,7 @@
 #include "TestActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "AICharacter.h"
+#include "Components/AudioComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
@@ -85,7 +86,8 @@ void APlayerCharacter::FireWeapon()
 	int Damage;
 	int Range;
 	if (Weapon == Cannons)
-	{	
+	{
+		
 		if (CannonOverheated) return;
 		if(CannonHeat >= MaxCannonHeat)
 		{
@@ -105,7 +107,9 @@ void APlayerCharacter::FireWeapon()
 	}
 	else if (Weapon == Energy)
 	{
+		
 		GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, EnergyCooldown, false);
+
 		bShowEnergyCooldown = true;
 		Damage = EnergyBaseDamage;
 		Range = EnergyRange;

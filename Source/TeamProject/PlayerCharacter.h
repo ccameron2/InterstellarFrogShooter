@@ -111,6 +111,16 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 		bool bDeveloperMode = false;
 
+
+	//------------------//
+	//		Audio		//
+	//------------------//
+	UPROPERTY(EditAnywhere)
+		USoundBase* PlasmaSoundWave;
+
+	UPROPERTY(EditAnywhere)
+		USoundBase* MachineGunWave; 
+
 	
 	//------------------//
 	//		Weapons		//
@@ -237,5 +247,7 @@ private:
 	void CooldownTimerUp();
 	void CannonOverheatEnd();
 	void HeatTimerUp();
-	void Raycast(float damage, float range);
+
+	UFUNCTION()
+		void Raycast(float damage, float range);
 };
