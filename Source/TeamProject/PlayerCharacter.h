@@ -48,6 +48,10 @@ public:
 		AController* EventInstigator, AActor* DamageCauser) override;
 
 	void Turn(float AxisAmount);
+
+	void StartFireWeapon();
+	void StopFireWeapon();
+	void ChangeWeapon();
 	
 	//------------------------//
 	//		Levelling Up	  //
@@ -220,9 +224,6 @@ private:
 		void ResetPlayerHitIndicator();
 
 	void FireWeapon();
-	void StartFireWeapon();
-	void StopFireWeapon();
-	void ChangeWeapon();
 	void CooldownTimerUp();
 	void HeatTimerUp();
 	void Raycast(float damage, float range);

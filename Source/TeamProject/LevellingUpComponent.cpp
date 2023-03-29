@@ -58,13 +58,13 @@ void ULevellingUpComponent::CalculatePercentage()
 void ULevellingUpComponent::CalculateMaxXP()
 {
 	//Calculate the next Level up requirement amount through an exponential equation
-	float tempXP = BaseMaxXP * FMath::Pow(1.5f, CurrentXPLevel);
+	float TempXP = BaseMaxXP * FMath::Pow(ExponentialValue, CurrentXPLevel);
 
 	//Ceil the temporary value to ensure that there are no floating points 
-	tempXP = ceilf(tempXP);
+	TempXP = ceilf(TempXP);
 
 	//Set the MaxXp to this new temporary value
-	CurrentMaxXP = tempXP;
+	CurrentMaxXP = TempXP;
 
 }
 

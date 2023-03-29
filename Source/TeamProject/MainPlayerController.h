@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "PlayerCharacter.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+
 #include "GameFramework/PlayerController.h"
 #include "MainPlayerController.generated.h"
 
@@ -24,25 +27,88 @@ public:
 
 	virtual void SetupInputComponent();
 
-	void CallMoveForwards(float AxisAmount);
+	void CallMoveForwards(const FInputActionValue& Value);
 
-	void CallStrafe(float AxisAmount);
+	void CallStrafe(const FInputActionValue& Value);
 
-	void CallLookUp(float AxisAmount);
+	void CallLookUp(const FInputActionValue& Value);
 
-	void CallTurn(float AxisAmount);
+	void CallTurn(const FInputActionValue& Value);
 
 	void CallJump();
 
 	void RebindCharacter(APlayerCharacter* playerCharacter);
+
+	void CallFire();
+
+	void CallStopFire();
+
+	void CallChangeWeapon();
 
 	UFUNCTION(BlueprintCallable)
 		void WidgetLoader(int index);
 
 	void PauseGame();
 
+	void AddOrRemoveSkillTree();
+
 	APlayerCharacter* Character;
 
+	//--------------------------//
+	//		Input System		//
+	//--------------------------//
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
+		UInputMappingContext* DefaultMappingContext;
+
+	UPROPERTY(BlueprintReadOnly)
+		TArray<FEnhancedActionKeyMapping> KeyMappings;
+
+	UPROPERTY()
+		UEnhancedInputLocalPlayerSubsystem* Subsystem;
+
+	//----------------------//
+	//	Input Actions		//
+	//----------------------//
+
+	//Input Action for Pausing the Game
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
+		UInputAction* PauseAction;
+
+	//Input Action for Pausing the Game
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
+	UInputAction* TurnAction;
+	
+	//Input Action for Pausing the Game
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input)
+	UInputAction* LookUpAction;
+	
+	//Input Action for Turning Left
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+		UInputAction* ChangeWeaponAction;
+
+	//Input Action for Turning Right
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+		UInputAction* FireAction;
+
+	//Input Action for Jumping
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+		UInputAction* JumpAction;
+
+	//Input Action for Moving Left and Right
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+		UInputAction* StrafeAction;
+
+	//Input Action for Moving Left and Right
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+		UInputAction* ForwardAction;
+
+	//Input Action for Moving Left and Right
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+		UInputAction* SkillTreeAction;
+
+
+	
 	UPROPERTY()
 		bool BuildMode = false;
 
@@ -75,7 +141,17 @@ public:
 		void InvertMouseX() {InvertMouseXValue *= -1;} 
 
 	UFUNCTION(BlueprintCallable)
-		void InvertMouseY() {InvertMouseYValue *= -1;} 
+		void InvertMouseY() {InvertMouseYValue *= -1;}
+
+
+	// UFUNCTION(BlueprintNativeEvent)
+	// 	void InitSkills();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TSubclassOf<UUserWidget> SkillTreeWidget;
+
+	UPROPERTY(BlueprintReadWrite)
+		UUserWidget* SkillTree;
 	
 private:
 
@@ -89,8 +165,7 @@ private:
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<UUserWidget> SettingsWidget;
 
-	UPROPERTY(EditAnywhere)
-		TSubclassOf<UUserWidget> SkillTreeWidget;
+
 
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<UUserWidget> PauseUserWidget;
@@ -106,9 +181,6 @@ private:
 
 	UPROPERTY()
 		UUserWidget* Settings;
-
-	UPROPERTY()
-		UUserWidget* SkillTree;
 
 	UPROPERTY()
 		UUserWidget* PauseWidget;
