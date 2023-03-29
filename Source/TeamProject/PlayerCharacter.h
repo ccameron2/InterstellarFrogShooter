@@ -133,17 +133,19 @@ public:
 	UPROPERTY(EditAnywhere, Category="Weapons")
 		float CannonRange = 8000.0f;
 	UPROPERTY(EditAnywhere, Category="Weapons")
-		float CannonCooldown = 0.01f;
+		float CannonCooldown = 0.01f; // Cooldown between shots
+	UPROPERTY(EditAnywhere, Category = "Weapons")
+		bool  CannonOverheated = false; // Cooldown on overheat
 	UPROPERTY(EditAnywhere, Category="Weapons")
-		float CannonOverheatCooldown = 1.0f;
+		float CannonOverheatCooldown = 1.0f; // Time to put Cannons on cooldown
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapons")
 		float CannonHeat = 0.0f;
 	UPROPERTY(EditAnywhere, Category="Weapons")
-		float CannonHeatIncrement = 1.0f;
+		float CannonHeatIncrement = 5.0f; // Heat added per shot
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapons")
 		float MaxCannonHeat = 100.0f;
 	UPROPERTY(EditAnywhere, Category="Weapons")
-		float HeatDissipationRate = 0.1f;
+		float HeatDissipationRate = 0.1f; // Time between decrementing CannonHeat
 
 	UPROPERTY(EditAnywhere, Category="Weapons", BlueprintReadOnly)
 		float EnergyBaseDamage = 50.0f;
@@ -221,7 +223,7 @@ private:
 	bool Firing = false;
 
 	FTimerHandle HeatCooldownTimer;
-	
+	FTimerHandle OverheatCooldownTimer;
 	UPROPERTY()
 		ADrone* DroneRef;
 
@@ -230,6 +232,7 @@ private:
 
 	void FireWeapon();
 	void CooldownTimerUp();
+	void CannonOverheatEnd();
 	void HeatTimerUp();
 	void Raycast(float damage, float range);
 };

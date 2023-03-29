@@ -85,11 +85,13 @@ void APlayerCharacter::FireWeapon()
 	int Damage;
 	int Range;
 	if (Weapon == Cannons)
-	{		
+	{	
+		if (CannonOverheated) return;
 		if(CannonHeat >= MaxCannonHeat)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Overheated"));
-			GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, CannonOverheatCooldown, false);
+			CannonOverheated = true;
+			GetWorld()->GetTimerManager().SetTimer(OverheatCooldownTimer, this, &APlayerCharacter::CannonOverheatEnd, CannonOverheatCooldown, true);
 			return;
 		}
 		CannonHeat += CannonHeatIncrement;
@@ -216,6 +218,15 @@ void APlayerCharacter::CooldownTimerUp()
 	EnergyCooldownUI = 1.0f;
 	RocketLauncherCooldownUI = 1.0f;
 	CurrentRocketAmount = MaxRocketAmount; 
+}
+
+void APlayerCharacter::CannonOverheatEnd()
+{
+	if (CannonHeat < MaxCannonHeat / 2)
+	{
+		CannonOverheated = false;
+		GetWorldTimerManager().ClearTimer(OverheatCooldownTimer);
+	}
 }
 
 void APlayerCharacter::HeatTimerUp()
