@@ -108,7 +108,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 		UInputAction* SkillTreeAction;
 
-
+	//----------------------//
+	//		Misc     		//
+	//----------------------//
 	
 	UPROPERTY()
 		bool BuildMode = false;
@@ -144,12 +146,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void InvertMouseY() {InvertMouseYValue *= -1;}
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TSubclassOf<UUserWidget> SkillTreeWidget;
-
 	UPROPERTY(BlueprintReadWrite)
 		UUserWidget* SkillTree;
 
+	//--------------------------//
+	//		SaveGame     		//
+	//--------------------------//
+	
 	UFUNCTION(BlueprintCallable)
 		void SaveGame();
 

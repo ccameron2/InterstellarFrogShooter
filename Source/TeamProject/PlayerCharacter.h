@@ -98,6 +98,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void IncreaseDodgeChance(float Amount);
 
+	UFUNCTION(BlueprintCallable)
+		void IncreaseMaxCannonHeat(float Amount);
+
 	//--------------------------//
 	//		Developer Mode		//
 	//--------------------------//
@@ -134,7 +137,7 @@ public:
 		float CannonRange = 8000.0f;
 	UPROPERTY(EditAnywhere, Category="Weapons")
 		float CannonCooldown = 0.01f; // Cooldown between shots
-	UPROPERTY(EditAnywhere, Category = "Weapons")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapons")
 		bool  CannonOverheated = false; // Cooldown on overheat
 	UPROPERTY(EditAnywhere, Category="Weapons")
 		float CannonOverheatCooldown = 1.0f; // Time to put Cannons on cooldown

@@ -190,8 +190,6 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	return PlayerHealth;
 }
 
-
-
 void APlayerCharacter::RegenerateHealth()
 {
 	if(PlayerHealth < PlayerMaxHealth)
@@ -208,6 +206,11 @@ void APlayerCharacter::IncreaseDodgeChance(float Amount)
 {
 	if((Amount > 0.0f && Amount < 1.0f) || DodgeChance < 1.0f)
 		DodgeChance += Amount;
+}
+
+void APlayerCharacter::IncreaseMaxCannonHeat(float Amount)
+{
+	MaxCannonHeat *= Amount;
 }
 
 void APlayerCharacter::CooldownTimerUp()
