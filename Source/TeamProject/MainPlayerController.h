@@ -6,6 +6,7 @@
 #include "PlayerCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "ControlsSaveGame.h"
 
 #include "GameFramework/PlayerController.h"
 #include "MainPlayerController.generated.h"
@@ -143,18 +144,58 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void InvertMouseY() {InvertMouseYValue *= -1;}
 
-
-	// UFUNCTION(BlueprintNativeEvent)
-	// 	void InitSkills();
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TSubclassOf<UUserWidget> SkillTreeWidget;
 
 	UPROPERTY(BlueprintReadWrite)
 		UUserWidget* SkillTree;
+
+	UFUNCTION(BlueprintCallable)
+		void SaveGame();
+
+	UFUNCTION(BlueprintCallable)
+		UControlsSaveGame* CreateSaveGame();
+
+	//Update the Subsystems keyMappings with a new Key set by the player
+	UFUNCTION(BlueprintCallable)
+		void UpdateMapping(FText DisplayName, FKey Key);
+
+	//Return the Players Save Game
+	UFUNCTION(BlueprintCallable)
+		UControlsSaveGame* GetPlayerSaveGame() const {return ControlSaveGame;}
+
+	//Update the SaveGames' KeyMappings
+	UFUNCTION(BlueprintCallable)
+		void UpdateKeyMappings();
+
+	UFUNCTION(BlueprintCallable)
+		void UpdateSaveGameMouseSensitivity();
+
+	UFUNCTION(BlueprintCallable)
+		void UpdateSaveGameInvertMouseX();
+
+	UFUNCTION(BlueprintCallable)
+		void UpdateSaveGameInvertMouseY();
+
+	//Set keyMappings to the SubSystems PlayerMappableKeyMappings
+	//Delayed as it takes the Subsystem a Tick or more to update
+	UFUNCTION()
+		void DelayUpdatingKeyMappings();
+
+	//Return the current KeyMappings
+	UFUNCTION(BlueprintCallable)
+		TArray<FEnhancedActionKeyMapping> GetKeyMappings() {return KeyMappings;}
+
+	UFUNCTION(BlueprintCallable)
+		bool GetIsKeyLoaded() const {return bLoadedKeyMappings;}
+
+	UFUNCTION(BlueprintCallable)
+		void SetIsKeyLoaded(const bool Value) {bLoadedKeyMappings = Value;} 
 	
 private:
 
+	UFUNCTION()
+		void SetKeyMappings();
 
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<UUserWidget> MainMenuWidget;
@@ -164,9 +205,7 @@ private:
 
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<UUserWidget> SettingsWidget;
-
-
-
+	
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<UUserWidget> PauseUserWidget;
 	
@@ -187,4 +226,18 @@ private:
 
 	UPROPERTY()
 		UUserWidget* CreditsWidget;
+
+	//Reference to the Players SaveGame
+	UPROPERTY()
+		UControlsSaveGame* ControlSaveGame;
+
+	//Blueprint Reference to the Players SaveGame
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<UControlsSaveGame> ControlSaveGameSubclass;
+
+	UPROPERTY(EditAnywhere)
+		FString ControlSaveGameName = "Controls";
+
+	UPROPERTY()
+		bool bLoadedKeyMappings = false;
 };

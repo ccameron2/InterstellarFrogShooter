@@ -22,6 +22,19 @@ void AMainPlayerController::BeginPlay()
 	{
 		Subsystem->AddMappingContext(DefaultMappingContext, 0);
 	}
+
+	if(UGameplayStatics::DoesSaveGameExist(ControlSaveGameName, 0))
+	{
+		ControlSaveGame = Cast<UControlsSaveGame>(UGameplayStatics::LoadGameFromSlot(ControlSaveGameName, 0));
+		KeyMappings = ControlSaveGame->PlayerKeyMappings;
+		MouseSensitivity = ControlSaveGame->PlayerMouseSensitivity;
+		InvertMouseXValue = ControlSaveGame->PlayerInvertedMouseX;
+		InvertMouseYValue = ControlSaveGame->PlayerInvertedMouseY;
+	}
+	else
+	{
+		CreateSaveGame();
+	}
 	
 	Menu = CreateWidget(this, MainMenuWidget);
 	HUD = CreateWidget(this, HUDWidget);
@@ -31,7 +44,7 @@ void AMainPlayerController::BeginPlay()
 	CreditsWidget = CreateWidget(this, CreditsUserWidgets);
 
 	Menu->AddToViewport();
-	SetInputMode(FInputModeGameAndUI());
+	SetInputMode(FInputModeUIOnly());
 	bShowMouseCursor = true;
 
 	Character = Cast<APlayerCharacter>(GetPawn());
@@ -255,7 +268,70 @@ void AMainPlayerController::UpdateDeveloperMode()
 	bDeveloperMode = !bDeveloperMode;
 }
 
-// void AMainPlayerController::InitSkills_Implementation()
-// {
-// 	
-// }
+void AMainPlayerController::SaveGame()
+{
+	UGameplayStatics::SaveGameToSlot(ControlSaveGame, ControlSaveGameName, 0);
+}
+
+UControlsSaveGame* AMainPlayerController::CreateSaveGame()
+{
+	ControlSaveGame = Cast<UControlsSaveGame>(UGameplayStatics::CreateSaveGameObject(ControlSaveGameSubclass));
+
+	FTimerHandle UnusedHandle;
+	GetWorldTimerManager().SetTimer(UnusedHandle, this, &AMainPlayerController::SetKeyMappings, 0.5f, false);
+	return ControlSaveGame;
+}
+
+void AMainPlayerController::UpdateMapping(FText DisplayName, FKey Key)
+{
+	Subsystem->AddPlayerMappedKey(*DisplayName.ToString(), Key);
+
+	FTimerHandle UnusedHandle;
+	GetWorldTimerManager().SetTimer(UnusedHandle, this, &AMainPlayerController::DelayUpdatingKeyMappings, 0.1f, false);
+}
+
+void AMainPlayerController::UpdateKeyMappings()
+{
+	if(ControlSaveGame)
+		ControlSaveGame->PlayerKeyMappings = KeyMappings;
+
+	SaveGame();
+}
+
+void AMainPlayerController::UpdateSaveGameMouseSensitivity()
+{
+	if(ControlSaveGame)
+		ControlSaveGame->PlayerMouseSensitivity = MouseSensitivity;
+
+	SaveGame();
+}
+
+void AMainPlayerController::UpdateSaveGameInvertMouseX()
+{
+	if(ControlSaveGame)
+		ControlSaveGame->PlayerInvertedMouseX = InvertMouseXValue;
+
+	SaveGame();
+}
+
+void AMainPlayerController::UpdateSaveGameInvertMouseY()
+{
+	if(ControlSaveGame)
+		ControlSaveGame->PlayerInvertedMouseY = InvertMouseYValue;
+
+	SaveGame();
+}
+
+void AMainPlayerController::DelayUpdatingKeyMappings()
+{
+	KeyMappings = Subsystem->GetAllPlayerMappableActionKeyMappings();
+}
+
+void AMainPlayerController::SetKeyMappings()
+{
+	KeyMappings = Subsystem->GetAllPlayerMappableActionKeyMappings();
+
+	ControlSaveGame->PlayerKeyMappings = KeyMappings;
+
+	SaveGame();
+}
