@@ -128,67 +128,76 @@ void ABackLand::CreateMesh(FastNoise* noise)
 		ProcMesh->SetMaterial(0, ForestMaterial);
 		break;
 	}
-	/*if (terrainType != Desert)*/
-
-	// Store list of coordinates for triangulation
-	std::vector<double> coords;
-
-	float lastX = 0;
-	float lastY = 0;
-	bool inARowX = true;
-	bool inARowY = true;
-
-	for (auto vertex : Vertices)
+	if (TerrainType != Desert)
 	{
-		if (vertex.Z < WaterLevel)
+		// Store list of coordinates for triangulation
+		std::vector<double> coords;
+
+		float lastX = 0;
+		float lastY = 0;
+		bool inARowX = true;
+		bool inARowY = true;
+
+		for (auto vertex : Vertices)
 		{
-			// Set new vertex to water level and add to array
-			vertex.Z = WaterLevel;
-			WaterVertices.Push(vertex);
-			WaterColours.Push(FColor::Blue);
-
-			// Push vertex into coordinates list
-			coords.push_back(vertex.X);
-			coords.push_back(vertex.Y);
-
-			// Cant triangulate if all triangles are lined up
-			if (lastX == 0 || lastY == 0)
+			if (vertex.Z < WaterLevel)
 			{
+				// Set new vertex to water level and add to array
+				vertex.Z = WaterLevel;
+				WaterVertices.Push(vertex);
+				WaterColours.Push(FColor::Blue);
+
+				// Push vertex into coordinates list
+				coords.push_back(vertex.X);
+				coords.push_back(vertex.Y);
+
+				// Cant triangulate if all triangles are lined up
+				if (lastX == 0 || lastY == 0)
+				{
+					lastX = vertex.X;
+					lastY = vertex.Y;
+					continue;
+				}
+				if (vertex.X != lastX) { inARowX = false; }
+				if (vertex.Y != lastY) { inARowY = false; }
 				lastX = vertex.X;
 				lastY = vertex.Y;
-				continue;
 			}
-			if (vertex.X != lastX) { inARowX = false; }
-			if (vertex.Y != lastY) { inARowY = false; }
-			lastX = vertex.X;
-			lastY = vertex.Y;
 		}
-	}
 
-	if (coords.size() > 6 || coords.size() % 3 == 0)
-	{
-		if (!inARowX && !inARowY)
+		if (coords.size() > 6 || coords.size() % 3 == 0)
 		{
-			// Use external library to triangulate
-			delaunator::Delaunator d(coords);
-
-			// Push resultant triangles into triangles list
-			for (auto& triangle : d.triangles)
+			if (!inARowX && !inARowY)
 			{
-				WaterTriangles.Push(triangle);
+				// Use external library to triangulate
+				delaunator::Delaunator d(coords);
+
+				// Push resultant triangles into triangles list
+				for (auto& triangle : d.triangles)
+				{
+					WaterTriangles.Push(triangle);
+				}
+				
+				for (auto& vertex : WaterVertices)
+				{
+					vertex.Z += 30 * FMath::PerlinNoise2D(FVector2D{ vertex.X,vertex.Y } / 100);
+				}
+
+				// Calculate Normals
+				CalculateNormals(WaterVertices, WaterTriangles, WaterNormals);
+
+				// Create mesh and set material to water
+				if (TerrainType == Snowy)
+				{
+					ProcMesh->CreateMeshSection(1, WaterVertices, WaterTriangles, WaterNormals, UVs, WaterColours, WaterTangents, true);
+					ProcMesh->SetMaterial(1, IceMaterial);
+				}
+				else
+				{
+					ProcMesh->CreateMeshSection(1, WaterVertices, WaterTriangles, WaterNormals, UVs, WaterColours, WaterTangents, false);
+					ProcMesh->SetMaterial(1, WaterMaterial);
+				}
 			}
-
-			for (auto& vertex : WaterVertices)
-			{
-				vertex.Z += 50 * FMath::PerlinNoise2D(FVector2D{ vertex.X,vertex.Y } / 100);
-			}
-
-			// Calculate Normals
-			CalculateNormals(WaterVertices, WaterTriangles, WaterNormals);
-
-			// Create mesh and set material to water
-			ProcMesh->CreateMeshSection(1, WaterVertices, WaterTriangles, WaterNormals, UVs, WaterColours, WaterTangents, false);
-			ProcMesh->SetMaterial(1, WaterMaterial);
 		}
 	}
 }
@@ -224,6 +233,9 @@ void ABackLand::LoadStaticMeshes()
 	// Load material and pull from object into material interface
 	ConstructorHelpers::FObjectFinder<UMaterial> waterMaterial(TEXT("M_Water_Master'/Game/Materials/M_Water_Master.M_Water_Master'"));
 	WaterMaterial = waterMaterial.Object;
+
+	ConstructorHelpers::FObjectFinder<UMaterialInstance> iceMaterial(TEXT("M_Ice'/Game/Materials/M_Ice.M_Ice'"));
+	IceMaterial = iceMaterial.Object;
 
 	ConstructorHelpers::FObjectFinder<UMaterialInstance> forestMaterial(TEXT("M_Terrain_Forest'/Game/Materials/M_Terrain_Forest.M_Terrain_Forest'"));
 	ForestMaterial = forestMaterial.Object;

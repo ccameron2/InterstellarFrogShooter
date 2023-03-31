@@ -76,6 +76,7 @@ public:
 	TArray<FProcMeshTangent> WaterTangents;
 
 	UMaterialInterface* WaterMaterial;
+	UMaterialInterface* IceMaterial;
 	UMaterialInterface* ForestMaterial;
 	UMaterialInterface* DesertMaterial;
 	UMaterialInterface* MossyMaterial;
