@@ -29,10 +29,10 @@ public:
 		float PlayerMouseSensitivity = 0.5f;
 
 	UPROPERTY()
-		float PlayerInvertedMouseX;
+		float PlayerInvertedMouseX = 1.0f;
 	
 	UPROPERTY()
-		float PlayerInvertedMouseY;
+		float PlayerInvertedMouseY = 1.0f;
 	
 	
 };
