@@ -116,6 +116,8 @@ public:
 		CurrentRocketAmount = MaxRocketAmount;
 		UE_LOG(LogTemp, Warning, TEXT("Increased Rockets"));
 	}
+
+	int DamageMultiplier = 1;
 	
 	UPROPERTY(EditAnywhere, Category="Weapons")
 		float CannonBaseDamage = 2.0f;

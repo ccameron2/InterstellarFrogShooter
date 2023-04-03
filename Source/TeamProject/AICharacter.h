@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BasePickUpActor.h"
 
 #include "HitpointText.h"
 
@@ -59,7 +60,9 @@ private:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 		AController* EventInstigator, AActor* DamageCauser) override;
 
-
+	UFUNCTION()
+		void SpawnDrop();
+	
 public:
 	UPROPERTY(EditAnywhere)
 		float Health;
@@ -113,5 +116,9 @@ private:
 		float MaxHealth = 100.0f;
 
 	UPROPERTY()
-		float XPAmount = 0.0f;  
+		float XPAmount = 0.0f;
+
+private:
+	UPROPERTY(EditAnywhere)
+		TMap<EPickUpType, TSubclassOf<ABasePickUpActor>> PickupClasses;
 };

@@ -36,9 +36,6 @@ void AAICharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	
-	
-	
 }
 
 // Called to bind functionality to input
@@ -70,7 +67,6 @@ void AAICharacter::Shoot(AActor* TargetActor)
 			{
 				if(HitActor->GetClass()->IsChildOf(APlayerCharacter::StaticClass()))
 				{
-					UE_LOG(LogTemp, Warning, TEXT("Player Shot"));
 					UGameplayStatics::ApplyDamage(HitActor, Damage,
 						GetInstigatorController(), this, UDamageType::StaticClass());
 				}
@@ -112,9 +108,32 @@ float AAICharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 	{
 		XPAmount = UKismetMathLibrary::RandomFloatInRange(MinXPAmount, MaxXPAmount);
 		Cast<APlayerCharacter>(DamageCauser)->LevelComponent->AddXP(XPAmount);
+
+		SpawnDrop();
+		
 		Destroy();
 	}
 
 	return Health;
+}
+
+void AAICharacter::SpawnDrop()
+{
+	if(!PickupClasses.IsEmpty())
+	{
+		// Select pickup
+		EPickUpType SelectedType = EPickUpType::Damage;
+		
+		// SpawnPickUp
+
+		if(SelectedType != EPickUpType::None)
+		{
+			TSubclassOf<ABasePickUpActor> PickupToSpawn = *PickupClasses.Find(SelectedType);
+			if(PickupToSpawn != nullptr)
+			{
+				GetWorld()->SpawnActor<ABasePickUpActor>(PickupToSpawn, GetActorLocation(), GetActorRotation());
+			}
+		}
+	}
 }
 

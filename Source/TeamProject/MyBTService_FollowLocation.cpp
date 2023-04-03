@@ -17,7 +17,7 @@ void UMyBTService_FollowLocation::TickNode(UBehaviorTreeComponent& OwnerComp, ui
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 	
-	UE_LOG(LogTemp, Warning, TEXT("FollowTicks"));
+	
 	if(AAICharacter* Character = Cast<AAICharacter>(OwnerComp.GetAIOwner()->GetPawn()))
 	{
 		TArray<AActor*> OutActors;
@@ -26,14 +26,13 @@ void UMyBTService_FollowLocation::TickNode(UBehaviorTreeComponent& OwnerComp, ui
 		{
 			Controller->PerceptionComponent->GetPerceivedHostileActors(OutActors);
 		}
+
 		
 		if(!OutActors.IsEmpty())
 		{
-			
 			for(auto actor : OutActors)
 			{
 				OwnerComp.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), actor->GetActorLocation());
-				UE_LOG(LogTemp, Warning, TEXT("Updating player follow location"));
 				break; // There is only one hostile actor so should instantly leave after finding
 			}
 		}

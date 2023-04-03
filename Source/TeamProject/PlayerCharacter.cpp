@@ -88,6 +88,7 @@ void APlayerCharacter::ResetPlayerHitIndicator()
 
 void APlayerCharacter::FireWeapon()
 {
+
 	int Damage;
 	int Range;
 	if (Weapon == Cannons)
@@ -252,7 +253,7 @@ void APlayerCharacter::Raycast(float damage, float range)
 		{
 			UGameplayStatics::ApplyDamage(
 				Hit.GetActor(),
-				damage * LevelComponent->DamageMultiplier, // Damage Amount 
+				damage * LevelComponent->DamageMultiplier * DamageMultiplier, // Damage Amount 
 				GetInstigatorController(),
 				this,
 				UDamageType::StaticClass()

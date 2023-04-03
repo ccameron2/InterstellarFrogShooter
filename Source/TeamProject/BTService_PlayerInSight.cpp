@@ -16,8 +16,6 @@ void UBTService_PlayerInSight::TickNode(UBehaviorTreeComponent& OwnerComp, uint8
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
-	//UE_LOG(LogTemp, Warning, TEXT("TICKKKing"));
-
 	if(AAICharacter* Character = Cast<AAICharacter>(OwnerComp.GetAIOwner()->GetPawn()))
 	{
 		TArray<AActor*> OutActors;
