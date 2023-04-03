@@ -124,7 +124,29 @@ void AAICharacter::SpawnDrop()
 	if(!PickupClasses.IsEmpty())
 	{
 		// Select pickup
-		EPickUpType SelectedType = EPickUpType::Damage;
+		EPickUpType SelectedType = EPickUpType::Health;
+
+		//float number = FMath::RandRange(0, 100);
+		//
+		//if(number < 25.0f) // 25% chance of spawning 
+		//{
+		//	SelectedType =  EPickUpType::Health;
+//
+		//}
+		//else if(number > 25.0f && number < 50.0f)
+		//{
+		//	SelectedType =  EPickUpType::Damage;
+		//}
+		//else if(number > 50.0f && number < 75.0f)
+		//{
+		//	SelectedType =  EPickUpType::Speed;
+		//}
+		//else
+		//{
+		//	
+		//	SelectedType =  EPickUpType::None;
+		//}
+		
 		
 		// SpawnPickUp
 

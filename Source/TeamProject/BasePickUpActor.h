@@ -15,6 +15,7 @@ enum class EPickUpType
 	None = 0,
 	Health,
 	Damage,
+	Speed,
 };
 
 UCLASS()

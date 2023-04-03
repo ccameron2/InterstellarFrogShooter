@@ -26,19 +26,16 @@ EBTNodeResult::Type UBTTask_DecisionTask::ExecuteTask(UBehaviorTreeComponent& Ow
 		{
 			if (Character->Health > 60)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Decided Shoot"));
 				Character->State = EAIState::Shoot;
 			}	
 			
 			if (Character->Health  > 40 && Character->Health < 60)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Decided Find Cover"));
 				Character->State = EAIState::FindCover;
 			}
 			
 			if (Character->Health < 40)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Decided Run"));
 				Character->State = EAIState::Run;
 			}
 			

@@ -20,8 +20,12 @@ void AHealthPickUpActor::OnPickUp(APlayerCharacter* Character)
 		int newHealth = Character->PlayerHealth + HealthAmount;
 		if(newHealth >= Character->PlayerMaxHealth)
 		{
-			newHealth = newHealth - Character->PlayerMaxHealth;
-			Character->PlayerHealth += newHealth;
+			UE_LOG(LogTemp, Warning, TEXT("Current Health %f"), Character->PlayerHealth);
+			UE_LOG(LogTemp, Warning, TEXT("Health before calulation %d"), newHealth);
+			int diff = newHealth - Character->PlayerMaxHealth;
+			newHealth -= diff;
+			UE_LOG(LogTemp, Warning, TEXT("Health after calulation %d"), newHealth);
+			Character->PlayerHealth = newHealth;
 		}
 		else
 		{
