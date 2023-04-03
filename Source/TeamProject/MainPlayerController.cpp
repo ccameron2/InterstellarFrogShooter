@@ -16,11 +16,30 @@ AMainPlayerController::AMainPlayerController()
 void AMainPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
+	if(Subsystem)
+	{
+		Subsystem->AddMappingContext(DefaultMappingContext, 0);
+	}
+
+	if(UGameplayStatics::DoesSaveGameExist(ControlSaveGameName, 0))
+	{
+		ControlSaveGame = Cast<UControlsSaveGame>(UGameplayStatics::LoadGameFromSlot(ControlSaveGameName, 0));
+		KeyMappings = ControlSaveGame->PlayerKeyMappings;
+		MouseSensitivity = ControlSaveGame->PlayerMouseSensitivity;
+		InvertMouseXValue = ControlSaveGame->PlayerInvertedMouseX;
+		InvertMouseYValue = ControlSaveGame->PlayerInvertedMouseY;
+	}
+	else
+	{
+		CreateSaveGame();
+	}
 	
 	Menu = CreateWidget(this, MainMenuWidget);
 	HUD = CreateWidget(this, HUDWidget);
 	Settings = CreateWidget(this, SettingsWidget);
-	//SkillTree = CreateWidget(this, SkillTreeWidget);
+
 	PauseWidget = CreateWidget(this, PauseUserWidget);
 	CreditsWidget = CreateWidget(this, CreditsUserWidgets);
 
@@ -36,47 +55,67 @@ void AMainPlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 
 	check(InputComponent);
+	
+	//Get the EnhancedInputComponent and Bind keyActions to Different Functions
+	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
+	{
+		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Completed, this, &AMainPlayerController::PauseGame);
+		EnhancedInputComponent->BindAction(SkillTreeAction, ETriggerEvent::Completed, this, &AMainPlayerController::AddOrRemoveSkillTree);
+		
+		EnhancedInputComponent->BindAction(TurnAction, ETriggerEvent::Triggered, this, &AMainPlayerController::CallTurn);
+		EnhancedInputComponent->BindAction(LookUpAction, ETriggerEvent::Triggered, this, &AMainPlayerController::CallLookUp);
+		
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AMainPlayerController::CallJump);
 
-	InputComponent->BindAxis(TEXT("Move Forward"), this, &AMainPlayerController::CallMoveForwards);
-	InputComponent->BindAxis(TEXT("Strafe"), this, &AMainPlayerController::CallStrafe);
-	InputComponent->BindAxis(TEXT("Turn"), this, &AMainPlayerController::CallTurn);
-	InputComponent->BindAxis(TEXT("Look Up"), this, &AMainPlayerController::CallLookUp);
-	InputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AMainPlayerController::CallJump);
-	InputComponent->BindAction(TEXT("Pause"), IE_Pressed, this, &AMainPlayerController::PauseGame);
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &AMainPlayerController::CallFire);
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Completed, this, &AMainPlayerController::CallStopFire);
+
+		EnhancedInputComponent->BindAction(ChangeWeaponAction, ETriggerEvent::Completed, this, &AMainPlayerController::CallChangeWeapon);
+		
+		EnhancedInputComponent->BindAction(StrafeAction, ETriggerEvent::Triggered, this, &AMainPlayerController::CallStrafe);
+		EnhancedInputComponent->BindAction(ForwardAction, ETriggerEvent::Triggered, this, &AMainPlayerController::CallMoveForwards);
+	}
 }
 
-void AMainPlayerController::CallMoveForwards(float AxisAmount)
+void AMainPlayerController::CallMoveForwards(const FInputActionValue& Value)
 {
+	const float ForwardValue = Value.Get<float>();
 	if (Character)
 	{
-		Character->MoveForwards(AxisAmount);
+		Character->MoveForwards(ForwardValue);
 	}
 }
 
 //Allows the player to move the character left and right
-void AMainPlayerController::CallStrafe(float AxisAmount)
+void AMainPlayerController::CallStrafe(const FInputActionValue& Value)
 {
+	const float StrafeValue = Value.Get<float>();
 	if (Character)
 	{
-		Character->Strafe(AxisAmount);
+		Character->Strafe(StrafeValue);
 	}
 }
 
 //Allows the player to rotate the character up and down
-void AMainPlayerController::CallLookUp(float AxisAmount)
+void AMainPlayerController::CallLookUp(const FInputActionValue& Value)
 {
+	const float AxisAmount = Value.Get<float>();
+	float RotationAmount = AxisAmount * InvertMouseYValue * MouseSensitivity;
 	if (Character)
 	{
-		Character->LookUp(AxisAmount);
+		Character->LookUp(RotationAmount);
 	}
 }
 
 //Allows the player to rotate the character left and right
-void AMainPlayerController::CallTurn(float AxisAmount)
+void AMainPlayerController::CallTurn(const FInputActionValue& Value)
 {
+	const float AxisAmount = Value.Get<float>();
+	
+	float RotationAmount = AxisAmount * InvertMouseXValue * MouseSensitivity;
 	if (Character)
 	{
-		Character->Turn(AxisAmount);
+		Character->Turn(RotationAmount);
 	}
 }
 
@@ -92,6 +131,30 @@ void AMainPlayerController::RebindCharacter(APlayerCharacter* playerCharacter)
 {
 	Character = nullptr;
 	Character = Cast<APlayerCharacter>(playerCharacter);
+}
+
+void AMainPlayerController::CallFire()
+{
+	if(Character)
+	{
+		Character->StartFireWeapon();
+	}
+}
+
+void AMainPlayerController::CallStopFire()
+{
+	if(Character)
+	{
+		Character->StopFireWeapon();
+	}
+}
+
+void AMainPlayerController::CallChangeWeapon()
+{
+	if(Character)
+	{
+		Character->ChangeWeapon();
+	}
 }
 
 void AMainPlayerController::WidgetLoader(int index)
@@ -163,11 +226,112 @@ void AMainPlayerController::PauseGame()
 {
 	if(UGameplayStatics::IsGamePaused(GetWorld()))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Game is paused"));
+		SetInputMode(FInputModeGameOnly());
+		SetShowMouseCursor(false);
 		WidgetLoader(1);
 	}
 	else
 	{
 		WidgetLoader(4);
 		UGameplayStatics::SetGamePaused(GetWorld(), true);
+		SetInputMode(FInputModeUIOnly());
+		SetShowMouseCursor(true);
 	}
+}
+
+void AMainPlayerController::AddOrRemoveSkillTree()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Skill tree pressed"));
+	if(SkillTree)
+	{
+		if(SkillTree->IsInViewport())
+		{
+			SkillTree->RemoveFromParent();
+			UGameplayStatics::SetGamePaused(GetWorld(), false);
+			SetInputMode(FInputModeGameOnly());
+			SetShowMouseCursor(false);
+		}
+		else
+		{
+			SkillTree->AddToViewport();
+			UGameplayStatics::SetGamePaused(GetWorld(), true);
+			SetInputMode(FInputModeGameAndUI());
+			SetShowMouseCursor(true);
+		}
+	}
+}
+
+void AMainPlayerController::UpdateDeveloperMode()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Updated Developer Mode"));
+	bDeveloperMode = !bDeveloperMode;
+}
+
+void AMainPlayerController::SaveGame()
+{
+	UGameplayStatics::SaveGameToSlot(ControlSaveGame, ControlSaveGameName, 0);
+}
+
+UControlsSaveGame* AMainPlayerController::CreateSaveGame()
+{
+	ControlSaveGame = Cast<UControlsSaveGame>(UGameplayStatics::CreateSaveGameObject(ControlSaveGameSubclass));
+
+	FTimerHandle UnusedHandle;
+	GetWorldTimerManager().SetTimer(UnusedHandle, this, &AMainPlayerController::SetKeyMappings, 0.5f, false);
+	return ControlSaveGame;
+}
+
+void AMainPlayerController::UpdateMapping(FText DisplayName, FKey Key)
+{
+	Subsystem->AddPlayerMappedKey(*DisplayName.ToString(), Key);
+
+	FTimerHandle UnusedHandle;
+	GetWorldTimerManager().SetTimer(UnusedHandle, this, &AMainPlayerController::DelayUpdatingKeyMappings, 0.1f, false);
+}
+
+void AMainPlayerController::UpdateKeyMappings()
+{
+	if(ControlSaveGame)
+		ControlSaveGame->PlayerKeyMappings = KeyMappings;
+
+	SaveGame();
+}
+
+void AMainPlayerController::UpdateSaveGameMouseSensitivity()
+{
+	if(ControlSaveGame)
+		ControlSaveGame->PlayerMouseSensitivity = MouseSensitivity;
+
+	SaveGame();
+}
+
+void AMainPlayerController::UpdateSaveGameInvertMouseX()
+{
+	if(ControlSaveGame)
+		ControlSaveGame->PlayerInvertedMouseX = InvertMouseXValue;
+
+	SaveGame();
+}
+
+void AMainPlayerController::UpdateSaveGameInvertMouseY()
+{
+	if(ControlSaveGame)
+		ControlSaveGame->PlayerInvertedMouseY = InvertMouseYValue;
+
+	SaveGame();
+}
+
+void AMainPlayerController::DelayUpdatingKeyMappings()
+{
+	KeyMappings = Subsystem->GetAllPlayerMappableActionKeyMappings();
+}
+
+void AMainPlayerController::SetKeyMappings()
+{
+	KeyMappings = Subsystem->GetAllPlayerMappableActionKeyMappings();
+
+	ControlSaveGame->PlayerKeyMappings = KeyMappings;
+
+	SaveGame();
 }

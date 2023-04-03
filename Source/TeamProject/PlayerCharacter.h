@@ -34,10 +34,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	
 	void MoveForwards(float AxisAmount);
 
 	void Strafe(float AxisAmount);
@@ -49,7 +46,10 @@ public:
 
 	void Turn(float AxisAmount);
 
-
+	void StartFireWeapon();
+	void StopFireWeapon();
+	void ChangeWeapon();
+	
 	//------------------------//
 	//		Levelling Up	  //
 	//------------------------//
@@ -86,17 +86,41 @@ public:
 	UFUNCTION(BlueprintCallable)
 		float GetPlayerHealthPercentage() const {return PlayerHealth / PlayerMaxHealth;}
 	
-	UPROPERTY(EditAnywhere, Category="Damage")
+	UPROPERTY(EditAnywhere, Category="Damage", BlueprintReadOnly)
 		float DamageReduction = 1.0f;
 
 	UFUNCTION(BlueprintCallable)
 		void IncreaseDamageReduction(float Amount);
 
-	UPROPERTY(EditAnywhere, Category="Damage")
+	UPROPERTY(EditAnywhere, Category="Damage", BlueprintReadWrite)
 		float DodgeChance = 0.0f;
 
 	UFUNCTION(BlueprintCallable)
 		void IncreaseDodgeChance(float Amount);
+
+	UFUNCTION(BlueprintCallable)
+		void IncreaseMaxCannonHeat(float Amount);
+
+	//--------------------------//
+	//		Developer Mode		//
+	//--------------------------//
+
+	UFUNCTION()
+		void UpdateDeveloperMode(bool Value);
+
+	UPROPERTY(BlueprintReadOnly)
+		bool bDeveloperMode = false;
+
+
+	//------------------//
+	//		Audio		//
+	//------------------//
+	UPROPERTY(EditAnywhere)
+		USoundBase* PlasmaSoundWave;
+
+	UPROPERTY(EditAnywhere)
+		USoundBase* MachineGunWave; 
+
 	
 	//------------------//
 	//		Weapons		//
@@ -119,32 +143,36 @@ public:
 
 	int DamageMultiplier = 1;
 	
+	UPROPERTY(EditAnywhere, Category="Weapons", BlueprintReadOnly)
+		float CannonBaseDamage = 5.0f;
 	UPROPERTY(EditAnywhere, Category="Weapons")
-		float CannonBaseDamage = 2.0f;
+		float CannonRange = 8000.0f;
 	UPROPERTY(EditAnywhere, Category="Weapons")
-		float CannonRange = 5000.0f;
+		float CannonCooldown = 0.01f; // Cooldown between shots
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapons")
+		bool  CannonOverheated = false; // Cooldown on overheat
 	UPROPERTY(EditAnywhere, Category="Weapons")
-		float CannonCooldown = 0.01f;
-	UPROPERTY(EditAnywhere, Category="Weapons")
+		float CannonOverheatCooldown = 1.0f; // Time to put Cannons on cooldown
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapons")
 		float CannonHeat = 0.0f;
 	UPROPERTY(EditAnywhere, Category="Weapons")
-		float CannonHeatIncrement = 1.0f;
-	UPROPERTY(EditAnywhere, Category="Weapons")
+		float CannonHeatIncrement = 5.0f; // Heat added per shot
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapons")
 		float MaxCannonHeat = 100.0f;
 	UPROPERTY(EditAnywhere, Category="Weapons")
-		float HeatDissipationRate = 0.1f;
+		float HeatDissipationRate = 0.1f; // Time between decrementing CannonHeat
 
-	UPROPERTY(EditAnywhere, Category="Weapons")
-		float EnergyBaseDamage = 10.0f;
-	UPROPERTY(EditAnywhere, Category="Weapons")
+	UPROPERTY(EditAnywhere, Category="Weapons", BlueprintReadOnly)
+		float EnergyBaseDamage = 50.0f;
+	UPROPERTY(EditAnywhere, Category="Weapons", BlueprintReadOnly)
 		float EnergyCooldown = 2.0f;
 	UPROPERTY(EditAnywhere, Category="Weapons")
-		float EnergyRange = 10000.0f;
+		float EnergyRange = 16000.0f;
 
-	UPROPERTY(EditAnywhere, Category="Weapons")
+	UPROPERTY(EditAnywhere, Category="Weapons", BlueprintReadOnly)
 		float RocketCooldown = 1.0f;
 	
-	UPROPERTY(EditAnywhere, Category="Weapons")
+	UPROPERTY(EditAnywhere, Category="Weapons", BlueprintReadOnly)
 		int MaxRocketAmount = 1;
 
 	UPROPERTY(EditAnywhere, Category="Weapons")
@@ -183,12 +211,24 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 		bool bShowHitIndicator = false;
 
-private:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadOnly)
+		bool bUnlockedEnergyWeapon = false;
+
+	UPROPERTY(BlueprintReadOnly)
+		bool bUnlockedRocketLauncher = false;
+
+	UPROPERTY(BlueprintReadOnly)
+		int NumberOfKills = 0;
+
+	UFUNCTION()
+		void IncrementKillCount() {++NumberOfKills;}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UStaticMeshComponent* CannonMesh1;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UStaticMeshComponent* CannonMesh2;
+private:
 
 	UPROPERTY(EditAnywhere)
 		bool DebugWeapons;
@@ -198,24 +238,18 @@ private:
 	bool Firing = false;
 
 	FTimerHandle HeatCooldownTimer;
-	
+	FTimerHandle OverheatCooldownTimer;
 	UPROPERTY()
 		ADrone* DroneRef;
 
 	UFUNCTION()
 		void ResetPlayerHitIndicator();
 
-	UPROPERTY()
-		bool bUnlockedEnergyWeapon = false;
-
-	UPROPERTY()
-		bool bUnlockedRocketLauncher = false;
-
 	void FireWeapon();
-	void StartFireWeapon();
-	void StopFireWeapon();
-	void ChangeWeapon();
 	void CooldownTimerUp();
+	void CannonOverheatEnd();
 	void HeatTimerUp();
-	void Raycast(float damage, float range);
+
+	UFUNCTION()
+		void Raycast(float damage, float range);
 };

@@ -59,7 +59,7 @@ public:
 		uint64 Seed = 69420;
 
 	UPROPERTY(EditAnywhere, Category = "ProcGen")
-		int WaterLevel = -2000;
+		int WaterLevel = -1000;
 
 	TArray<FVector> Vertices;
 	TArray<int32> Triangles;
@@ -76,6 +76,7 @@ public:
 	TArray<FProcMeshTangent> WaterTangents;
 
 	UMaterialInterface* WaterMaterial;
+	UMaterialInterface* IceMaterial;
 	UMaterialInterface* ForestMaterial;
 	UMaterialInterface* DesertMaterial;
 	UMaterialInterface* MossyMaterial;

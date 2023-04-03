@@ -108,6 +108,8 @@ float AAICharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 	{
 		XPAmount = UKismetMathLibrary::RandomFloatInRange(MinXPAmount, MaxXPAmount);
 		Cast<APlayerCharacter>(DamageCauser)->LevelComponent->AddXP(XPAmount);
+		Cast<APlayerCharacter>(DamageCauser)->IncrementKillCount();
+		
 
 		SpawnDrop();
 		

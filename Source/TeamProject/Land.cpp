@@ -121,18 +121,16 @@ void ALand::PlaceObjects(FastNoise* noise)
 			FQuat Rotation = FVector{ 0,0,0 }.ToOrientationQuat();
 			transform.SetRotation(Rotation);
 
-			if (meshNum > 6)
+			if (meshNum >= 6)
 			{
 				// Scale Bushes
-				transform.SetScale3D(FVector{ float(FMath::RandRange(0.8,1.2)) });
+				transform.SetScale3D(FVector{ float(FMath::RandRange(0.8,1.0)) });
 			}
 			else
 			{
 				// Scale Trees
-				transform.SetScale3D(FVector{ float(FMath::RandRange(1,3)) });
+				transform.SetScale3D(FVector{ float(FMath::RandRange(2,3)) });
 			}
-
-			// Add instance of static mesh in world
 
 
 			// Spawn actor

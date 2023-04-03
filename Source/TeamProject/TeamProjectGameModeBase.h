@@ -29,7 +29,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-private:
+
 public:
 	bool GameStart = false;
 
@@ -49,7 +49,9 @@ public:
 	APawn* PlayerPawn;
 	ALand* LandActor;
 	TArray<ABackLand*> BackLandActors;
-	AWaveManager* WaveManager;
+
+	UPROPERTY(BlueprintReadWrite)
+		AWaveManager* WaveManager;
 
 	UFUNCTION(BlueprintCallable)
 		void OnGuiSetValues(FText InSeedString, int InTerrainType);

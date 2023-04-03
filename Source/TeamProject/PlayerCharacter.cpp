@@ -6,6 +6,7 @@
 #include "TestActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "AICharacter.h"
+#include "Components/AudioComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
@@ -28,7 +29,6 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	GetWorld()->GetTimerManager().SetTimer(HeatCooldownTimer, this, &APlayerCharacter::HeatTimerUp, HeatDissipationRate, true);
-	SpawnDrone();
 }
 
 // Called every frame
@@ -43,17 +43,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 		EnergyCooldownUI -= (DeltaTime / EnergyCooldown);
 	if(bShowRocketLauncherCooldown)
 		RocketLauncherCooldownUI -= (DeltaTime / RocketCooldown);
-}
-
-// Called to bind functionality to input
-void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	InputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &APlayerCharacter::StartFireWeapon);
-	InputComponent->BindAction(TEXT("Fire"), IE_Released, this, &APlayerCharacter::StopFireWeapon);
-	InputComponent->BindAction(TEXT("ChangeWeapon"), IE_Pressed, this, &APlayerCharacter::ChangeWeapon);
-
 }
 
 void APlayerCharacter::MoveForwards(float AxisAmount)
@@ -71,6 +60,12 @@ void APlayerCharacter::Strafe(float AxisAmount)
 void APlayerCharacter::LookUp(float AxisAmount)
 {
 	AddControllerPitchInput(AxisAmount);
+}
+
+//Allows the player to rotate the character left and right
+void APlayerCharacter::Turn(float AxisAmount)
+{
+	AddControllerYawInput(AxisAmount);
 }
 
 void APlayerCharacter::SpawnDrone()
@@ -92,8 +87,16 @@ void APlayerCharacter::FireWeapon()
 	int Damage;
 	int Range;
 	if (Weapon == Cannons)
-	{		
-		if(CannonHeat > MaxCannonHeat) return;
+	{
+		
+		if (CannonOverheated) return;
+		if(CannonHeat >= MaxCannonHeat)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Overheated"));
+			CannonOverheated = true;
+			GetWorld()->GetTimerManager().SetTimer(OverheatCooldownTimer, this, &APlayerCharacter::CannonOverheatEnd, CannonOverheatCooldown, true);
+			return;
+		}
 		CannonHeat += CannonHeatIncrement;
 		GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, CannonCooldown, false);
 		Damage = CannonBaseDamage;
@@ -105,7 +108,9 @@ void APlayerCharacter::FireWeapon()
 	}
 	else if (Weapon == Energy)
 	{
+		
 		GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, EnergyCooldown, false);
+
 		bShowEnergyCooldown = true;
 		Damage = EnergyBaseDamage;
 		Range = EnergyRange;
@@ -140,6 +145,11 @@ void APlayerCharacter::StopFireWeapon()
 	Firing = false;
 }
 
+void APlayerCharacter::UpdateDeveloperMode(bool Value)
+{
+	bDeveloperMode = Value;
+}
+
 void APlayerCharacter::ChangeWeapon()
 {
 	if (Weapon == Cannons && bUnlockedEnergyWeapon)
@@ -172,6 +182,7 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	GetWorld()->GetTimerManager().SetTimer(UnusedHandle, this, &APlayerCharacter::ResetPlayerHitIndicator, 0.3f, false);
 
 	DamageAmount *= DamageReduction;
+	UE_LOG(LogTemp, Warning, TEXT("Damage Reduction: %f"), DamageAmount);
 	
 	if(UKismetMathLibrary::RandomFloatInRange(0.0f, 1.0f) > DodgeChance)
 		PlayerHealth -= DamageAmount;
@@ -182,12 +193,6 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	}
 
 	return PlayerHealth;
-}
-
-//Allows the player to rotate the character left and right
-void APlayerCharacter::Turn(float AxisAmount)
-{
-	AddControllerYawInput(AxisAmount);
 }
 
 void APlayerCharacter::RegenerateHealth()
@@ -208,6 +213,11 @@ void APlayerCharacter::IncreaseDodgeChance(float Amount)
 		DodgeChance += Amount;
 }
 
+void APlayerCharacter::IncreaseMaxCannonHeat(float Amount)
+{
+	MaxCannonHeat *= Amount;
+}
+
 void APlayerCharacter::CooldownTimerUp()
 {
 	bShowEnergyCooldown = false;
@@ -216,6 +226,15 @@ void APlayerCharacter::CooldownTimerUp()
 	EnergyCooldownUI = 1.0f;
 	RocketLauncherCooldownUI = 1.0f;
 	CurrentRocketAmount = MaxRocketAmount; 
+}
+
+void APlayerCharacter::CannonOverheatEnd()
+{
+	if (CannonHeat < MaxCannonHeat / 2)
+	{
+		CannonOverheated = false;
+		GetWorldTimerManager().ClearTimer(OverheatCooldownTimer);
+	}
 }
 
 void APlayerCharacter::HeatTimerUp()

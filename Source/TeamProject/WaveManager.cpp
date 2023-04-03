@@ -30,7 +30,15 @@ void AWaveManager::Tick(float DeltaTime)
 
 void AWaveManager::NewWave()
 {
-	if (WaveNum > MaxWaves) { GetWorldTimerManager().ClearTimer(WaveTimerHandle); return; }
+	if (WaveNum > MaxWaves)
+	{
+		GetWorldTimerManager().ClearTimer(WaveTimerHandle);
+		GetWorldTimerManager().ClearTimer(WaveDisplayTimerHandle);
+		return;
+	}
+
+	GetWorldTimerManager().SetTimer(WaveDisplayTimerHandle, this, &AWaveManager::ResetWaveChanged, WaveDisplayTime, false);
+	WaveChanged = true;
 	NumFrogs += WaveNum * 2;
 
 	CurrentDirection = static_cast<WaveDirection>(FMath::RandRange(0, 3));

@@ -33,6 +33,12 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		int LevelCap = 10;
 
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "1.0", ClampMax = "2.0", UIMin = "1.0", UIMax = "2.0"))
+		float ExponentialValue = 1.5f;
+
+	UPROPERTY(BlueprintReadOnly)
+		bool bLevelledUp = false;
+
 	//The current XP of the player
 	UPROPERTY(BlueprintReadonly, EditAnywhere)
 		float CurrentXP = 0.0f;
@@ -80,6 +86,9 @@ public:
 	//Function to level up the player
 	UFUNCTION()
 		void LevelUP();
+
+	UFUNCTION()
+		void ResetLevelledUpBool();
 
 private:
 
