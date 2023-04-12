@@ -30,6 +30,8 @@ void AMainPlayerController::BeginPlay()
 		MouseSensitivity = ControlSaveGame->PlayerMouseSensitivity;
 		InvertMouseXValue = ControlSaveGame->PlayerInvertedMouseX;
 		InvertMouseYValue = ControlSaveGame->PlayerInvertedMouseY;
+		ColourVisionDeficiency = ControlSaveGame->PlayerColourVisionDeficiency;
+		ColourVisionDeficiencySeverity = ControlSaveGame->PlayerColourVisionDeficiencySeverity;
 	}
 	else
 	{
@@ -318,6 +320,22 @@ void AMainPlayerController::UpdateSaveGameInvertMouseY()
 {
 	if(ControlSaveGame)
 		ControlSaveGame->PlayerInvertedMouseY = InvertMouseYValue;
+
+	SaveGame();
+}
+
+void AMainPlayerController::UpdateSaveGameColourDeficiency()
+{
+	if(ControlSaveGame)
+		ControlSaveGame->PlayerColourVisionDeficiency = ColourVisionDeficiency;
+
+	SaveGame();
+}
+
+void AMainPlayerController::UpdateSaveGameColourDeficiencySeverity()
+{
+	if(ControlSaveGame)
+		ControlSaveGame->PlayerColourVisionDeficiencySeverity = ColourVisionDeficiencySeverity;
 
 	SaveGame();
 }

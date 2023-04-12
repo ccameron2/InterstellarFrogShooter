@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 
 #include "EnhancedActionKeyMapping.h"
-
+#include "Rendering/RenderingCommon.h"
 #include "GameFramework/SaveGame.h"
 #include "ControlsSaveGame.generated.h"
 
@@ -33,6 +33,11 @@ public:
 	
 	UPROPERTY()
 		float PlayerInvertedMouseY = 1.0f;
-	
+
+	UPROPERTY()
+		EColorVisionDeficiency PlayerColourVisionDeficiency = EColorVisionDeficiency::NormalVision;
+
+	UPROPERTY()
+		float PlayerColourVisionDeficiencySeverity = 1.0f;
 	
 };

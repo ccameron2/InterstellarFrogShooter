@@ -6,6 +6,7 @@
 #include "PlayerCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+//#include "Rendering/RenderingCommon.h"
 #include "ControlsSaveGame.h"
 
 #include "GameFramework/PlayerController.h"
@@ -150,6 +151,16 @@ public:
 		UUserWidget* SkillTree;
 
 	//--------------------------//
+	//		Accessibility 		//
+	//--------------------------//
+
+	UPROPERTY(BlueprintReadWrite)
+		EColorVisionDeficiency ColourVisionDeficiency = EColorVisionDeficiency::NormalVision;
+
+	UPROPERTY(BlueprintReadWrite)
+		float ColourVisionDeficiencySeverity = 1.0f;
+	
+	//--------------------------//
 	//		SaveGame     		//
 	//--------------------------//
 	
@@ -179,6 +190,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void UpdateSaveGameInvertMouseY();
+
+	UFUNCTION(BlueprintCallable)
+		void UpdateSaveGameColourDeficiency();
+
+	UFUNCTION(BlueprintCallable)
+		void UpdateSaveGameColourDeficiencySeverity();
 
 	//Set keyMappings to the SubSystems PlayerMappableKeyMappings
 	//Delayed as it takes the Subsystem a Tick or more to update
