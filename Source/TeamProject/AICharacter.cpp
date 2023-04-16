@@ -96,19 +96,30 @@ float AAICharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 	SpawnLocation.Y += UKismetMathLibrary::RandomFloatInRange(-25.0f, 25.0f);
 	SpawnLocation.Z += 150.0f;
 
-	FRotator SpawnRotation = UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->GetActorRotation();
-
-	AHitpointText* Hitpoint =  GetWorld()->SpawnActor<AHitpointText>(HitPointText, SpawnLocation, SpawnRotation);
-	Hitpoint->HitpointsText->SetText(FText::FromString(DamageString));
-	Hitpoint->HitpointsText->SetTextRenderColor(FColor::Red);
+	if (GetWorld()->GetFirstPlayerController()->GetPawn())
+	{
+		FRotator SpawnRotation = UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->GetActorRotation();
+		AHitpointText* Hitpoint = GetWorld()->SpawnActor<AHitpointText>(HitPointText, SpawnLocation, SpawnRotation);
+		Hitpoint->HitpointsText->SetText(FText::FromString(DamageString));
+		Hitpoint->HitpointsText->SetTextRenderColor(FColor::Red);
+	}
 
 	Health -= DamageAmount;
 
 	if (Health <= 0.0f)
 	{
 		XPAmount = UKismetMathLibrary::RandomFloatInRange(MinXPAmount, MaxXPAmount);
-		Cast<APlayerCharacter>(DamageCauser)->LevelComponent->AddXP(XPAmount);
-		Cast<APlayerCharacter>(DamageCauser)->IncrementKillCount();
+		if (Cast<ARocket>(DamageCauser))
+		{
+			Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn())->LevelComponent->AddXP(XPAmount);
+			Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn())->IncrementKillCount();
+		}
+		else
+		{
+			Cast<APlayerCharacter>(DamageCauser)->LevelComponent->AddXP(XPAmount);
+			Cast<APlayerCharacter>(DamageCauser)->IncrementKillCount();
+		}
+		
 		
 
 		SpawnDrop();

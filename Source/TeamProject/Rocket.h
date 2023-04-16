@@ -4,6 +4,7 @@
 
 #include "GameFramework/ProjectileMovementComponent.h" 
 #include "Components/SphereComponent.h" 
+#include "Sound/SoundCue.h" 
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
@@ -19,7 +20,8 @@ public:
 	ARocket();
 
 	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	void OnHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit);
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -30,9 +32,15 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere)
-	UStaticMeshComponent* RocketMesh;
+		UStaticMeshComponent* RocketMesh;
 	UPROPERTY(EditAnywhere)
-	UProjectileMovementComponent* ProjMovement;
+		UProjectileMovementComponent* ProjMovement;
 	UPROPERTY(EditAnywhere)
-	USphereComponent* SphereCollision;
+		USphereComponent* SphereCollision;
+	UPROPERTY(EditAnywhere)
+		UParticleSystem* ExplosionEffect;
+	UPROPERTY(EditAnywhere)
+		USoundCue* ExplosionSound;
+	UPROPERTY(EditAnywhere)
+		float Damage = 50;
 };
