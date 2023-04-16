@@ -27,8 +27,7 @@ void ARocket::OnHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse
 		// Apply a radial force to push objects away from the explosion
 		FVector ExplosionLocation = GetActorLocation();
 		TArray<FHitResult> HitResults;
-		float mExplosionRadius = 500.0f;
-		float mImpulseStrength = 100000.0f;
+	
 		UGameplayStatics::ApplyRadialDamageWithFalloff(GetWorld(), Damage, 0.0f, ExplosionLocation, mExplosionRadius, mExplosionRadius, 1.0f, nullptr, TArray<AActor*>(), this, this->GetInstigatorController());
 
 		if (OtherActor->GetRootComponent()->IsSimulatingPhysics())

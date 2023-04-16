@@ -43,4 +43,8 @@ public:
 		USoundCue* ExplosionSound;
 	UPROPERTY(EditAnywhere)
 		float Damage = 50;
+	UPROPERTY(EditAnywhere)
+		float ExplosionRadius = 500.0f;
+	UPROPERTY(EditAnywhere)
+		float ImpulseStrength = 100000.0f;
 };
