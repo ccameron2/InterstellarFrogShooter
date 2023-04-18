@@ -28,13 +28,13 @@ void ARocket::OnHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse
 		FVector ExplosionLocation = GetActorLocation();
 		TArray<FHitResult> HitResults;
 	
-		UGameplayStatics::ApplyRadialDamageWithFalloff(GetWorld(), Damage, 0.0f, ExplosionLocation, mExplosionRadius, mExplosionRadius, 1.0f, nullptr, TArray<AActor*>(), this, this->GetInstigatorController());
+		UGameplayStatics::ApplyRadialDamageWithFalloff(GetWorld(), Damage, 0.0f, ExplosionLocation, ExplosionRadius, ExplosionRadius, 1.0f, nullptr, TArray<AActor*>(), this, this->GetInstigatorController());
 
 		if (OtherActor->GetRootComponent()->IsSimulatingPhysics())
 		{
 			// Apply a force to the other actor
 			FVector ForceDirection = (OtherActor->GetActorLocation() - GetActorLocation()).GetSafeNormal();
-			OtherActor->FindComponentByClass<UStaticMeshComponent>()->AddImpulse(ForceDirection * mImpulseStrength, NAME_None, true);
+			OtherActor->FindComponentByClass<UStaticMeshComponent>()->AddImpulse(ForceDirection * ImpulseStrength, NAME_None, true);
 		}		
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionEffect, GetActorLocation());
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), ExplosionSound, GetActorLocation());
