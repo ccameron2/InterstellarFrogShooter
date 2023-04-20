@@ -4,6 +4,7 @@
 #include "BasePickUpActor.h"
 
 #include "PlayerCharacter.h"
+#include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
 
 // Sets default values
@@ -18,6 +19,8 @@ ABasePickUpActor::ABasePickUpActor()
 
 	PickUpCollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Pick Up Col Sphere"));
 	PickUpCollisionSphere->SetupAttachment(MeshComponent);
+
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>("PickUpAudio");
 }
 
 // Called when the game starts or when spawned
@@ -29,7 +32,7 @@ void ABasePickUpActor::BeginPlay()
 
 void ABasePickUpActor::OnPickUp(APlayerCharacter* Character)
 {
-	
+	AudioComponent->Play();
 }
 
 void ABasePickUpActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

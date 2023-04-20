@@ -54,6 +54,9 @@ protected:
 	UPROPERTY(EditAnywhere)
 		USphereComponent* PickUpCollisionSphere;
 
+	UPROPERTY(EditAnywhere)
+		UAudioComponent* AudioComponent;
+	
 private:
 	UPROPERTY(EditAnywhere)
 		float RotationSpeed = 100.0f;

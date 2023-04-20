@@ -12,3 +12,7 @@ Heart Model: "Heart" (https://skfb.ly/6WPTn) by Diego T. Yamaguchi is licensed u
 Energy Icon:		  https://icons8.com/icon/QtdPDOzlNdVc/lightning-bolt
 Missile Icon: 		  https://icons8.com/icon/IUiKHCKr2ZN5/missile
 Ammo Icon: 			  https://icons8.com/icon/53f3rpiNJYYV/bullet
+
+Music & Sound:
+- MixKit: https://mixkit.co/license/
+  ~ 
