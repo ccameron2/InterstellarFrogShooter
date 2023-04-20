@@ -69,9 +69,16 @@ void APlayerCharacter::Turn(float AxisAmount)
 
 void APlayerCharacter::SpawnDrone()
 {
-	FTransform transform;
-	transform.SetLocation(FVector{ 200,-50,100 });
-	DroneRef = GetWorld()->SpawnActor<ADrone>(DroneClass, transform);
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	
+	FTransform Transform;
+	GetWorld()->SpawnActor<ASceneCapture2D>(SceneCaptureClass);
+	
+	Transform.SetLocation(GetActorLocation() + FVector{ 200,-50,-50 });
+
+	DroneRef = GetWorld()->SpawnActor<ADrone>(DroneClass, Transform, SpawnParameters);
+	
 	DroneRef->AttachToActor(this,FAttachmentTransformRules::KeepRelativeTransform);
 }
 
