@@ -44,6 +44,7 @@ void AMainPlayerController::BeginPlay()
 
 	PauseWidget = CreateWidget(this, PauseUserWidget);
 	CreditsWidget = CreateWidget(this, CreditsUserWidgets);
+	EndScreen = CreateWidget(this, EndScreenWidget);
 
 	Menu->AddToViewport();
 	SetInputMode(FInputModeUIOnly());
@@ -166,7 +167,6 @@ void AMainPlayerController::WidgetLoader(int index)
 		Menu->AddToViewport();
 		HUD->RemoveFromParent();
 		Settings->RemoveFromParent();
-		//SkillTree->RemoveFromParent();
 		PauseWidget->RemoveFromParent();
 		CreditsWidget->RemoveFromParent();
 	}
@@ -176,7 +176,6 @@ void AMainPlayerController::WidgetLoader(int index)
 		HUD->AddToViewport();
 		Menu->RemoveFromParent();
 		Settings->RemoveFromParent();
-		//SkillTree->RemoveFromParent();
 		PauseWidget->RemoveFromParent();
 		CreditsWidget->RemoveFromParent();
 	}
@@ -185,22 +184,20 @@ void AMainPlayerController::WidgetLoader(int index)
 		Settings->AddToViewport();
 		Menu->RemoveFromParent();
 		HUD->RemoveFromParent();
-		//SkillTree->RemoveFromParent();
 		PauseWidget->RemoveFromParent();
 		CreditsWidget->RemoveFromParent();
 	}
 	else if (index == 3)
 	{
-		// SkillTree->AddToViewport();
-		// Menu->RemoveFromParent();
-		// HUD->RemoveFromParent();
-		// Settings->RemoveFromParent();
-		// PauseWidget->RemoveFromParent();
-		// FInputModeGameAndUI temp = FInputModeGameAndUI();
-		// temp.SetHideCursorDuringCapture(false);
-		// SetInputMode(temp);
-		// SetShowMouseCursor(true);
-		// CreditsWidget->RemoveFromParent();
+		EndScreen->AddToViewport();
+		Menu->RemoveFromParent();
+		HUD->RemoveFromParent();
+		Settings->RemoveFromParent();
+		PauseWidget->RemoveFromParent();
+		CreditsWidget->RemoveFromParent();
+		const FInputModeUIOnly Temp = FInputModeUIOnly();
+		SetInputMode(Temp);
+		SetShowMouseCursor(true);
 		
 	}
 	else if (index == 4)
@@ -209,7 +206,6 @@ void AMainPlayerController::WidgetLoader(int index)
 		Menu->RemoveFromParent();
 		HUD->RemoveFromParent();
 		Settings->RemoveFromParent();
-		//SkillTree->RemoveFromParent();
 		CreditsWidget->RemoveFromParent();
 	}
 
@@ -220,7 +216,6 @@ void AMainPlayerController::WidgetLoader(int index)
 		Menu->RemoveFromParent();
 		HUD->RemoveFromParent();
 		Settings->RemoveFromParent();
-		//SkillTree->RemoveFromParent();
 	}
 }
 
@@ -244,7 +239,6 @@ void AMainPlayerController::PauseGame()
 
 void AMainPlayerController::AddOrRemoveSkillTree()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Skill tree pressed"));
 	if(SkillTree)
 	{
 		if(SkillTree->IsInViewport())

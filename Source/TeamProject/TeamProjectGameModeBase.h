@@ -5,14 +5,13 @@
 #include "Land.h"
 #include "BackLand.h"
 
-#include <string>
 #include "PlayerCharacter.h"
 #include "WaveManager.h"
+#include "Engine/SceneCapture2D.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "TeamProjectGameModeBase.generated.h"
-
 
 /**
  * 
@@ -46,9 +45,16 @@ public:
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<AWaveManager> WaveManagerClass;
 
+	UPROPERTY()
 	AMainPlayerController* PlayerController;
+
+	UPROPERTY()
 	APawn* PlayerPawn;
+
+	UPROPERTY()
 	ALand* LandActor;
+
+	UPROPERTY()
 	TArray<ABackLand*> BackLandActors;
 
 	UPROPERTY(BlueprintReadWrite)
@@ -69,6 +75,18 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void OnDebug();
 
+	//MiniMap and Preview
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<ASceneCapture2D> MiniMapCaptureClass;
+
+	UPROPERTY(EditAnywhere)
+		UTextureRenderTarget2D* PreviewTextureTarget;
+
+	UPROPERTY()
+		ASceneCapture2D* MiniMapCapture;
+
+	UPROPERTY()
+		ASceneCapture2D* PreviewCapture;
 
 private:
 	UPROPERTY(EditAnywhere, Category = Audio)

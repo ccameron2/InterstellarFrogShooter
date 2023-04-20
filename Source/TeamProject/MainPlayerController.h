@@ -232,6 +232,9 @@ private:
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<UUserWidget> CreditsUserWidgets;
 
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<UUserWidget> EndScreenWidget;
+	
 	UPROPERTY()
 		UUserWidget* Menu;
 
@@ -246,6 +249,9 @@ private:
 
 	UPROPERTY()
 		UUserWidget* CreditsWidget;
+
+	UPROPERTY()
+		UUserWidget* EndScreen;
 
 	//Reference to the Players SaveGame
 	UPROPERTY()

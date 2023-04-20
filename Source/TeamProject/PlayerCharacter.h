@@ -7,7 +7,6 @@
 #include "LevellingUpComponent.h"
 #include "Rocket.h"
 #include "Drone.h"
-#include "Engine/SceneCapture2D.h"
 
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
@@ -175,9 +174,6 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<ADrone> DroneClass;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<ASceneCapture2D> SceneCaptureClass;
 	//----------------------//
 	//		Weapon UI		//
 	//----------------------//

@@ -2,7 +2,8 @@
 #include "TeamProjectGameModeBase.h"
 
 #include "Components/AudioComponent.h"
-#include "Kismet/GameplayStatics.h"
+#include "Components/SceneCaptureComponent2D.h"
+
 
 ATeamProjectGameModeBase::ATeamProjectGameModeBase()
 {
@@ -20,7 +21,10 @@ void ATeamProjectGameModeBase::BeginPlay()
 		AudioComponent->Play();
 	}
 		
-	
+	MiniMapCapture = GetWorld()->SpawnActor<ASceneCapture2D>(MiniMapCaptureClass);
+
+	PreviewCapture = GetWorld()->SpawnActor<ASceneCapture2D>(MiniMapCaptureClass);
+	PreviewCapture->GetCaptureComponent2D()->TextureTarget = PreviewTextureTarget;
 	
 	PlayerController = Cast<AMainPlayerController>(GetWorld()->GetFirstPlayerController());
 	PlayerPawn = PlayerController->GetPawn();
@@ -176,6 +180,8 @@ void ATeamProjectGameModeBase::OnStart()
 		PlayerPawn = PlayerActor;
 
 		PlayerController->RebindCharacter(PlayerActor);
+
+		MiniMapCapture->AttachToActor(PlayerActor, FAttachmentTransformRules::KeepRelativeTransform);
 	}
 	
 	if(EnableWaveManager)

@@ -5,6 +5,7 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "AICharacter.h"
+#include "MainPlayerController.h"
 #include "Components/AudioComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -71,15 +72,13 @@ void APlayerCharacter::SpawnDrone()
 {
 	FActorSpawnParameters SpawnParameters;
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-	
 	FTransform Transform;
-	GetWorld()->SpawnActor<ASceneCapture2D>(SceneCaptureClass);
 	
 	Transform.SetLocation(GetActorLocation() + FVector{ 200,-50,-50 });
 
 	DroneRef = GetWorld()->SpawnActor<ADrone>(DroneClass, Transform, SpawnParameters);
 	
-	DroneRef->AttachToActor(this,FAttachmentTransformRules::KeepRelativeTransform);
+	DroneRef->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 void APlayerCharacter::ResetPlayerHitIndicator()
@@ -196,6 +195,9 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 
 	if (PlayerHealth <= 0.0f)
 	{
+		Cast<AMainPlayerController>(GetController())->WidgetLoader(3);
+		//Controller->WidgetLoader(3);//End screen is Index 3
+		UGameplayStatics::SetGamePaused(GetWorld(), true);
 		Destroy();
 	}
 
