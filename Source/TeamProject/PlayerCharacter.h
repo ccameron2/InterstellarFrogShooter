@@ -11,9 +11,10 @@
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
 
-UENUM() enum WeaponType
+UENUM(BlueprintType)
+enum class WeaponType : uint8
 {
-	Cannons,
+	Cannons = 0,
 	Energy,
 	Rocket
 };
@@ -110,22 +111,12 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 		bool bDeveloperMode = false;
-
-
-	//------------------//
-	//		Audio		//
-	//------------------//
-	UPROPERTY(EditAnywhere)
-		USoundBase* PlasmaSoundWave;
-
-	UPROPERTY(EditAnywhere)
-		USoundBase* MachineGunWave; 
-
+	
 	
 	//------------------//
 	//		Weapons		//
 	//------------------//
-	WeaponType Weapon = Cannons;
+	WeaponType Weapon =  WeaponType::Cannons;
 
 	UFUNCTION(BlueprintCallable)
 		WeaponType GetWeaponType() const {return Weapon;} 
@@ -229,7 +220,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UStaticMeshComponent* CannonMesh2;
 private:
+	//------------------//
+	//		Audio		//
+	//------------------//
+	
+	UPROPERTY(EditAnywhere, Category = Audio)
+		UAudioComponent* FireAudioComponent;
 
+	UPROPERTY(EditAnywhere, Category = Audio)
+		TMap<WeaponType, USoundBase*> WeaponAudioMap;
+	
 	UPROPERTY(EditAnywhere)
 		bool DebugWeapons;
 
@@ -252,4 +252,6 @@ private:
 
 	UFUNCTION()
 		void Raycast(float damage, float range);
+	
+	void PlayFireAudio();
 };
