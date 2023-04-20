@@ -2,6 +2,8 @@
 
 
 #include "LevellingUpComponent.h"
+
+#include "Components/AudioComponent.h"
 #include "Math/UnrealMathUtility.h"
 
 // Sets default values for this component's properties
@@ -11,7 +13,8 @@ ULevellingUpComponent::ULevellingUpComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("Audio"));
+	AudioComponent->SetAutoActivate(false);
 }
 
 
@@ -76,6 +79,7 @@ void ULevellingUpComponent::AddXP(float XPToAdd)
 //Level up the player
 void ULevellingUpComponent::LevelUP()
 {
+	AudioComponent->Play();
 	if (CurrentXPLevel >= LevelCap)
 	{
 		CurrentXP = CurrentMaxXP;

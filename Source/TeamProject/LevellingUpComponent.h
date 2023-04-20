@@ -91,7 +91,9 @@ public:
 		void ResetLevelledUpBool();
 
 private:
-
+	UPROPERTY(EditAnywhere)
+		UAudioComponent* AudioComponent;
+	
 	UPROPERTY()
 		bool bMiniMap = false;
 		
