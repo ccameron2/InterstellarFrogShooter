@@ -1,14 +1,27 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 #include "TeamProjectGameModeBase.h"
+
+#include "Components/AudioComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 ATeamProjectGameModeBase::ATeamProjectGameModeBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>("BackgroundMusic");
+	AudioComponent->SetAutoActivate(false);
 }
 
 void ATeamProjectGameModeBase::BeginPlay()
 {
+	if(BackgroundSoundMap.Contains("Menu"))
+	{
+		AudioComponent->SetSound(*BackgroundSoundMap.Find("Menu"));
+		AudioComponent->Play();
+	}
+		
+	
+	
 	PlayerController = Cast<AMainPlayerController>(GetWorld()->GetFirstPlayerController());
 	PlayerPawn = PlayerController->GetPawn();
 
@@ -68,13 +81,23 @@ void ATeamProjectGameModeBase::Tick(float DeltaTime)
 {
 	if (GameStart)
 	{
-		TArray<AActor*> FoundActors;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerCharacter::StaticClass(), FoundActors);
-
-		if (FoundActors.Num() <= 0)
+		if(BackgroundSoundMap.Contains("Ambient"))
 		{
-			GameStart = false;
-			UGameplayStatics::OpenLevel(GetWorld(), "OpenWorld_3", true);
+			AudioComponent->SetSound(*BackgroundSoundMap.Find("Ambient"));
+		}
+
+		GameStart = false;
+	}
+
+	if(EnableWaveManager && !IsWaveStarted)
+	{
+		if(WaveManager->WaveNum == 1)
+		{
+			if(BackgroundSoundMap.Contains("Wave"))
+			{
+				AudioComponent->SetSound(*BackgroundSoundMap.Find("Wave"));
+			}
+			IsWaveStarted = true;
 		}
 	}
 }

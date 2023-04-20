@@ -20,7 +20,7 @@ APlayerCharacter::APlayerCharacter()
 	CannonMesh2->SetupAttachment(RootComponent);
 
 	LevelComponent = CreateDefaultSubobject<ULevellingUpComponent>(TEXT("Level Component"));
-
+	FireAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("Fire Audio Component"));
 }
 
 // Called when the game starts or when spawned
@@ -92,9 +92,9 @@ void APlayerCharacter::FireWeapon()
 
 	int Damage;
 	int Range;
-	if (Weapon == Cannons)
+	if (Weapon == WeaponType::Cannons)
 	{
-		
+		PlayFireAudio();
 		if (CannonOverheated) return;
 		if(CannonHeat >= MaxCannonHeat)
 		{
@@ -112,9 +112,9 @@ void APlayerCharacter::FireWeapon()
 		CannonMesh2->AddLocalRotation(FVector{ 0,0,-0.1 }.Rotation());
 		Raycast(Damage, Range);
 	}
-	else if (Weapon == Energy)
+	else if (Weapon ==  WeaponType::Energy)
 	{
-		
+		PlayFireAudio();
 		GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, EnergyCooldown, false);
 
 		bShowEnergyCooldown = true;
@@ -122,8 +122,9 @@ void APlayerCharacter::FireWeapon()
 		Range = EnergyRange;
 		Raycast(Damage, Range);
 	}
-	else if (Weapon == Rocket)
+	else if (Weapon ==  WeaponType::Rocket)
 	{
+		PlayFireAudio();
 		if(CurrentRocketAmount > 0)
 		{
 			GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, RocketCooldown, false);
@@ -158,24 +159,24 @@ void APlayerCharacter::UpdateDeveloperMode(bool Value)
 
 void APlayerCharacter::ChangeWeapon()
 {
-	if (Weapon == Cannons && bUnlockedEnergyWeapon)
+	if (Weapon ==  WeaponType::Cannons && bUnlockedEnergyWeapon)
 	{
-		Weapon = Energy;
+		Weapon =  WeaponType::Energy;
 		bShowCannonCooldown = false;
 	}
-	else if (Weapon == Energy)
+	else if (Weapon ==  WeaponType::Energy)
 	{
 		if (bUnlockedRocketLauncher)
 		{
-			Weapon = Rocket;
+			Weapon =  WeaponType::Rocket;
 		}
 		else
 		{
-			Weapon = Cannons;
+			Weapon =  WeaponType::Cannons;
 		}
 		bShowCannonCooldown = true;
 	}
-	else if (Weapon == Rocket) Weapon = Cannons;
+	else if (Weapon ==  WeaponType::Rocket) Weapon =  WeaponType::Cannons;
 }
 
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
@@ -284,6 +285,15 @@ void APlayerCharacter::Raycast(float damage, float range)
 				UDamageType::StaticClass()
 			);
 		}
+	}
+}
+
+void APlayerCharacter::PlayFireAudio()
+{
+	if(WeaponAudioMap.Contains(Weapon))
+	{
+		FireAudioComponent->SetSound(*WeaponAudioMap.Find(Weapon));
+		FireAudioComponent->Play();
 	}
 }
 

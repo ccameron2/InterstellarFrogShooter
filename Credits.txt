@@ -15,4 +15,8 @@ Ammo Icon: 			  https://icons8.com/icon/53f3rpiNJYYV/bullet
 
 Music & Sound:
 - MixKit: https://mixkit.co/license/
-  ~ 
+  ~ mixkit-retro-game-notification-212
+  ~ mixkit-valley-sunset-127
+  ~ mixkit-forest-walk-607
+
+638938__dibko__ribnisko-selo-rooster-birds-and-crickets - https://freesound.org/people/dibko/ - Creative Commons Attribution 4.0 International License

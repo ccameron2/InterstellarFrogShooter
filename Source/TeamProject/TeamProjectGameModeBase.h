@@ -31,6 +31,7 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 public:
+	UPROPERTY(BlueprintReadOnly)
 	bool GameStart = false;
 
 	UPROPERTY(EditAnywhere)
@@ -68,7 +69,17 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void OnDebug();
 
+
 private:
+	UPROPERTY(EditAnywhere, Category = Audio)
+		UAudioComponent* AudioComponent;
+
+	UPROPERTY(EditAnywhere, Category = Audio)
+		TMap<FString, USoundBase*> BackgroundSoundMap;
+	
 	UPROPERTY(EditAnywhere)
 		bool EnableWaveManager = true;
+
+	UPROPERTY()
+	 bool IsWaveStarted = false;
 };
