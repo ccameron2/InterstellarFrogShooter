@@ -97,7 +97,6 @@ void APlayerCharacter::FireWeapon()
 		if (CannonOverheated) return;
 		if(CannonHeat >= MaxCannonHeat)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Overheated"));
 			CannonOverheated = true;
 			GetWorld()->GetTimerManager().SetTimer(OverheatCooldownTimer, this, &APlayerCharacter::CannonOverheatEnd, CannonOverheatCooldown, true);
 			return;
@@ -119,6 +118,7 @@ void APlayerCharacter::FireWeapon()
 		bShowEnergyCooldown = true;
 		Damage = EnergyBaseDamage;
 		Range = EnergyRange;
+		
 		Raycast(Damage, Range);
 	}
 	else if (Weapon ==  WeaponType::Rocket)
@@ -188,7 +188,6 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	GetWorld()->GetTimerManager().SetTimer(UnusedHandle, this, &APlayerCharacter::ResetPlayerHitIndicator, 0.3f, false);
 
 	DamageAmount *= DamageReduction;
-	UE_LOG(LogTemp, Warning, TEXT("Damage Reduction: %f"), DamageAmount);
 	
 	if(UKismetMathLibrary::RandomFloatInRange(0.0f, 1.0f) > DodgeChance)
 		PlayerHealth -= DamageAmount;
@@ -269,8 +268,18 @@ void APlayerCharacter::Raycast(float damage, float range)
 
 	if (DebugWeapons)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Start: %s \n End: %s \n \n "), *Location.ToString(), *End.ToString());
-		DrawDebugLine(GetWorld(), Location, End, FColor(0, 0, 255), true, -1, 0, 12.333);
+		//FVector Weapon1Location = CannonMesh1->GetRelativeLocation();
+		FVector Weapon1Location = CannonMesh1->GetComponentLocation();
+		FVector Weapon2Location = CannonMesh2->GetComponentLocation();
+		DrawDebugLine(GetWorld(), Weapon1Location, End, FColor(0, 127, 255), false, 2.5, 0, 12.333);
+		DrawDebugLine(GetWorld(), Weapon2Location, End, FColor(0, 127, 255), false, 2.5, 0, 12.333);
+	}
+	if(Weapon == WeaponType::Energy)
+	{
+		FVector Weapon1Location = CannonMesh1->GetComponentLocation();
+		FVector Weapon2Location = CannonMesh2->GetComponentLocation();
+		DrawDebugLine(GetWorld(), Weapon1Location, End, FColor(0, 127, 255), false, 1, 0, 12.333);
+		DrawDebugLine(GetWorld(), Weapon2Location, End, FColor(0, 127, 255), false, 1, 0, 12.333);
 	}
 
 	bool bRayHit = GetWorld()->LineTraceSingleByChannel(Hit, Location, End, ECC_Visibility, CollisionParams);
