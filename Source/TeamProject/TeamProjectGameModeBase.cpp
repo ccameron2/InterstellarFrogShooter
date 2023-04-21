@@ -20,33 +20,33 @@ void ATeamProjectGameModeBase::BeginPlay()
 		AudioComponent->SetSound(*BackgroundSoundMap.Find("Menu"));
 		AudioComponent->Play();
 	}
-		
-	MiniMapCapture = GetWorld()->SpawnActor<ASceneCapture2D>(MiniMapCaptureClass);
+	
+	//MiniMapCapture->GetCaptureComponent2D()->Control
 
-	PreviewCapture = GetWorld()->SpawnActor<ASceneCapture2D>(MiniMapCaptureClass);
+	PreviewCapture = GetWorld()->SpawnActor<ASceneCapture2D>(PreviewCaptureClass);
 	PreviewCapture->GetCaptureComponent2D()->TextureTarget = PreviewTextureTarget;
+	//PreviewCapture->SetTextureTarget(PreviewTextureTarget);
 	
 	PlayerController = Cast<AMainPlayerController>(GetWorld()->GetFirstPlayerController());
 	PlayerPawn = PlayerController->GetPawn();
 
-	FTransform transform;
+	FTransform Transform;
 	FVector Location = { 0,0,0 };
-	transform.SetTranslation(Location);
+	Transform.SetTranslation(Location);
 
 	// Create noise object, set noise type to fractal and set seed.
 	FastNoise noise;
 	noise.SetNoiseType(FastNoise::SimplexFractal);
 	noise.SetSeed(FMath::RandRange(0, 999));
 
-	int type = 0;
+	int Type = 0;
 	if (LandClass)
 	{
-		LandActor = GetWorld()->SpawnActor<ALand>(LandClass, transform);
-		type = FMath::RandRange(0, LandActor->NumTypes - 1);
-		LandActor->Init(type, &noise);
+		LandActor = GetWorld()->SpawnActor<ALand>(LandClass, Transform);
+		Type = FMath::RandRange(0, LandActor->NumTypes - 1);
+		LandActor->Init(Type, &noise);
 	}
-
-	auto location = FVector{ 0 };
+	
 	auto size = LandActor->Size * LandActor->Scale;
 	auto scale = LandActor->Scale;
 
@@ -54,28 +54,28 @@ void ATeamProjectGameModeBase::BeginPlay()
 	{
 		for (int i = 0; i < 8; i++)
 		{
-			if(i == 0) location = FVector{-size + scale,size - scale ,0};
-			if(i == 1) location = FVector{0,size - scale,0};
-			if(i == 2) location = FVector{size - scale,size - scale,0};
-			if(i == 3) location = FVector{-size + scale,0,0};
-			if(i == 4) location = FVector{size - scale,0,0};
-			if(i == 5) location = FVector{-size + scale,-size + scale,0};
-			if(i == 6) location = FVector{0,-size + scale,0};
-			if(i == 7) location = FVector{size - scale,-size + scale,0};
-			transform.SetLocation(location);
+			if(i == 0) Location = FVector{-size + scale,size - scale ,0};
+			if(i == 1) Location = FVector{0,size - scale,0};
+			if(i == 2) Location = FVector{size - scale,size - scale,0};
+			if(i == 3) Location = FVector{-size + scale,0,0};
+			if(i == 4) Location = FVector{size - scale,0,0};
+			if(i == 5) Location = FVector{-size + scale,-size + scale,0};
+			if(i == 6) Location = FVector{0,-size + scale,0};
+			if(i == 7) Location = FVector{size - scale,-size + scale,0};
+			Transform.SetLocation(Location);
 
-			auto backLandActor = GetWorld()->SpawnActor<ABackLand>(BackLandClass, transform);
-			backLandActor->Init(type, &noise);
+			auto backLandActor = GetWorld()->SpawnActor<ABackLand>(BackLandClass, Transform);
+			backLandActor->Init(Type, &noise);
 			BackLandActors.Push(backLandActor);
 		}
 	}
 
 	Location = { 0,0,1000 };
-	transform.SetTranslation(Location);
+	Transform.SetTranslation(Location);
 
 	if(EnableWaveManager)
 	{
-		WaveManager = GetWorld()->SpawnActor<AWaveManager>(WaveManagerClass, transform);
+		WaveManager = GetWorld()->SpawnActor<AWaveManager>(WaveManagerClass, Transform);
 		WaveManager->Init(LandActor->Size * LandActor->Scale);
 		WaveManager->SpawnTitleFrogs();
 	}
@@ -180,8 +180,6 @@ void ATeamProjectGameModeBase::OnStart()
 		PlayerPawn = PlayerActor;
 
 		PlayerController->RebindCharacter(PlayerActor);
-
-		MiniMapCapture->AttachToActor(PlayerActor, FAttachmentTransformRules::KeepRelativeTransform);
 	}
 	
 	if(EnableWaveManager)

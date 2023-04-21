@@ -219,6 +219,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UStaticMeshComponent* CannonMesh2;
+
 private:
 	//------------------//
 	//		Audio		//

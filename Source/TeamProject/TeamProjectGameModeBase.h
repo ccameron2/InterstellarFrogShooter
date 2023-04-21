@@ -77,14 +77,11 @@ public:
 
 	//MiniMap and Preview
 	UPROPERTY(EditAnywhere)
-		TSubclassOf<ASceneCapture2D> MiniMapCaptureClass;
+		TSubclassOf<ASceneCapture2D> PreviewCaptureClass;
 
 	UPROPERTY(EditAnywhere)
 		UTextureRenderTarget2D* PreviewTextureTarget;
-
-	UPROPERTY()
-		ASceneCapture2D* MiniMapCapture;
-
+	
 	UPROPERTY()
 		ASceneCapture2D* PreviewCapture;
 
