@@ -31,6 +31,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void Tick(float DeltaTime) override;
+	
 	virtual void OnPickUp(APlayerCharacter* Character);
 	
 	virtual void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
@@ -38,12 +40,13 @@ protected:
 
 	
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	EPickUpType GetPickUpType();
 	
 
+	EPickUpType GetPickUpType();
+
+private:
+	void OnLifeTimerFinished();
+	
 protected:
 	UPROPERTY(EditAnywhere)
 		EPickUpType PickUpType;
@@ -56,11 +59,16 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 		UAudioComponent* AudioComponent;
+
+	bool IsPickedUp = false;
 	
 private:
 	UPROPERTY(EditAnywhere)
 		float RotationSpeed = 100.0f;
+
+	UPROPERTY(EditAnywhere)
+		float LifeTimeRate = 120.0f;
 	
-	
+	FTimerHandle LifeTimeTimer;
 
 };

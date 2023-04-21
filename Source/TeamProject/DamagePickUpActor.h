@@ -34,7 +34,7 @@ private:
 		int DamageMultiplier = 2;
 
 	UPROPERTY(EditAnywhere)
-		float PickUpTimer = 10.0f;
+		float PickUpTimer = 20.0f;
 	
 	FTimerHandle PowerUpTimer;
 

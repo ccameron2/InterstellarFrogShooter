@@ -3,6 +3,7 @@
 
 #include "DamagePickUpActor.h"
 #include "PlayerCharacter.h"
+#include "Components/AudioComponent.h"
 
 ADamagePickUpActor::ADamagePickUpActor()
 {
@@ -12,17 +13,23 @@ ADamagePickUpActor::ADamagePickUpActor()
 void ADamagePickUpActor::OnPickUp(APlayerCharacter* Character)
 {
 	Super::OnPickUp(Character);
+
 	
 	PlayerCharacter = Character;
 	PreviousDamage = Character->DamageMultiplier;
-	PlayerCharacter->DamageMultiplier *= DamageMultiplier;
-
-	GetWorld()->GetTimerManager().SetTimer(PowerUpTimer, this, &ADamagePickUpActor::OnTimerFinished, PickUpTimer, false);
-
-	// Hides and disables the pickup
-	MeshComponent->SetVisibility(false);
-	PickUpCollisionSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
+	if(PreviousDamage * DamageMultiplier == DamageMultiplier)
+	{
+		IsPickedUp = true;
+		AudioComponent->Play();
+		PlayerCharacter->DamageMultiplier *= DamageMultiplier;
+		GetWorld()->GetTimerManager().SetTimer(PowerUpTimer, this, &ADamagePickUpActor::OnTimerFinished, PickUpTimer, false);
+
+		// Hides and disables the pickup
+		MeshComponent->SetVisibility(false);
+		PickUpCollisionSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		
+	}
 	
 }
 

@@ -4,6 +4,7 @@
 #include "SpeedPickUpActor.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "PlayerCharacter.h"
+#include "Components/AudioComponent.h"
 
 ASpeedPickUpActor::ASpeedPickUpActor()
 {
@@ -16,13 +17,18 @@ void ASpeedPickUpActor::OnPickUp(APlayerCharacter* Character)
 
 	PlayerCharacter = Character;
 	PreviousSpeed = Character->GetCharacterMovement()->MaxWalkSpeed;
-	PlayerCharacter->GetCharacterMovement()->MaxWalkSpeed *= SpeedMultiplier;
 
-	GetWorld()->GetTimerManager().SetTimer(SpeedTimer, this, &ASpeedPickUpActor::OnTimerFinished, PickUpTimer, false);
+	if(PreviousSpeed != Character->DefaultMaxSpeed * SpeedMultiplier)
+	{
+		IsPickedUp = true;
+		AudioComponent->Play();
+		PlayerCharacter->GetCharacterMovement()->MaxWalkSpeed *= SpeedMultiplier;
+		GetWorld()->GetTimerManager().SetTimer(SpeedTimer, this, &ASpeedPickUpActor::OnTimerFinished, PickUpTimer, false);
 
-	// Hides and disables the pickup
-	MeshComponent->SetVisibility(false);
-	PickUpCollisionSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		// Hides and disables the pickup
+		MeshComponent->SetVisibility(false);
+		PickUpCollisionSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
 }
 
 void ASpeedPickUpActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

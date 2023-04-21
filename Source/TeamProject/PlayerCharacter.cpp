@@ -7,6 +7,7 @@
 #include "AICharacter.h"
 #include "MainPlayerController.h"
 #include "Components/AudioComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
@@ -29,6 +30,7 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	GetWorld()->GetTimerManager().SetTimer(HeatCooldownTimer, this, &APlayerCharacter::HeatTimerUp, HeatDissipationRate, true);
+	DefaultMaxSpeed = GetCharacterMovement()->MaxWalkSpeed;
 }
 
 // Called every frame

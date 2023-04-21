@@ -220,6 +220,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UStaticMeshComponent* CannonMesh2;
 
+	float DefaultMaxSpeed;
+	
 private:
 	//------------------//
 	//		Audio		//
@@ -255,4 +257,6 @@ private:
 		void Raycast(float damage, float range);
 	
 	void PlayFireAudio();
+
+	
 };

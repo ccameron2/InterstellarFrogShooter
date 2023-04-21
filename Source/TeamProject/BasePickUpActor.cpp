@@ -28,11 +28,13 @@ void ABasePickUpActor::BeginPlay()
 {
 	Super::BeginPlay();
 	PickUpCollisionSphere->OnComponentBeginOverlap.AddDynamic(this, &ABasePickUpActor::OnBeginOverlap);
+
+	GetWorld()->GetTimerManager().SetTimer(LifeTimeTimer, this, &ABasePickUpActor::OnLifeTimerFinished, LifeTimeRate, false);
 }
 
 void ABasePickUpActor::OnPickUp(APlayerCharacter* Character)
 {
-	AudioComponent->Play();
+	
 }
 
 void ABasePickUpActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -58,5 +60,11 @@ void ABasePickUpActor::Tick(float DeltaTime)
 EPickUpType ABasePickUpActor::GetPickUpType()
 {
 	return PickUpType;
+}
+
+void ABasePickUpActor::OnLifeTimerFinished()
+{
+	if(!IsPickedUp)
+		Destroy();
 }
 

@@ -4,27 +4,41 @@
 #include "HealthPickUpActor.h"
 
 #include "PlayerCharacter.h"
+#include "Components/AudioComponent.h"
 
 AHealthPickUpActor::AHealthPickUpActor()
 {
+	PrimaryActorTick.bCanEverTick = true;
 	PickUpType = EPickUpType::Health;
+}
+
+void AHealthPickUpActor::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	
+	
+
+	if(IsPickedUp && !AudioComponent->IsPlaying())
+	{
+		Destroy();
+	}
 }
 
 void AHealthPickUpActor::OnPickUp(APlayerCharacter* Character)
 {
 	Super::OnPickUp(Character);
-	UE_LOG(LogTemp, Warning, TEXT("Picked Up"));
+	
 	if(Character->PlayerHealth < Character->PlayerMaxHealth)
 	{
+		IsPickedUp = true;
+		AudioComponent->Play();
 		// Calculate if the health amount is bigger than max health or not
 		int newHealth = Character->PlayerHealth + HealthAmount;
 		if(newHealth >= Character->PlayerMaxHealth)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Current Health %f"), Character->PlayerHealth);
-			UE_LOG(LogTemp, Warning, TEXT("Health before calulation %d"), newHealth);
 			int diff = newHealth - Character->PlayerMaxHealth;
 			newHealth -= diff;
-			UE_LOG(LogTemp, Warning, TEXT("Health after calulation %d"), newHealth);
+
 			Character->PlayerHealth = newHealth;
 		}
 		else
@@ -32,9 +46,12 @@ void AHealthPickUpActor::OnPickUp(APlayerCharacter* Character)
 			Character->PlayerHealth += HealthAmount;
 		}
 		
-		Destroy();
+		// Hides and disables the pickup
+		MeshComponent->SetVisibility(false);
+		PickUpCollisionSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
-
+	
+	
 }
 
 void AHealthPickUpActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

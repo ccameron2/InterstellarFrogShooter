@@ -18,6 +18,10 @@ public:
 	AHealthPickUpActor();
 
 protected:
+
+	
+	virtual void Tick(float DeltaSeconds) override;
+	
 	virtual void OnPickUp(APlayerCharacter* Character) override;
 
 	UFUNCTION()
