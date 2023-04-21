@@ -62,6 +62,8 @@ private:
 
 	UFUNCTION()
 		void SpawnDrop();
+
+	void CalculateDrop();
 	
 public:
 	UPROPERTY(EditAnywhere)
@@ -121,4 +123,11 @@ private:
 private:
 	UPROPERTY(EditAnywhere)
 		TMap<EPickUpType, TSubclassOf<ABasePickUpActor>> PickupClasses;
+
+	UPROPERTY(EditAnywhere)
+		TMap<EPickUpType, int> DropRate;
+
+	int PickupTotalProbability = 0;
+
+	EPickUpType SelectedType;
 };

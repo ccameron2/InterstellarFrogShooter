@@ -18,6 +18,12 @@ AAICharacter::AAICharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	NavInvoker = CreateDefaultSubobject<UNavigationInvokerComponent>(TEXT("Navigation Invoker"));
+
+	// Set up default Drop Rates
+	DropRate.Add(EPickUpType::None, 25);
+	DropRate.Add(EPickUpType::Health, 25);
+	DropRate.Add(EPickUpType::Damage, 25);
+	DropRate.Add(EPickUpType::Speed, 25);
 	
 }
 
@@ -29,6 +35,8 @@ void AAICharacter::BeginPlay()
 
 	State = EAIState::Decision;
 	Reasons = EDecisionReasons::None;
+
+	CalculateDrop();
 }
 
 // Called every frame
@@ -134,34 +142,7 @@ void AAICharacter::SpawnDrop()
 {
 	if(!PickupClasses.IsEmpty())
 	{
-		// Select pickup
-		EPickUpType SelectedType;
-
-
-		const int Number = FMath::RandRange(0, 10);
-		
-		if(Number == 8) // 25% chance of spawning 
-		{
-			SelectedType =  EPickUpType::Health;
-
-		}
-		else if(Number == 9)
-		{
-			SelectedType =  EPickUpType::Damage;
-		}
-		else if(Number == 10)
-		{
-			SelectedType =  EPickUpType::Speed;
-		}
-		else
-		{
-			
-			SelectedType =  EPickUpType::None;
-		}
-		
-		
 		// SpawnPickUp
-
 		if(SelectedType != EPickUpType::None)
 		{
 			TSubclassOf<ABasePickUpActor> PickupToSpawn = *PickupClasses.Find(SelectedType);
@@ -171,5 +152,37 @@ void AAICharacter::SpawnDrop()
 			}
 		}
 	}
+}
+
+void AAICharacter::CalculateDrop()
+{
+	
+	if(!DropRate.IsEmpty())
+	{
+		// Calculate Total Probability
+		for(auto elem : DropRate)
+		{
+			PickupTotalProbability += elem.Value;
+		}
+
+		// SelectDrop
+		int cumulativeChance = 0;
+		const int Number = FMath::RandRange(0, PickupTotalProbability);
+		for(auto elem : DropRate)
+		{
+			cumulativeChance += elem.Value;
+			if(Number < cumulativeChance)
+			{
+				SelectedType = elem.Key;
+				break;
+			}
+			
+		}
+		
+	}
+
+	
+	
+	
 }
 
