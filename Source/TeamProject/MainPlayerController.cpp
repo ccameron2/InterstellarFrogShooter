@@ -1,16 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "MainPlayerController.h"
 #include "PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
 
-
 AMainPlayerController::AMainPlayerController()
 {
-	 
-	
 }
 
 void AMainPlayerController::BeginPlay()
@@ -32,6 +28,7 @@ void AMainPlayerController::BeginPlay()
 		InvertMouseYValue = ControlSaveGame->PlayerInvertedMouseY;
 		ColourVisionDeficiency = ControlSaveGame->PlayerColourVisionDeficiency;
 		ColourVisionDeficiencySeverity = ControlSaveGame->PlayerColourVisionDeficiencySeverity;
+		PlayerHighScore = ControlSaveGame->PlayerHighScore;
 	}
 	else
 	{
@@ -44,7 +41,7 @@ void AMainPlayerController::BeginPlay()
 
 	PauseWidget = CreateWidget(this, PauseUserWidget);
 	CreditsWidget = CreateWidget(this, CreditsUserWidgets);
-	EndScreen = CreateWidget(this, EndScreenWidget);
+	
 
 	Menu->AddToViewport();
 	SetInputMode(FInputModeUIOnly());
@@ -189,12 +186,14 @@ void AMainPlayerController::WidgetLoader(int index)
 	}
 	else if (index == 3)
 	{
+		EndScreen = CreateWidget(this, EndScreenWidget);
 		EndScreen->AddToViewport();
 		Menu->RemoveFromParent();
 		HUD->RemoveFromParent();
 		Settings->RemoveFromParent();
 		PauseWidget->RemoveFromParent();
 		CreditsWidget->RemoveFromParent();
+		
 		const FInputModeUIOnly Temp = FInputModeUIOnly();
 		SetInputMode(Temp);
 		SetShowMouseCursor(true);
@@ -202,11 +201,14 @@ void AMainPlayerController::WidgetLoader(int index)
 	}
 	else if (index == 4)
 	{
-		PauseWidget->AddToViewport();
-		Menu->RemoveFromParent();
-		HUD->RemoveFromParent();
-		Settings->RemoveFromParent();
-		CreditsWidget->RemoveFromParent();
+	    if(!SkillTree->IsInViewport())
+	    {
+	    	PauseWidget->AddToViewport();
+			Menu->RemoveFromParent();
+			HUD->RemoveFromParent();
+			Settings->RemoveFromParent();
+			CreditsWidget->RemoveFromParent();
+	    }
 	}
 
 	else if (index == 5)
@@ -223,7 +225,6 @@ void AMainPlayerController::PauseGame()
 {
 	if(UGameplayStatics::IsGamePaused(GetWorld()))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Game is paused"));
 		SetInputMode(FInputModeGameOnly());
 		SetShowMouseCursor(false);
 		WidgetLoader(1);
@@ -260,7 +261,6 @@ void AMainPlayerController::AddOrRemoveSkillTree()
 
 void AMainPlayerController::UpdateDeveloperMode()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Updated Developer Mode"));
 	bDeveloperMode = !bDeveloperMode;
 }
 
@@ -330,6 +330,26 @@ void AMainPlayerController::UpdateSaveGameColourDeficiencySeverity()
 {
 	if(ControlSaveGame)
 		ControlSaveGame->PlayerColourVisionDeficiencySeverity = ColourVisionDeficiencySeverity;
+
+	SaveGame();
+}
+
+void AMainPlayerController::UpdateSaveGamePlayerHighScore(bool bReset)
+{
+	if(ControlSaveGame)
+	{
+		if(bReset)
+		{
+			PlayerHighScore = 0;
+			ControlSaveGame->PlayerHighScore = 0;
+		}
+		else
+		{
+			if(PlayerScore > PlayerHighScore)
+				ControlSaveGame->PlayerHighScore = PlayerScore;
+			PlayerHighScore = PlayerScore;
+		}
+	}
 
 	SaveGame();
 }

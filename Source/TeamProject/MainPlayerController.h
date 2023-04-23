@@ -159,6 +159,15 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 		float ColourVisionDeficiencySeverity = 1.0f;
+
+	UPROPERTY(BlueprintReadWrite)
+		float PlayerHighScore = 0.0f;
+
+	UPROPERTY(BlueprintReadWrite)
+		float PlayerScore = 0.0f;
+
+	UFUNCTION(BlueprintCallable)
+		void SetPlayerScore(const float Amount) {PlayerScore += Amount; UE_LOG(LogTemp, Warning, TEXT("PlayerScore: %f"), PlayerScore);}
 	
 	//--------------------------//
 	//		SaveGame     		//
@@ -196,6 +205,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void UpdateSaveGameColourDeficiencySeverity();
+
+	UFUNCTION(BlueprintCallable)
+		void UpdateSaveGamePlayerHighScore(const bool bReset);
 
 	//Set keyMappings to the SubSystems PlayerMappableKeyMappings
 	//Delayed as it takes the Subsystem a Tick or more to update

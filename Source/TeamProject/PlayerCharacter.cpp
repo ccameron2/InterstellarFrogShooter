@@ -83,6 +83,11 @@ void APlayerCharacter::SpawnDrone()
 	DroneRef->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
+void APlayerCharacter::UpdatePlayerScore(const float Amount)
+{
+	Cast<AMainPlayerController>(GetController())->SetPlayerScore(Amount);
+}
+
 void APlayerCharacter::ResetPlayerHitIndicator()
 {
 	bShowHitIndicator = false;
@@ -196,6 +201,7 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 
 	if (PlayerHealth <= 0.0f)
 	{
+		Cast<AMainPlayerController>(GetController())->UpdateSaveGamePlayerHighScore(false);
 		Cast<AMainPlayerController>(GetController())->WidgetLoader(3);
 		//Controller->WidgetLoader(3);//End screen is Index 3
 		UGameplayStatics::SetGamePaused(GetWorld(), true);
@@ -308,5 +314,10 @@ void APlayerCharacter::PlayFireAudio()
 		FireAudioComponent->SetSound(*WeaponAudioMap.Find(Weapon));
 		FireAudioComponent->Play();
 	}
+}
+
+void APlayerCharacter::CallEndScreenLoading()
+{
+	
 }
 

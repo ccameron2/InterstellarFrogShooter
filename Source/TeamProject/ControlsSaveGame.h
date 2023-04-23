@@ -39,5 +39,7 @@ public:
 
 	UPROPERTY()
 		float PlayerColourVisionDeficiencySeverity = 1.0f;
-	
+
+	UPROPERTY()
+		float PlayerHighScore = 0.0f;	
 };

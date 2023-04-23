@@ -5,6 +5,7 @@
 
 #include "AIController.h"
 #include "AIHelpers.h"
+#include "MainPlayerController.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "NavigationInvokerComponent.h"
@@ -95,8 +96,6 @@ float AAICharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 	
 	ShootFromLocation = DamageCauser->GetActorLocation(); // Would Rather detect the direction that the shoot came from rather than get the players position
 	
-	UE_LOG(LogTemp, Warning, TEXT("TakingDamage"));
-	
 	FVector SpawnLocation = GetActorLocation();
 	FString DamageString = FString::SanitizeFloat(DamageAmount);
 
@@ -116,19 +115,15 @@ float AAICharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 
 	if (Health <= 0.0f)
 	{
+		APlayerCharacter* Player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 		XPAmount = UKismetMathLibrary::RandomFloatInRange(MinXPAmount, MaxXPAmount);
-		if (Cast<ARocket>(DamageCauser))
+		if(Player)
 		{
-			Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn())->LevelComponent->AddXP(XPAmount);
-			Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn())->IncrementKillCount();
+			Player->LevelComponent->AddXP(XPAmount);
+			Player->IncrementKillCount();
+			
+			Player->UpdatePlayerScore(XPAmount * ScoreMultiplier);
 		}
-		else
-		{
-			Cast<APlayerCharacter>(DamageCauser)->LevelComponent->AddXP(XPAmount);
-			Cast<APlayerCharacter>(DamageCauser)->IncrementKillCount();
-		}
-		
-		
 
 		SpawnDrop();
 		

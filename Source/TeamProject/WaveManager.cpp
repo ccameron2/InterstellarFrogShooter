@@ -2,6 +2,8 @@
 
 #include "WaveManager.h"
 
+#include "MainPlayerController.h"
+
 // Sets default values
 AWaveManager::AWaveManager()
 {
@@ -13,6 +15,7 @@ AWaveManager::AWaveManager()
 void AWaveManager::BeginPlay()
 {
 	Super::BeginPlay();
+	ActualWaveTime = StartingWaveTime;
 }
 
 // Called every frame
@@ -30,11 +33,14 @@ void AWaveManager::Tick(float DeltaTime)
 
 void AWaveManager::NewWave()
 {
-	if (WaveNum > MaxWaves)
+	if (MaxWaves != 0)
 	{
-		GetWorldTimerManager().ClearTimer(WaveTimerHandle);
-		GetWorldTimerManager().ClearTimer(WaveDisplayTimerHandle);
-		return;
+		if(WaveNum > MaxWaves)
+		{
+			GetWorldTimerManager().ClearTimer(WaveTimerHandle);
+			GetWorldTimerManager().ClearTimer(WaveDisplayTimerHandle);
+			return;
+		}
 	}
 
 	GetWorldTimerManager().SetTimer(WaveDisplayTimerHandle, this, &AWaveManager::ResetWaveChanged, WaveDisplayTime, false);
@@ -74,7 +80,8 @@ void AWaveManager::Init(int worldSize)
 
 void AWaveManager::StartWaves()
 {
-	GetWorld()->GetTimerManager().SetTimer(WaveTimerHandle, this, &AWaveManager::NewWave, WaveTime, true, WaveDelay);
+	GetWorld()->GetTimerManager().SetTimer(WaveTimerHandle, this, &AWaveManager::NewWave, ActualWaveTime, true, WaveDelay);
+	ActualWaveTime = WaveTime;
 }
 
 void AWaveManager::SpawnTitleFrogs()

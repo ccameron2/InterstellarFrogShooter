@@ -51,7 +51,13 @@ public:
 	FTimerHandle WaveDisplayTimerHandle;
 
 	UPROPERTY(EditAnywhere)
+		float StartingWaveTime = 120;
+	
+	UPROPERTY(EditAnywhere)
 		float WaveTime = 55;
+
+	UPROPERTY()
+		float ActualWaveTime;
 
 	UPROPERTY(EditAnywhere)
 		float WaveDisplayTime = 2.0f;
@@ -59,7 +65,7 @@ public:
 	UPROPERTY(EditAnywhere)
 		float WaveDelay = 5;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly)
 		int WaveNum = 0;
 
 	UPROPERTY(EditAnywhere)

@@ -214,6 +214,9 @@ public:
 	UFUNCTION()
 		void IncrementKillCount() {++NumberOfKills;}
 
+	UFUNCTION()
+		void UpdatePlayerScore(const float Amount);
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UStaticMeshComponent* CannonMesh1;
 
@@ -223,6 +226,8 @@ public:
 	float DefaultMaxSpeed;
 	
 private:
+
+	
 	//------------------//
 	//		Audio		//
 	//------------------//
@@ -258,5 +263,7 @@ private:
 	
 	void PlayFireAudio();
 
+	UFUNCTION()
+		void CallEndScreenLoading();
 	
 };

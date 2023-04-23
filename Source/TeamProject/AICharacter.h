@@ -101,6 +101,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "AI Settings")
 		float ShootTimer = 2.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Score")
+		float ScoreMultiplier = 2.0f;
 	
 	UPROPERTY()
 		FVector ShootFromLocation; 
