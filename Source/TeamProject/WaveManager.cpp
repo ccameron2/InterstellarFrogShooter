@@ -33,6 +33,8 @@ void AWaveManager::Tick(float DeltaTime)
 
 void AWaveManager::NewWave()
 {
+	//GetWorldTimerManager().ClearTimer(WaveTimerHandle);
+	GetWorld()->GetTimerManager().SetTimer(WaveTimerHandle, this, &AWaveManager::NewWave, ActualWaveTime);
 	if (MaxWaves != 0)
 	{
 		if(WaveNum > MaxWaves)
@@ -80,7 +82,7 @@ void AWaveManager::Init(int worldSize)
 
 void AWaveManager::StartWaves()
 {
-	GetWorld()->GetTimerManager().SetTimer(WaveTimerHandle, this, &AWaveManager::NewWave, ActualWaveTime, true, WaveDelay);
+	GetWorld()->GetTimerManager().SetTimer(WaveTimerHandle, this, &AWaveManager::NewWave, ActualWaveTime);
 	ActualWaveTime = WaveTime;
 }
 
@@ -96,8 +98,10 @@ void AWaveManager::SpawnTitleFrogs()
 		FVector End = FVector{ x,y,-5000 };
 		ECollisionChannel Channel = ECC_Visibility;
 		FCollisionQueryParams Params;
+		
 		GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, Params);
-		//DrawDebugLine(GetWorld(), Start, Hit.Location, FColor(125, 18, 255), true, -1, 0, 20);
+
+		
 		FVector location = Hit.Location;
 		location.Z += 50;
 		transform.SetTranslation(location);
@@ -136,7 +140,10 @@ FVector AWaveManager::GetNewFrogLocation(WaveDirection direction)
 	ECollisionChannel Channel = ECC_Visibility;
 	FCollisionQueryParams Params;
 	GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, Params);
-	DrawDebugLine(GetWorld(), Start, Hit.Location, FColor(125, 18, 255), true, -1, 0, 20);
+
+	if(bDebug)
+		DrawDebugLine(GetWorld(), Start, Hit.Location, FColor(125, 18, 255), true, -1, 0, 20);
+
 	FVector location = Hit.Location;
 	location.Z += 50;
 

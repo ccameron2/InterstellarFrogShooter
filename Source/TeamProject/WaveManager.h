@@ -79,6 +79,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 		bool WaveChanged = false;
+
+	UPROPERTY(EditAnywhere)
+		bool bDebug = false;
 	
 	WaveDirection CurrentDirection;
 private:

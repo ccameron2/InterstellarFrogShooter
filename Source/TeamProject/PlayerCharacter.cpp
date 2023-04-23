@@ -203,7 +203,7 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	{
 		Cast<AMainPlayerController>(GetController())->UpdateSaveGamePlayerHighScore(false);
 		Cast<AMainPlayerController>(GetController())->WidgetLoader(3);
-		//Controller->WidgetLoader(3);//End screen is Index 3
+
 		UGameplayStatics::SetGamePaused(GetWorld(), true);
 		Destroy();
 	}
@@ -276,7 +276,6 @@ void APlayerCharacter::Raycast(float damage, float range)
 
 	if (DebugWeapons)
 	{
-		//FVector Weapon1Location = CannonMesh1->GetRelativeLocation();
 		FVector Weapon1Location = CannonMesh1->GetComponentLocation();
 		FVector Weapon2Location = CannonMesh2->GetComponentLocation();
 		DrawDebugLine(GetWorld(), Weapon1Location, End, FColor(0, 127, 255), false, 2.5, 0, 12.333);
@@ -315,9 +314,3 @@ void APlayerCharacter::PlayFireAudio()
 		FireAudioComponent->Play();
 	}
 }
-
-void APlayerCharacter::CallEndScreenLoading()
-{
-	
-}
-

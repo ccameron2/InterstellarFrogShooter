@@ -167,7 +167,7 @@ public:
 		float PlayerScore = 0.0f;
 
 	UFUNCTION(BlueprintCallable)
-		void SetPlayerScore(const float Amount) {PlayerScore += Amount; UE_LOG(LogTemp, Warning, TEXT("PlayerScore: %f"), PlayerScore);}
+		void SetPlayerScore(const float Amount) {PlayerScore += Amount;}
 	
 	//--------------------------//
 	//		SaveGame     		//

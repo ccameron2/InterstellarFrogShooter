@@ -261,9 +261,5 @@ private:
 	UFUNCTION()
 		void Raycast(float damage, float range);
 	
-	void PlayFireAudio();
-
-	UFUNCTION()
-		void CallEndScreenLoading();
-	
+	void PlayFireAudio();	
 };
