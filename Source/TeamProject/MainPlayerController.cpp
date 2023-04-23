@@ -346,8 +346,10 @@ void AMainPlayerController::UpdateSaveGamePlayerHighScore(bool bReset)
 		else
 		{
 			if(PlayerScore > PlayerHighScore)
+			{
 				ControlSaveGame->PlayerHighScore = PlayerScore;
-			PlayerHighScore = PlayerScore;
+				PlayerHighScore = PlayerScore;
+			}
 		}
 	}
 
