@@ -158,7 +158,7 @@ public:
 	UPROPERTY(EditAnywhere, Category="Weapons", BlueprintReadOnly)
 		float EnergyCooldown = 2.0f;
 	UPROPERTY(EditAnywhere, Category="Weapons")
-		float EnergyRange = 16000.0f;
+		float EnergyRange = 12000.0f;
 
 	UPROPERTY(EditAnywhere, Category="Weapons", BlueprintReadOnly)
 		float RocketCooldown = 1.0f;

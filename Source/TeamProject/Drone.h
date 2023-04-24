@@ -4,6 +4,7 @@
 #include "GameFramework/FloatingPawnMovement.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "AICharacter.h"
 #include "Drone.generated.h"
 
 UCLASS()
@@ -22,13 +23,30 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	void WeaponCooldownUp();
+
 	UPROPERTY(EditAnywhere)
 		UStaticMeshComponent* DroneMesh;
+
 	UPROPERTY(EditAnywhere)
 		UFloatingPawnMovement* FloatingComponent;
 
 	UPROPERTY(EditAnywhere)
 		float MaxDistance = 1000.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float DroneDamage = 10.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool UnlockedWeapon = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool AttackRange = true;
+
+	bool WeaponOnCooldown = false;
+	FTimerHandle WeaponCooldownTimer;
+	float WeaponCooldownTime = 2.0f;
 
 	bool Up = true;
 	FTimerHandle WobbleTimer;

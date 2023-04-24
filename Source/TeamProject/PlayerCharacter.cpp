@@ -76,11 +76,12 @@ void APlayerCharacter::SpawnDrone()
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 	FTransform Transform;
 	
-	Transform.SetLocation(GetActorLocation() + FVector{ 200,-50,-50 });
-
+	Transform.SetLocation(GetActorLocation() + FVector{ 200,-100, 50 });
+	//Transform.SetRotation(GetActorRotation().Quaternion());
 	DroneRef = GetWorld()->SpawnActor<ADrone>(DroneClass, Transform, SpawnParameters);
 	
 	DroneRef->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+	DroneRef->bUseControllerRotationRoll = false;
 }
 
 void APlayerCharacter::UpdatePlayerScore(const float Amount)
@@ -95,7 +96,6 @@ void APlayerCharacter::ResetPlayerHitIndicator()
 
 void APlayerCharacter::FireWeapon()
 {
-
 	int Damage;
 	int Range;
 	if (Weapon == WeaponType::Cannons)
