@@ -132,6 +132,9 @@ public:
 		UE_LOG(LogTemp, Warning, TEXT("Increased Rockets"));
 	}
 
+	UFUNCTION(BlueprintCallable)
+		ADrone* GetDrone() const;
+
 	int DamageMultiplier = 1;
 	
 	UPROPERTY(EditAnywhere, Category="Weapons", BlueprintReadOnly)

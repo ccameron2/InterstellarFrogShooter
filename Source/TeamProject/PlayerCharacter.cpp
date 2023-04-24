@@ -163,6 +163,18 @@ void APlayerCharacter::UpdateDeveloperMode(bool Value)
 	bDeveloperMode = Value;
 }
 
+ADrone*	APlayerCharacter::GetDrone() const
+{
+	if(DroneRef)
+	{
+		return DroneRef;
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
 void APlayerCharacter::ChangeWeapon()
 {
 	if (Weapon ==  WeaponType::Cannons && bUnlockedEnergyWeapon)

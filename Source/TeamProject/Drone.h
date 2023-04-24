@@ -41,14 +41,16 @@ public:
 		float DroneDamage = 10.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		bool UnlockedWeapon = true;
+		bool UnlockedWeapon = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float AttackRange = 10000.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float WeaponCooldownTime = 2.0f;
+	
 	bool WeaponOnCooldown = false;
 	FTimerHandle WeaponCooldownTimer;
-	float WeaponCooldownTime = 2.0f;
 
 	bool Up = true;
 	FTimerHandle WobbleTimer;
