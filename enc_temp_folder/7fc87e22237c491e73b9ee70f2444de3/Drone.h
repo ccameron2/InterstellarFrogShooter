@@ -3,8 +3,6 @@
 #pragma once
 #include "GameFramework/FloatingPawnMovement.h"
 #include "CoreMinimal.h"
-#include "Components/SphereComponent.h" 
-
 #include "GameFramework/Pawn.h"
 #include "AICharacter.h"
 #include "Drone.generated.h"
@@ -33,9 +31,6 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		UFloatingPawnMovement* FloatingComponent;
-
-	UPROPERTY(EditAnywhere)
-		USphereComponent* SphereCollision;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float DroneDamage = 10.0f;
