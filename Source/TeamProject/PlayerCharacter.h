@@ -227,7 +227,8 @@ public:
 		UStaticMeshComponent* CannonMesh2;
 
 	float DefaultMaxSpeed;
-	
+	bool Underwater = false;
+	bool SpeedReset = false;
 private:
 
 	
@@ -247,7 +248,7 @@ private:
 	FTimerHandle WeaponCooldownTimer;
 	bool OnCooldown = false;
 	bool Firing = false;
-
+	
 	FTimerHandle HeatCooldownTimer;
 	FTimerHandle OverheatCooldownTimer;
 	UPROPERTY()

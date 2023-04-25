@@ -45,6 +45,21 @@ void APlayerCharacter::Tick(float DeltaTime)
 		EnergyCooldownUI -= (DeltaTime / EnergyCooldown);
 	if(bShowRocketLauncherCooldown)
 		RocketLauncherCooldownUI -= (DeltaTime / RocketCooldown);
+
+	// Slow the character if underwater
+	if (Underwater)
+	{
+		 GetCharacterMovement()->MaxWalkSpeed = DefaultMaxSpeed / 2;
+		 SpeedReset = false;
+	}
+	else
+	{
+		if (!SpeedReset)
+		{
+			GetCharacterMovement()->MaxWalkSpeed = DefaultMaxSpeed;
+			SpeedReset = true;
+		}
+	}
 }
 
 void APlayerCharacter::MoveForwards(float AxisAmount)

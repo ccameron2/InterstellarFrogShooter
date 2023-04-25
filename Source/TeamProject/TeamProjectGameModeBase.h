@@ -97,4 +97,7 @@ private:
 
 	UPROPERTY()
 	 bool IsWaveStarted = false;
+
+	APlayerCharacter* PlayerActor;
+
 };

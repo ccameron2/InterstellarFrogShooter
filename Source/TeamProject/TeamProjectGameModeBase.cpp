@@ -104,6 +104,18 @@ void ATeamProjectGameModeBase::Tick(float DeltaTime)
 			IsWaveStarted = true;
 		}
 	}
+
+	if (PlayerActor)
+	{
+		if (PlayerActor->GetActorLocation().Z < LandActor->WaterLevel)
+		{
+			PlayerActor->Underwater = true;
+		}
+		else
+		{
+			PlayerActor->Underwater = false;
+		}
+	}
 }
 
 void ATeamProjectGameModeBase::OnGuiSetValues(FText InSeedString, int InTerrainType)
@@ -170,7 +182,7 @@ void ATeamProjectGameModeBase::OnStart()
 		FVector Location = { 0,0,1000 };
 		Transform.SetTranslation(Location);
 
-		APlayerCharacter* PlayerActor = GetWorld()->SpawnActor<APlayerCharacter>(PlayerCharacterClass, Transform);
+		PlayerActor = GetWorld()->SpawnActor<APlayerCharacter>(PlayerCharacterClass, Transform);
 		PlayerController->UnPossess();
 		PlayerController->AutoReceiveInput = EAutoReceiveInput::Player0;
 		PlayerController->Possess((PlayerActor));
