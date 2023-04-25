@@ -11,6 +11,7 @@
 #include "NavigationInvokerComponent.h"
 #include "PlayerCharacter.h"
 #include "Engine/DamageEvents.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Perception/AIPerceptionComponent.h"
 
 // Sets default values
@@ -20,18 +21,38 @@ AAICharacter::AAICharacter()
 	PrimaryActorTick.bCanEverTick = true;
 	NavInvoker = CreateDefaultSubobject<UNavigationInvokerComponent>(TEXT("Navigation Invoker"));
 
+	FrogMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Frog Mesh"));
+	FrogMesh->SetupAttachment(RootComponent);
+	
 	// Set up default Drop Rates
 	DropRate.Add(EPickUpType::None, 25);
 	DropRate.Add(EPickUpType::Health, 25);
 	DropRate.Add(EPickUpType::Damage, 25);
 	DropRate.Add(EPickUpType::Speed, 25);
-	
 }
 
 // Called when the game starts or when spawned
 void AAICharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	BodyInstanceMaterial = FrogMesh->CreateDynamicMaterialInstance(0);
+	
+	ToesAndBellyInstanceMaterial = FrogMesh->CreateDynamicMaterialInstance(2);
+	
+	const uint32_t ColourIndex = FMath::RandRange(0, BodyColourArray.Num() - 1);
+	if(BodyColourArray.IsValidIndex(ColourIndex) && ToesAndBellyColourArray.IsValidIndex(ColourIndex))
+	{
+		BodyInstanceMaterial->SetVectorParameterValue(FName("Colour"), BodyColourArray[ColourIndex]);
+		ToesAndBellyInstanceMaterial->SetVectorParameterValue(FName("Colour"), ToesAndBellyColourArray[ColourIndex]);
+		if(ColourIndex == 0)
+			Damage *= DamageTypeMultiplier;
+		else if (ColourIndex == 1)
+			MaxHealth *= HealthTypeMultiplier;
+		else if (ColourIndex == 2)
+			GetCharacterMovement()->MaxWalkSpeed  *= SpeedTypeMultiplier;
+	}
+	
 	Health = MaxHealth;
 
 	State = EAIState::Decision;
@@ -129,7 +150,6 @@ float AAICharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 		
 		Destroy();
 	}
-
 	return Health;
 }
 
@@ -151,7 +171,6 @@ void AAICharacter::SpawnDrop()
 
 void AAICharacter::CalculateDrop()
 {
-	
 	if(!DropRate.IsEmpty())
 	{
 		// Calculate Total Probability
@@ -171,13 +190,7 @@ void AAICharacter::CalculateDrop()
 				SelectedType = elem.Key;
 				break;
 			}
-			
 		}
-		
 	}
-
-	
-	
-	
 }
 

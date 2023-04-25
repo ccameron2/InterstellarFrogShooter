@@ -113,7 +113,15 @@ private:
 	UPROPERTY(EditAnywhere)
 		class UNavigationInvokerComponent* NavInvoker;
 
+	UPROPERTY(EditAnywhere)
+		UStaticMeshComponent* FrogMesh;
+	
+	UPROPERTY()
+		UMaterialInstanceDynamic* BodyInstanceMaterial;
 
+	UPROPERTY()
+		UMaterialInstanceDynamic* ToesAndBellyInstanceMaterial;
+	
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<AHitpointText> HitPointText;
 
@@ -122,14 +130,28 @@ private:
 
 	UPROPERTY()
 		float XPAmount = 0.0f;
-
-private:
-	UPROPERTY(EditAnywhere)
+	
+	UPROPERTY(EditAnywhere, Category="Drops")
 		TMap<EPickUpType, TSubclassOf<ABasePickUpActor>> PickupClasses;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Drops")
 		TMap<EPickUpType, int> DropRate;
 
+	UPROPERTY(EditAnywhere, Category="Enemy Type")
+		TArray<FLinearColor> BodyColourArray;
+	
+	UPROPERTY(EditAnywhere, Category="Enemy Type")
+		TArray<FLinearColor> ToesAndBellyColourArray;
+
+	UPROPERTY(EditAnywhere, Category="Enemy Type")
+		float DamageTypeMultiplier = 2.0f;
+
+	UPROPERTY(EditAnywhere, Category="Enemy Type")
+		float HealthTypeMultiplier = 1.2f;
+
+	UPROPERTY(EditAnywhere, Category="Enemy Type")
+		float SpeedTypeMultiplier = 1.5f;
+		
 	int PickupTotalProbability = 0;
 
 	EPickUpType SelectedType;
