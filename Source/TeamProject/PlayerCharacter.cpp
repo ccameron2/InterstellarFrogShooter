@@ -31,6 +31,8 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 	GetWorld()->GetTimerManager().SetTimer(HeatCooldownTimer, this, &APlayerCharacter::HeatTimerUp, HeatDissipationRate, true);
 	DefaultMaxSpeed = GetCharacterMovement()->MaxWalkSpeed;
+
+	RocketCooldown = MaxRocketCooldown;
 }
 
 // Called every frame
@@ -39,12 +41,15 @@ void APlayerCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (PlayerHealth <= 0)
 		Destroy();
+	
 	if (Firing && !OnCooldown)
  		FireWeapon();
+	
 	if (bShowEnergyCooldown)
 		EnergyCooldownUI -= (DeltaTime / EnergyCooldown);
+	
 	if(bShowRocketLauncherCooldown)
-		RocketLauncherCooldownUI -= (DeltaTime / RocketCooldown);
+		RocketLauncherCooldownUI -= (DeltaTime / MaxRocketCooldown);
 
 	// Slow the character if underwater
 	if (Underwater)
@@ -62,6 +67,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	}
 }
 
+//Allows the player to move the character forwards and backwards
 void APlayerCharacter::MoveForwards(float AxisAmount)
 {
 	AddMovementInput(GetActorForwardVector() * AxisAmount);
@@ -87,18 +93,21 @@ void APlayerCharacter::Turn(float AxisAmount)
 
 void APlayerCharacter::SpawnDrone()
 {
+	//Make sure the Drone is able to be spawned no matter what
 	FActorSpawnParameters SpawnParameters;
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 	FTransform Transform;
 	
 	Transform.SetLocation(GetActorLocation() + FVector{ 200,-100, 50 });
-	//Transform.SetRotation(GetActorRotation().Quaternion());
+	
 	DroneRef = GetWorld()->SpawnActor<ADrone>(DroneClass, Transform, SpawnParameters);
 	
 	DroneRef->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 	DroneRef->bUseControllerRotationRoll = false;
 }
 
+//Update the Players total score for the current game
+//by calling the SetPlayerScore function in the PlayerController 
 void APlayerCharacter::UpdatePlayerScore(const float Amount)
 {
 	Cast<AMainPlayerController>(GetController())->SetPlayerScore(Amount);
@@ -131,6 +140,8 @@ void APlayerCharacter::FireWeapon()
 		CannonMesh1->AddLocalRotation(FVector{ 0,0,0.1 }.Rotation());
 		CannonMesh2->AddLocalRotation(FVector{ 0,0,-0.1 }.Rotation());
 		Raycast(Damage, Range);
+
+		OnCooldown = true;
 	}
 	else if (Weapon ==  WeaponType::Energy)
 	{
@@ -142,25 +153,63 @@ void APlayerCharacter::FireWeapon()
 		Range = EnergyRange;
 		
 		Raycast(Damage, Range);
+		OnCooldown = true;
 	}
 	else if (Weapon ==  WeaponType::Rocket)
 	{
-		PlayFireAudio();
-		if(CurrentRocketAmount > 0)
+		//Only allow the firing of Rockets if the Player is not loading in a new Rocket
+		if(!bRocketLoadingOnCooldown)
 		{
-			GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, RocketCooldown, false);
+			PlayFireAudio();
 
-			FTransform transform;
-			transform.SetLocation(GetActorLocation() + FVector{ 0,0,0 });
-			transform.SetRotation(GetActorRotation().Quaternion());
+			//Makes sure that there is a rocket to fire
+			if(CurrentRocketAmount > 0)
+			{
+				
+				FTransform transform;
+				transform.SetLocation(GetActorLocation() + FVector{ 0,0,0 });
+				transform.SetRotation(GetActorRotation().Quaternion());
 
-			GetWorld()->SpawnActor<ARocket>(RocketClass, transform);
-			CurrentRocketAmount -= 1;
-			bShowRocketLauncherCooldown = true;
+				
+				GetWorld()->SpawnActor<ARocket>(RocketClass, transform);
+
+
+				CurrentRocketAmount -= 1;
+
+				//Allow the HUD Widget to display the Rocket Cooldown
+				bShowRocketLauncherCooldown = true;
+
+				//If the player has the additional Rocket skill
+				if(CurrentRocketAmount > 0)
+				{
+					//Make sure this function cannot be called while a new Rocket is being loaded into the "Mech"
+					bRocketLoadingOnCooldown = true;
+					
+					FTimerHandle RocketLoadingTimerHandle;
+
+					//Set a timer to Load in the new Rocket
+					GetWorld()->GetTimerManager().SetTimer(RocketLoadingTimerHandle, this, &APlayerCharacter::LoadRocket, RocketCooldown / 2, false);
+
+					//Allow the Mech to fire again if there is still another Rocket available
+					OnCooldown = false;
+				}
+				else
+				{
+					//Update the Rocket Cooldown timer based on when the Player decides to fire the newly loaded in Rocket
+					if(bSecondRocketReady)
+					{
+						//Multiplying by the current Cooldown value as it is between 0 and 1 and therefore provides
+						//a great way to get the percentage of the Cooldown left
+						RocketCooldown *= RocketLauncherCooldownUI;
+					}
+
+					//Set a timer to Cooldown the Rocket Launcher
+					GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, RocketCooldown, false);
+					OnCooldown = true;
+				}
+			}
 		}
 	}
-
-	OnCooldown = true;
 }
 
 void APlayerCharacter::StartFireWeapon()
@@ -178,16 +227,25 @@ void APlayerCharacter::UpdateDeveloperMode(bool Value)
 	bDeveloperMode = Value;
 }
 
+void APlayerCharacter::IncreaseNumberOfRockets(const int Amount)
+{
+	MaxRocketAmount += Amount;
+	CurrentRocketAmount = MaxRocketAmount;
+	bUnlockedAdditionalRockets = true;
+}
+
+//Get a reference to the Players Drone to enable the Drone Skills:
+// - Drone_Gun_Skill
+// - Drone_Increase_Damage_Skill
+// - Drone_Increase_Firerate_Skill
+// - Drone_Increase_Range_Skill
 ADrone*	APlayerCharacter::GetDrone() const
 {
 	if(DroneRef)
 	{
 		return DroneRef;
 	}
-	else
-	{
-		return nullptr;
-	}
+	return nullptr;
 }
 
 void APlayerCharacter::ChangeWeapon()
@@ -268,7 +326,15 @@ void APlayerCharacter::CooldownTimerUp()
 	OnCooldown = false;
 	EnergyCooldownUI = 1.0f;
 	RocketLauncherCooldownUI = 1.0f;
-	CurrentRocketAmount = MaxRocketAmount; 
+	bSecondRocketReady = false;
+	CurrentRocketAmount = MaxRocketAmount;
+	RocketCooldown = MaxRocketCooldown;
+}
+
+void APlayerCharacter::LoadRocket()
+{
+	bRocketLoadingOnCooldown = false;
+	bSecondRocketReady = true;
 }
 
 void APlayerCharacter::CannonOverheatEnd()

@@ -125,13 +125,8 @@ public:
 		void ReduceEnergyCooldown(const float ReductionAmount) {EnergyCooldown -= ReductionAmount;}
 
 	UFUNCTION(BlueprintCallable)
-		void IncreaseNumberOfRockets(const int Amount)
-	{
-		MaxRocketAmount += Amount;
-		CurrentRocketAmount = MaxRocketAmount;
-		UE_LOG(LogTemp, Warning, TEXT("Increased Rockets"));
-	}
-
+		void IncreaseNumberOfRockets(const int Amount);
+	
 	UFUNCTION(BlueprintCallable)
 		ADrone* GetDrone() const;
 
@@ -164,7 +159,16 @@ public:
 		float EnergyRange = 12000.0f;
 
 	UPROPERTY(EditAnywhere, Category="Weapons", BlueprintReadOnly)
-		float RocketCooldown = 1.0f;
+		float MaxRocketCooldown = 5.0f;
+	
+	UPROPERTY()
+		float RocketCooldown = 0;
+
+	UPROPERTY(BlueprintReadWrite)
+		bool bRocketLoadingOnCooldown = false;
+
+	UPROPERTY()
+		bool bSecondRocketReady = false;
 	
 	UPROPERTY(EditAnywhere, Category="Weapons", BlueprintReadOnly)
 		int MaxRocketAmount = 1;
@@ -210,6 +214,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 		bool bUnlockedRocketLauncher = false;
+
+	UPROPERTY(BlueprintReadOnly)
+		bool bUnlockedAdditionalRockets = false;
 
 	UPROPERTY(BlueprintReadOnly)
 		int NumberOfKills = 0;
@@ -259,6 +266,7 @@ private:
 
 	void FireWeapon();
 	void CooldownTimerUp();
+	void LoadRocket();
 	void CannonOverheatEnd();
 	void HeatTimerUp();
 
