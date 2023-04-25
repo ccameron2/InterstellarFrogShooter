@@ -107,14 +107,18 @@ void ATeamProjectGameModeBase::Tick(float DeltaTime)
 
 	if (PlayerActor)
 	{
-		if (PlayerActor->GetActorLocation().Z < LandActor->WaterLevel)
+		if (LandActor->TerrainType != Desert && LandActor->TerrainType != Snowy)
 		{
-			PlayerActor->Underwater = true;
+			if (PlayerActor->GetActorLocation().Z < LandActor->WaterLevel)
+			{
+				PlayerActor->Underwater = true;
+			}
+			else
+			{
+				PlayerActor->Underwater = false;
+			}
 		}
-		else
-		{
-			PlayerActor->Underwater = false;
-		}
+		
 	}
 }
 
