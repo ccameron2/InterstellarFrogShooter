@@ -27,40 +27,51 @@ void AWaveManager::Tick(float DeltaTime)
 		if (EnemyFrogs[i] == nullptr || EnemyFrogs[i]->Health <= 0)
 		{
  			EnemyFrogs.RemoveAt(i);
+			NumAliveFrogs--;
 		}
 	}
 }
 
 void AWaveManager::NewWave()
 {
-	//GetWorldTimerManager().ClearTimer(WaveTimerHandle);
-	GetWorld()->GetTimerManager().SetTimer(WaveTimerHandle, this, &AWaveManager::NewWave, ActualWaveTime);
-	if (MaxWaves != 0)
+
+	if (NumAliveFrogs < MaxFrogs)
 	{
-		if(WaveNum > MaxWaves)
+		GetWorld()->GetTimerManager().SetTimer(WaveTimerHandle, this, &AWaveManager::NewWave, ActualWaveTime);
+		if (MaxWaves != 0)
 		{
-			GetWorldTimerManager().ClearTimer(WaveTimerHandle);
-			GetWorldTimerManager().ClearTimer(WaveDisplayTimerHandle);
-			return;
+			if (WaveNum > MaxWaves)
+			{
+				GetWorldTimerManager().ClearTimer(WaveTimerHandle);
+				GetWorldTimerManager().ClearTimer(WaveDisplayTimerHandle);
+				return;
+			}
 		}
+
+		GetWorldTimerManager().SetTimer(WaveDisplayTimerHandle, this, &AWaveManager::ResetWaveChanged, WaveDisplayTime, false);
+		WaveChanged = true;
+		NumFrogsToSpawn += WaveNum * 2;
+
+		CurrentDirection = static_cast<WaveDirection>(FMath::RandRange(0, 3));
+
+		for (int i = 0; i < NumFrogsToSpawn; i++)
+		{
+			FTransform transform;
+			auto location = GetNewFrogLocation(CurrentDirection);
+			transform.SetTranslation(location);
+
+			EnemyFrogs.Push(GetWorld()->SpawnActor<AAICharacter>(AIClass, transform));
+			NumAliveFrogs++;
+		}
+
+		WaveNum++;
 	}
-
-	GetWorldTimerManager().SetTimer(WaveDisplayTimerHandle, this, &AWaveManager::ResetWaveChanged, WaveDisplayTime, false);
-	WaveChanged = true;
-	NumFrogs += WaveNum * 2;
-
-	CurrentDirection = static_cast<WaveDirection>(FMath::RandRange(0, 3));
-
-	for (int i = 0; i < NumFrogs; i++)
+	else
 	{
-		FTransform transform;
-		auto location = GetNewFrogLocation(CurrentDirection);
-		transform.SetTranslation(location);
-
-		EnemyFrogs.Push(GetWorld()->SpawnActor<AAICharacter>(AIClass, transform));
+		GetWorld()->GetTimerManager().SetTimer(WaveDelayHandle, this, &AWaveManager::NewWave, MaxFrogsWaveDelay);
 	}
-
-	WaveNum++;
+	//GetWorldTimerManager().ClearTimer(WaveTimerHandle);
+	
 }
 
 void AWaveManager::ClearFrogs()

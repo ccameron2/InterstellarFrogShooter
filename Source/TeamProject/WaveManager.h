@@ -47,6 +47,7 @@ public:
 
 	TArray<AAICharacter*> EnemyFrogs;
 
+	FTimerHandle WaveDelayHandle;
 	FTimerHandle WaveTimerHandle;
 	FTimerHandle WaveDisplayTimerHandle;
 
@@ -65,11 +66,20 @@ public:
 	UPROPERTY(EditAnywhere)
 		float WaveDelay = 5;
 
+	UPROPERTY(EditAnywhere)
+		float MaxFrogsWaveDelay = 30.0f;
+
 	UPROPERTY(BlueprintReadOnly)
 		int WaveNum = 0;
 
 	UPROPERTY(EditAnywhere)
-		int NumFrogs = 5;
+		int NumFrogsToSpawn = 5;
+
+	UPROPERTY(EditAnywhere)
+		int NumAliveFrogs = 0;
+
+	UPROPERTY(EditAnywhere)
+		int MaxFrogs = 60;
 
 	UPROPERTY(EditAnywhere)
 		int NumTitleFrogs = 35;
