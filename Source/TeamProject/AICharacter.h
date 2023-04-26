@@ -32,6 +32,18 @@ enum class EDecisionReasons
 	Clear
 };
 
+USTRUCT(BlueprintType)
+struct FDrops
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+		int Rate;
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<ABasePickUpActor> PickupClass;
+};
+
 UCLASS()
 class TEAMPROJECT_API AAICharacter : public ACharacter
 {
@@ -130,12 +142,15 @@ private:
 
 	UPROPERTY()
 		float XPAmount = 0.0f;
-	
-	UPROPERTY(EditAnywhere, Category="Drops")
-		TMap<EPickUpType, TSubclassOf<ABasePickUpActor>> PickupClasses;
 
+
+	// Pick up classes can be added to the map with there pick up type
+	// These can be added in the AI blueprints
+	// The drop rate can also be selected in the blueprint
+	// This allows different AI to have different pickups depending on their settings
 	UPROPERTY(EditAnywhere, Category="Drops")
-		TMap<EPickUpType, int> DropRate;
+		TMap<EPickUpType, FDrops> PickupMap;	
+	
 
 	UPROPERTY(EditAnywhere, Category="Enemy Type")
 		TArray<FLinearColor> BodyColourArray;
