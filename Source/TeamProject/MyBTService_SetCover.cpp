@@ -13,6 +13,8 @@ UMyBTService_SetCover::UMyBTService_SetCover()
 void UMyBTService_SetCover::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
+
+	// Sets the cover location to be behind the cover
 	AActor* actor = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(GetSelectedBlackboardKey()));
 	if(actor != nullptr)
 	{

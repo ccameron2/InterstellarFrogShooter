@@ -27,11 +27,14 @@ void AHealthPickUpActor::Tick(float DeltaSeconds)
 void AHealthPickUpActor::OnPickUp(APlayerCharacter* Character)
 {
 	Super::OnPickUp(Character);
-	
+
+	// Checks if the health if smaller than max health
+	// if not don't pick up
 	if(Character->PlayerHealth < Character->PlayerMaxHealth)
 	{
 		IsPickedUp = true;
-		AudioComponent->Play();
+		AudioComponent->Play(); 
+		
 		// Calculate if the health amount is bigger than max health or not
 		int newHealth = Character->PlayerHealth + HealthAmount;
 		if(newHealth >= Character->PlayerMaxHealth)
@@ -47,6 +50,7 @@ void AHealthPickUpActor::OnPickUp(APlayerCharacter* Character)
 		}
 		
 		// Hides and disables the pickup
+		// Allows the pickup to run in the background
 		MeshComponent->SetVisibility(false);
 		PickUpCollisionSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}

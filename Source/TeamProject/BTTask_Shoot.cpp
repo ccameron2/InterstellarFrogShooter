@@ -18,6 +18,7 @@ EBTNodeResult::Type UBTTask_Shoot::ExecuteTask(UBehaviorTreeComponent& Owner, ui
 	
 	if(AAICharacter* Character = Cast<AAICharacter>(Owner.GetAIOwner()->GetPawn()))
 	{
+		// Finds the player
 		TArray<AActor*> OutActors;
 		AAIController* Controller = Owner.GetAIOwner();
 		if(Controller->PerceptionComponent)
@@ -31,6 +32,7 @@ EBTNodeResult::Type UBTTask_Shoot::ExecuteTask(UBehaviorTreeComponent& Owner, ui
 			for(auto actor : OutActors)
 			{
 				Target = actor;
+				break; // Only ever one
 			}
 		}
 		else
@@ -38,6 +40,7 @@ EBTNodeResult::Type UBTTask_Shoot::ExecuteTask(UBehaviorTreeComponent& Owner, ui
 			return EBTNodeResult::Failed;
 		}
 
+		// If the player is found then shoot
 		if(Target != nullptr)
 			Character->Shoot(Target);
 	}

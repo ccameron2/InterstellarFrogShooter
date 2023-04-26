@@ -16,6 +16,8 @@ EBTNodeResult::Type UBTTask_SetRandomLocation::ExecuteTask(UBehaviorTreeComponen
 {
 	Super::ExecuteTask(Owner, NodeMemory);
 
+	// Set random location in world bounds
+	// This is for patrolling randomly
 	FVector NewLocation = Owner.GetOwner()->GetActorLocation();
 	if(AAICharacter* Character = Cast<AAICharacter>(Owner.GetAIOwner()->GetPawn()))
 	{

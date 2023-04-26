@@ -15,11 +15,14 @@ UBTTask_SetRunLocation::UBTTask_SetRunLocation()
 EBTNodeResult::Type UBTTask_SetRunLocation::ExecuteTask(UBehaviorTreeComponent& Owner, uint8* NodeMemory)
 {
 	Super::ExecuteTask(Owner, NodeMemory);
-	
+
+	// Finds the player
 	if(AAICharacter* Character = Cast<AAICharacter>(Owner.GetAIOwner()->GetPawn()))
 	{
 		TArray<AActor*> OutActors;
 		AAIController* Controller = Owner.GetAIOwner();
+
+		// if the player is visible
 		if(Controller->PerceptionComponent)
 		{
 			Controller->PerceptionComponent->GetPerceivedHostileActors(OutActors);
@@ -32,6 +35,7 @@ EBTNodeResult::Type UBTTask_SetRunLocation::ExecuteTask(UBehaviorTreeComponent& 
 			for(auto Actor : OutActors) // Will only ever be one
 			{
 				Player = Actor;
+				break;
 			}
 		}
 

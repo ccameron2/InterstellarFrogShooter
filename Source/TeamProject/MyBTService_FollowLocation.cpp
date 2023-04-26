@@ -17,7 +17,8 @@ void UMyBTService_FollowLocation::TickNode(UBehaviorTreeComponent& OwnerComp, ui
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 	
-	
+	// Sets the location of the player this allows the
+	// AI to follow the player everytime this node ticks
 	if(AAICharacter* Character = Cast<AAICharacter>(OwnerComp.GetAIOwner()->GetPawn()))
 	{
 		TArray<AActor*> OutActors;

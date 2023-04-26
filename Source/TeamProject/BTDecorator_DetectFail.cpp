@@ -16,8 +16,9 @@ UBTDecorator_DetectFail::UBTDecorator_DetectFail()
 void UBTDecorator_DetectFail::OnNodeProcessed(FBehaviorTreeSearchData& SearchData, EBTNodeResult::Type& NodeResult)
 {
 	Super::OnNodeProcessed(SearchData, NodeResult);
-	
-	
+
+	// If one of the children nodes fail then this is called to reset the states and
+	// stop the states getting stuck
 	if(NodeResult == EBTNodeResult::Failed)
 	{
 		if(AAICharacter* Character = Cast<AAICharacter>(SearchData.OwnerComp.GetAIOwner()->GetPawn()))

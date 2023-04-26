@@ -14,6 +14,7 @@ EBTNodeResult::Type UBTTask_DecisionTask::ExecuteTask(UBehaviorTreeComponent& Ow
 {
 	if(AAICharacter* Character = Cast<AAICharacter>(Owner.GetAIOwner()->GetPawn()))
 	{
+		// Checks the reason and changes the state based on the reason
 		if(Character->Reasons == EDecisionReasons::None)
 		{
 			Character->State = EAIState::Patrol;
@@ -24,6 +25,7 @@ EBTNodeResult::Type UBTTask_DecisionTask::ExecuteTask(UBehaviorTreeComponent& Ow
 		}
 		else if(Character->Reasons == EDecisionReasons::BeingShot)
 		{
+			// If being shoot change state based on health
 			if (Character->Health > 60)
 			{
 				Character->State = EAIState::Shoot;

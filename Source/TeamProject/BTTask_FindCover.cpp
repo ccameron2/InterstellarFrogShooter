@@ -25,7 +25,8 @@ EBTNodeResult::Type UBTTask_FindCover::ExecuteTask(UBehaviorTreeComponent& Owner
 		TArray<AActor*> OutActors;
 		Controller->PerceptionComponent->GetCurrentlyPerceivedActors(TSubclassOf<UAISense_Sight>(), OutActors);
 		CalculateClosestActor(Controller->GetPawn(), OutActors);
-		//Owner.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), CoverLocation);
+
+		// Sets the cover values
 		if(CoverActor != nullptr)
 		{
 			Owner.GetBlackboardComponent()->SetValueAsObject(GetSelectedBlackboardKey(), CoverActor);
@@ -41,7 +42,7 @@ void UBTTask_FindCover::CalculateClosestActor(APawn* Owner, TArray<AActor*> OutA
 	CurrentDistance = -1;
 	CoverActor = nullptr;
 	
-	
+	// Calculate the Closest  actor and selects it
 	for(auto Actor : OutActors)
 	{
 		if(Actor->ActorHasTag("Cover"))
@@ -65,6 +66,7 @@ void UBTTask_FindCover::CalculateClosestActor(APawn* Owner, TArray<AActor*> OutA
 		}
 	}
 
+	// Sets the cover location to the cover actor
 	if(CoverActor != nullptr)
 	{
 		CoverLocation = CoverActor->GetActorLocation();

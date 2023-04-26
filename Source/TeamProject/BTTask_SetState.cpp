@@ -11,6 +11,7 @@ UBTTask_SetState::UBTTask_SetState()
 
 EBTNodeResult::Type UBTTask_SetState::ExecuteTask(UBehaviorTreeComponent& Owner, uint8* NodeMemory)
 {
+	// Sets the new state and reason
 	if(AAICharacter* Character = Cast<AAICharacter>(Owner.GetAIOwner()->GetPawn()))
 	{
 		Character->State = State;

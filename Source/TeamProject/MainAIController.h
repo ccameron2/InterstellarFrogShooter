@@ -41,6 +41,7 @@ private:
 	UPROPERTY(EditAnywhere)
 		class UAIPerceptionComponent* AIPerception;
 
+	// Team Id to be different from player to set the player as an hostile
 	UPROPERTY(EditAnywhere)
 		FGenericTeamId TeamId = 1;
 

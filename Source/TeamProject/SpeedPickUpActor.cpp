@@ -18,10 +18,14 @@ void ASpeedPickUpActor::OnPickUp(APlayerCharacter* Character)
 	PlayerCharacter = Character;
 	PreviousSpeed = Character->GetCharacterMovement()->MaxWalkSpeed;
 
+	// Checks if the the speed Multiplier already add
+	// if not not allow pick up
 	if(PreviousSpeed != Character->DefaultMaxSpeed * SpeedMultiplier)
 	{
 		IsPickedUp = true;
 		AudioComponent->Play();
+
+		// Sets the speed and starts the timer 
 		PlayerCharacter->GetCharacterMovement()->MaxWalkSpeed *= SpeedMultiplier;
 		GetWorld()->GetTimerManager().SetTimer(SpeedTimer, this, &ASpeedPickUpActor::OnTimerFinished, PickUpTimer, false);
 
@@ -39,6 +43,7 @@ void ASpeedPickUpActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 
 void ASpeedPickUpActor::OnTimerFinished()
 {
+	// Resets the speed
 	PlayerCharacter->GetCharacterMovement()->MaxWalkSpeed = PreviousSpeed;
 	Destroy();
 }

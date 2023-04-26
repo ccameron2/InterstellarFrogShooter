@@ -9,6 +9,8 @@
 class APlayerCharacter;
 class USphereComponent;
 
+// Enum for setting the pick up types
+// Used in blueprints (see AICharacter.h)
 UENUM()
 enum class EPickUpType
 {
@@ -48,6 +50,7 @@ private:
 	void OnLifeTimerFinished();
 	
 protected:
+	// Each setting changeable by child classes
 	UPROPERTY(EditAnywhere)
 		EPickUpType PickUpType;
 	
@@ -55,19 +58,21 @@ protected:
 		UStaticMeshComponent* MeshComponent;
 
 	UPROPERTY(EditAnywhere)
-		USphereComponent* PickUpCollisionSphere;
+		USphereComponent* PickUpCollisionSphere; // Sphere for collision detection for picking up
 
 	UPROPERTY(EditAnywhere)
-		UAudioComponent* AudioComponent;
+		UAudioComponent* AudioComponent; // Plays audio on pick up
 
+	// stops the Life timer timer from destroying pick up if already picked up
 	bool IsPickedUp = false;
 	
 private:
+	// Default settings
 	UPROPERTY(EditAnywhere)
-		float RotationSpeed = 100.0f;
+		float RotationSpeed = 100.0f; // The speed that the pick ups will spin at
 
 	UPROPERTY(EditAnywhere)
-		float LifeTimeRate = 120.0f;
+		float LifeTimeRate = 120.0f; //Timer used for destroying after 2 minutes if not picked up (done for performance)
 	
 	FTimerHandle LifeTimeTimer;
 

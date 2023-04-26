@@ -18,6 +18,7 @@ EBTNodeResult::Type UBTTask_FindPlayer::ExecuteTask(UBehaviorTreeComponent& Owne
 {
 	Super::ExecuteTask(Owner, NodeMemory);
 
+	// Sets the location where the AI was shot from
 	if(AAICharacter* Character = Cast<AAICharacter>(Owner.GetAIOwner()->GetPawn()))
 	{
 		Owner.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), Character->ShootFromLocation);
