@@ -31,6 +31,7 @@ void ALand::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+// Clear land objects
 void ALand::ClearMeshInstances()
 {
 	for (auto& mesh : ForestStaticMeshes)
@@ -59,6 +60,7 @@ void ALand::ClearMeshInstances()
 	}
 }
 
+// Clear geometry and blockers
 void ALand::Clear()
 {
 	Vertices.Empty();
@@ -97,8 +99,10 @@ void ALand::Clear()
 	}
 }
 
+// Place obstacles in the world	
 void ALand::PlaceObjects(FastNoise* noise)
 {
+	// Set meshes based on terrain type
 	if (TerrainType == Forest) { StaticMeshes = ForestStaticMeshes; }
 	else if (TerrainType == Snowy) { StaticMeshes = SnowyStaticMeshes; }
 	else if (TerrainType == Piney) { StaticMeshes = PineyStaticMeshes; }
@@ -231,9 +235,6 @@ void ALand::PlaceObjects(FastNoise* noise)
 void ALand::CreateMesh(FastNoise* noise)
 {
 	ABackLand::CreateMesh(noise);
-
-	/*if (terrainType != Desert)*/
-
 	PlaceObjects(noise);	
 }
 

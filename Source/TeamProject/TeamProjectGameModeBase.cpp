@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// CCameron, JMills
 #include "TeamProjectGameModeBase.h"
 
 #include "Components/AudioComponent.h"
@@ -37,6 +37,7 @@ void ATeamProjectGameModeBase::BeginPlay()
 	noise.SetNoiseType(FastNoise::SimplexFractal);
 	noise.SetSeed(FMath::RandRange(0, 999));
 
+	// Spawn the main arena
 	int Type = 0;
 	if (LandClass)
 	{
@@ -44,14 +45,16 @@ void ATeamProjectGameModeBase::BeginPlay()
 		Type = FMath::RandRange(0, LandActor->NumTypes - 1);
 		LandActor->Init(Type, &noise);
 	}
-	
+
 	auto size = LandActor->Size * LandActor->Scale;
 	auto scale = LandActor->Scale;
 
+	// Spawn background terrain
 	if (BackLandClass)
 	{
 		for (int i = 0; i < 8; i++)
 		{
+			// Set location for each background terrain block
 			if(i == 0) Location = FVector{-size + scale,size - scale ,0};
 			if(i == 1) Location = FVector{0,size - scale,0};
 			if(i == 2) Location = FVector{size - scale,size - scale,0};
@@ -73,8 +76,11 @@ void ATeamProjectGameModeBase::BeginPlay()
 
 	if(EnableWaveManager)
 	{
+		// Spawn a wave manager to spawn frogs
 		WaveManager = GetWorld()->SpawnActor<AWaveManager>(WaveManagerClass, Transform);
 		WaveManager->Init(LandActor->Size * LandActor->Scale);
+
+		// Spawn title background frogs
 		WaveManager->SpawnTitleFrogs();
 	}
 }
@@ -123,6 +129,7 @@ void ATeamProjectGameModeBase::Tick(float DeltaTime)
 //Update the Land based on the values the Player sets in Preview Panel
 void ATeamProjectGameModeBase::OnGuiSetValues(FText InSeedString, int InTerrainType)
 {
+	// Clear title screen frogs
 	if(EnableWaveManager)
 		WaveManager->ClearFrogs();
 
@@ -178,23 +185,30 @@ void ATeamProjectGameModeBase::OnStart()
 	GameStart = true;
 	if (PlayerCharacterClass)
 	{
+		// Spawn character into the world
 		FTransform Transform;
 		const FVector Location = { 0,0,1000 };
 		Transform.SetTranslation(Location);
 
 		PlayerActor = GetWorld()->SpawnActor<APlayerCharacter>(PlayerCharacterClass, Transform);
+
+		// Possess with custom player controller
 		PlayerController->UnPossess();
 		PlayerController->AutoReceiveInput = EAutoReceiveInput::Player0;
 		PlayerController->Possess((PlayerActor));
 
+		// Set developer mode
+		PlayerActor->UpdateDeveloperMode(PlayerController->bDeveloperMode);
+
+		// Destroy old actor
 		PlayerPawn->Destroy();
 		PlayerPawn = PlayerActor;
-
 		PlayerController->RebindCharacter(PlayerActor);
 	}
 	
 	if(EnableWaveManager)
 	{
+		// Clear title frogs and start wave timer
 		WaveManager->ClearFrogs();
 		WaveManager->StartWaves();;
 	}

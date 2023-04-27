@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// CCameron
 
 #pragma once
 #include <ProceduralMeshComponent.h>
@@ -61,6 +61,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "ProcGen")
 		int WaterLevel = -1000;
 
+	// Mesh geometry
 	TArray<FVector> Vertices;
 	TArray<int32> Triangles;
 	TArray<FVector> Normals;
@@ -69,12 +70,14 @@ public:
 	TArray<FColor> VertexColours;
 	TArray<FProcMeshTangent> Tangents;
 
+	// Water geometry
 	TArray<FVector> WaterVertices;
 	TArray<int32> WaterTriangles;
 	TArray<FVector> WaterNormals;
 	TArray<FColor> WaterColours;
 	TArray<FProcMeshTangent> WaterTangents;
-
+	
+	// Materials
 	UMaterialInterface* WaterMaterial;
 	UMaterialInterface* IceMaterial;
 	UMaterialInterface* ForestMaterial;

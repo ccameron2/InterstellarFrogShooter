@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// CCameron, JMills
 
 
 #include "PlayerCharacter.h"
@@ -13,9 +13,9 @@
 // Sets default values
 APlayerCharacter::APlayerCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	// Create cannons and attach to root
 	CannonMesh1 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Cannon Mesh 1"));
 	CannonMesh1->SetupAttachment(RootComponent);
 	CannonMesh2 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Cannon Mesh 2"));
@@ -30,7 +30,11 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	// Set looping timer to dissipate heat
 	GetWorld()->GetTimerManager().SetTimer(HeatCooldownTimer, this, &APlayerCharacter::HeatTimerUp, HeatDissipationRate, true);
+	
+	// Save default max speed
 	DefaultMaxSpeed = GetCharacterMovement()->MaxWalkSpeed;
 
 	//Update the Rockets Cooldown to be the Maximum Cooldown
@@ -41,9 +45,12 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	// Destroy the player if health reaches 0
 	if (PlayerHealth <= 0)
 		Destroy();
 	
+	// Fire weapon if not on cooldown
 	if (Firing && !OnCooldown)
  		FireWeapon();
 
@@ -104,8 +111,8 @@ void APlayerCharacter::SpawnDrone()
 	
 	Transform.SetLocation(GetActorLocation() + FVector{ 200,-100, 50 });
 	
-	DroneRef = GetWorld()->SpawnActor<ADrone>(DroneClass, Transform, SpawnParameters);
-	
+	// Spawn drone
+	DroneRef = GetWorld()->SpawnActor<ADrone>(DroneClass, Transform, SpawnParameters);	
 	DroneRef->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 	DroneRef->bUseControllerRotationRoll = false;
 }
@@ -122,6 +129,7 @@ void APlayerCharacter::ResetPlayerHitIndicator()
 	bShowHitIndicator = false;
 }
 
+// Fire the selected weapon and start cooldown
 void APlayerCharacter::FireWeapon()
 {
 	int Damage;
@@ -131,19 +139,29 @@ void APlayerCharacter::FireWeapon()
 	{
 		PlayFireAudio();
 		if (CannonOverheated) return;
+
+		// If cannon is too hot start longer overheat timer and return
 		if(CannonHeat >= MaxCannonHeat)
 		{
 			CannonOverheated = true;
 			GetWorld()->GetTimerManager().SetTimer(OverheatCooldownTimer, this, &APlayerCharacter::CannonOverheatEnd, CannonOverheatCooldown, true);
 			return;
 		}
+
+		// Add heat to cannon and start cooldown
 		CannonHeat += CannonHeatIncrement;
 		GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, CannonCooldown, false);
+
+		// Set damage and range
 		Damage = CannonBaseDamage;
 		Range = CannonRange;
 		bShowCannonCooldown = true;
+
+		// Rotate cannons
 		CannonMesh1->AddLocalRotation(FVector{ 0,0,0.1 }.Rotation());
 		CannonMesh2->AddLocalRotation(FVector{ 0,0,-0.1 }.Rotation());
+		
+		// Raycast to crosshair position and apply damage
 		Raycast(Damage, Range);
 
 		OnCooldown = true;
@@ -151,13 +169,18 @@ void APlayerCharacter::FireWeapon()
 	else if (Weapon ==  WeaponType::Energy)
 	{
 		PlayFireAudio();
+
+		// Start cooldown timer
 		GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, EnergyCooldown, false);
 
+		// Set damage and range
 		bShowEnergyCooldown = true;
 		Damage = EnergyBaseDamage;
 		Range = EnergyRange;
 		
+		// Raycast to crosshair and apply damage
 		Raycast(Damage, Range);
+
 		OnCooldown = true;
 	}
 	else if (Weapon ==  WeaponType::Rocket)
@@ -175,7 +198,7 @@ void APlayerCharacter::FireWeapon()
 				transform.SetLocation(GetActorLocation() + FVector{ 0,0,0 });
 				transform.SetRotation(GetActorRotation().Quaternion());
 
-				
+				// Spawn new rocket
 				GetWorld()->SpawnActor<ARocket>(RocketClass, transform);
 
 				//Fire a Rocket
@@ -249,6 +272,7 @@ ADrone*	APlayerCharacter::GetDrone() const
 	return nullptr;
 }
 
+// Swap between weapons in a cycle
 void APlayerCharacter::ChangeWeapon()
 {
 	if (Weapon ==  WeaponType::Cannons && bUnlockedEnergyWeapon)
@@ -290,9 +314,10 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	if(UKismetMathLibrary::RandomFloatInRange(0.0f, 1.0f) > DodgeChance)
 		PlayerHealth -= DamageAmount;
 
+	
 	if (PlayerHealth <= 0.0f)
 	{
-		//Update the Players High score
+		// Update Highscore 
 		Cast<AMainPlayerController>(GetController())->UpdateSaveGamePlayerHighScore(false);
 
 		//Load in the EndScreen User Widget
@@ -368,9 +393,9 @@ void APlayerCharacter::HeatTimerUp()
 	if(CannonHeat > 0) CannonHeat--;
 }
 
+// Raycast and apply damage to enemy hit
 void APlayerCharacter::Raycast(float damage, float range)
 {
-
 	AController* ControllerReference = GetController();
 
 	FVector Location;
@@ -385,15 +410,16 @@ void APlayerCharacter::Raycast(float damage, float range)
 	End = Location + (Rotation.Vector() * range);
 	
 	if(Weapon == WeaponType::Energy || DebugWeapons)
-	{
+	{	
 		FVector Weapon1Location = CannonMesh1->GetComponentLocation();
 		FVector Weapon2Location = CannonMesh2->GetComponentLocation();
-		DrawDebugLine(GetWorld(), Weapon1Location, End, FColor(0, 127, 255), false, 1, 0, 12.333);
-		DrawDebugLine(GetWorld(), Weapon2Location, End, FColor(0, 127, 255), false, 1, 0, 12.333);
+		DrawDebugLine(GetWorld(), Weapon1Location, End, FColor(0, 127, 255), false, 2.5, 0, 12.333);
+		DrawDebugLine(GetWorld(), Weapon2Location, End, FColor(0, 127, 255), false, 2.5, 0, 12.333);
 	}
 
 	bool bRayHit = GetWorld()->LineTraceSingleByChannel(Hit, Location, End, ECC_Visibility, CollisionParams);
 
+	// If an enemy is it apply damage
 	if (bRayHit && Hit.GetActor() != nullptr)
 	{
 		if (Hit.GetActor()->GetClass()->IsChildOf(AAICharacter::StaticClass()))

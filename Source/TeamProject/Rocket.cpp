@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// CCameron
 
 #include "Rocket.h"
 #include "Kismet/GameplayStatics.h"
@@ -6,13 +6,14 @@
 // Sets default values
 ARocket::ARocket()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	// Create rocket mesh
 	RocketMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RocketMesh"));
 	RocketMesh->SetSimulatePhysics(true);
-
 	SetRootComponent(RocketMesh);
 
+	// Create movement component and set values
 	ProjMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Movement Component"));
 	ProjMovement->UpdatedComponent = RocketMesh;
 	ProjMovement->InitialSpeed = 4000.0f;
@@ -25,9 +26,8 @@ void ARocket::OnHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse
 	if ((OtherActor != nullptr) && (OtherActor != this))
 	{
 		// Apply a radial force to push objects away from the explosion
-		FVector ExplosionLocation = GetActorLocation();
-		TArray<FHitResult> HitResults;
-	
+		FVector ExplosionLocation = GetActorLocation();	
+
 		UGameplayStatics::ApplyRadialDamageWithFalloff(GetWorld(), Damage, 0.0f, ExplosionLocation, ExplosionRadius, ExplosionRadius, 1.0f, nullptr, TArray<AActor*>(), this, this->GetInstigatorController());
 
 		if (OtherActor->GetRootComponent()->IsSimulatingPhysics())
@@ -35,9 +35,12 @@ void ARocket::OnHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse
 			// Apply a force to the other actor
 			FVector ForceDirection = (OtherActor->GetActorLocation() - GetActorLocation()).GetSafeNormal();
 			OtherActor->FindComponentByClass<UStaticMeshComponent>()->AddImpulse(ForceDirection * ImpulseStrength, NAME_None, true);
-		}		
+		}
+		
+		// Spawn particles and play sound
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionEffect, GetActorLocation());
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), ExplosionSound, GetActorLocation());
+
 		Destroy();
 	}
 }

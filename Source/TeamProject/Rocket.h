@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// CCameron
 
 #pragma once
 
@@ -33,18 +33,28 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		UStaticMeshComponent* RocketMesh;
+
+	// Projectile movement component
 	UPROPERTY(EditAnywhere)
 		UProjectileMovementComponent* ProjMovement;
-	UPROPERTY(EditAnywhere)
-		USphereComponent* SphereCollision;
+
+	// Explosion particles 
 	UPROPERTY(EditAnywhere)
 		UParticleSystem* ExplosionEffect;
+
+	// Explosion sound
 	UPROPERTY(EditAnywhere)
 		USoundCue* ExplosionSound;
+
+	// Damage dealt
 	UPROPERTY(EditAnywhere)
-		float Damage = 50;
+		float Damage = 75;
+
+	// Radius of explosion
 	UPROPERTY(EditAnywhere)
 		float ExplosionRadius = 500.0f;
+	
+	// Impulse to apply to enemies hit
 	UPROPERTY(EditAnywhere)
 		float ImpulseStrength = 100000.0f;
 };

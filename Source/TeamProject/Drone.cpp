@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// CCameron
 
 
 #include "Drone.h"
@@ -32,16 +32,20 @@ void ADrone::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// Move drone up and down
 	if (Up) SetActorLocation(GetActorLocation() + FVector{ 0,0,0.5 });
 	else SetActorLocation(GetActorLocation() + FVector{ 0,0,-0.5 });
 
+	// If drone weapon unlocked
 	if (UnlockedWeapon)
 	{
 		if (WeaponOnCooldown) return;
 
+		// Get all enemies
 		TArray<AActor*> outActors;
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AAICharacter::StaticClass(), outActors);
 
+		// Find the closest one
 		float minDistance = INT_MAX;
 		auto location = GetActorLocation();
 		AActor* closestEnemy = nullptr;
@@ -56,19 +60,24 @@ void ADrone::Tick(float DeltaTime)
 			}
 		} 
 
+		// If they are in attack range
 		if (minDistance > AttackRange) return;
 
+		// Get viewpoint of drone
 		FRotator rotation;
 		GetActorEyesViewPoint(location, rotation);
 
+		// Raycast from drone viewpoint to closest enemy
 		FHitResult hitResult;
 		FCollisionQueryParams params;
 		params.AddIgnoredActor(this);
 		auto owner = GetOwner();
+
 		if(owner) params.AddIgnoredActor(owner);
 		bool bHit;
 		if(closestEnemy) bHit = GetWorld()->LineTraceSingleByChannel(hitResult, location, closestEnemy->GetActorLocation(), ECollisionChannel::ECC_Pawn, params);
 
+		// If hit apply damage
 		if (bHit)
 		{
 			auto hitActor = hitResult.GetActor();
@@ -82,7 +91,8 @@ void ADrone::Tick(float DeltaTime)
 					UDamageType::StaticClass());
 			}
 		}
-									 
+						
+		// Set weapon cooldown timer
 		GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &ADrone::WeaponCooldownUp, WeaponCooldownTime, false);
 		WeaponOnCooldown = true;
 	}

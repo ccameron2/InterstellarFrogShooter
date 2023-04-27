@@ -1,5 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+// CCameron
 
 #include "Blocker.h"
 
@@ -9,6 +8,7 @@ ABlocker::ABlocker()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	// Create static mesh to block player
 	BlockerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BlockerMesh"));
 	BlockerMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	SetRootComponent(BlockerMesh);

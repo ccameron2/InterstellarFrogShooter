@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// CCameron
 
 #pragma once
 #include "GameFramework/FloatingPawnMovement.h"
@@ -40,6 +40,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float DroneDamage = 10.0f;
 
+	// Has player unlocked drone weapon skill
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool UnlockedWeapon = false;
 
@@ -49,11 +50,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float WeaponCooldownTime = 2.0f;
 	
+	// Weapon cooldown timer
 	bool WeaponOnCooldown = false;
 	FTimerHandle WeaponCooldownTimer;
 
 	bool Up = true;
 	FTimerHandle WobbleTimer;
 	float WobbleChangeTime = 1.0f;
+
+	// Change hover direction
 	void DirTimerUp();
 };

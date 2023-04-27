@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// CCameron
 #include "BackLand.h"
 #include "KismetProceduralMeshLibrary.h"
 #include "External/Delaunator.hpp"
@@ -36,6 +36,7 @@ void ABackLand::Init(int type, FastNoise* noise)
 	CreateMesh(noise);
 }
 
+// Clear old geometry
 void ABackLand::Clear()
 {
 	Vertices.Empty();
@@ -53,6 +54,7 @@ void ABackLand::Clear()
 	WaterTriangles.Empty();
 	WaterColours.Empty();
 }
+
 
 void ABackLand::CreateMesh(FastNoise* noise)
 {
@@ -100,7 +102,7 @@ void ABackLand::CreateMesh(FastNoise* noise)
 		}
 	}
 
-	// Faster normals
+	// Fast normals calculation
 	CalculateNormals(Vertices, Triangles, Normals);
 
 	// Create mesh section

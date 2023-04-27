@@ -1,5 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+// CCameron, JMills
 #pragma once
 
 #include "CoreMinimal.h"
@@ -36,17 +35,17 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
+	// Movement controls
 	void MoveForwards(float AxisAmount);
-
 	void Strafe(float AxisAmount);
-
 	void LookUp(float AxisAmount);
+	void Turn(float AxisAmount);
 
+	// TakeDamage override
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 		AController* EventInstigator, AActor* DamageCauser) override;
 
-	void Turn(float AxisAmount);
-
+	// Weapon controls
 	void StartFireWeapon();
 	void StopFireWeapon();
 	void ChangeWeapon();
@@ -118,7 +117,7 @@ public:
 	//------------------//
 	//		Weapons		//
 	//------------------//
-	
+
 	WeaponType Weapon =  WeaponType::Cannons;
 
 	UFUNCTION(BlueprintCallable)
@@ -137,6 +136,7 @@ public:
 	UPROPERTY(EditAnywhere)
 		int DamageMultiplier = 1;
 	
+	// Cannon
 	UPROPERTY(EditAnywhere, Category="Weapons", BlueprintReadOnly)
 		float CannonBaseDamage = 5.0f; //Base Damage of Cannon without skills
 	UPROPERTY(EditAnywhere, Category="Weapons")
@@ -156,6 +156,7 @@ public:
 	UPROPERTY(EditAnywhere, Category="Weapons")
 		float HeatDissipationRate = 0.1f; // Time between decrementing CannonHeat
 
+	// Energy
 	UPROPERTY(EditAnywhere, Category="Weapons", BlueprintReadOnly)
 		float EnergyBaseDamage = 50.0f; //Base Damage of Energy without skills
 	UPROPERTY(EditAnywhere, Category="Weapons", BlueprintReadOnly)
@@ -163,6 +164,7 @@ public:
 	UPROPERTY(EditAnywhere, Category="Weapons")
 		float EnergyRange = 12000.0f; //Energy Range
 
+	// Rocket
 	UPROPERTY(EditAnywhere, Category="Weapons", BlueprintReadOnly)
 		float MaxRocketCooldown = 5.0f; //Base Cooldown between firing Rockets
 
@@ -192,9 +194,10 @@ public:
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<ARocket> RocketClass;
 
-	//Reference to the Drone
+	// Drone class
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<ADrone> DroneClass;
+
 	//----------------------//
 	//		Weapon UI		//
 	//----------------------//
@@ -292,7 +295,7 @@ private:
 	
 	FTimerHandle HeatCooldownTimer;
 	FTimerHandle OverheatCooldownTimer;
-	
+
 	UPROPERTY()
 		ADrone* DroneRef;
 

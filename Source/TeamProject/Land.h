@@ -1,6 +1,4 @@
 // CCameron
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include <ProceduralMeshComponent.h>
@@ -35,27 +33,30 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	// Obsticles in the arena
 	UPROPERTY(VisibleAnywhere, Category = "ProcGen")
 		TArray<ALandObject*> LandObjects;
 
+	// Class of obstacles
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<ALandObject> LandObjectClass;
 
+	// Currently set meshes
 	TArray<UInstancedStaticMeshComponent*> StaticMeshes;
 
+	// Blockers for arena edges
 	UPROPERTY(EditAnywhere, Category = "ProcGen")
 		TSubclassOf<ABlocker> BlockerClass;
-
 	UPROPERTY(EditAnywhere, Category = "ProcGen")
 		TArray<ABlocker*> EdgeBlockers;
 
+	// Static meshes for each world type
 	TArray<UInstancedStaticMeshComponent*> ForestStaticMeshes;
 	TArray<UInstancedStaticMeshComponent*> SnowyStaticMeshes;
 	TArray<UInstancedStaticMeshComponent*> MossyStaticMeshes;
 	TArray<UInstancedStaticMeshComponent*> PineyStaticMeshes;
 	TArray<UInstancedStaticMeshComponent*> DesertStaticMeshes;
 	TArray<UInstancedStaticMeshComponent*> FoliageStaticMeshes;
-
 
 	UPROPERTY(EditAnywhere, Category = "ProcGen")
 		bool CreateOnConstruction = false;
@@ -67,9 +68,11 @@ public:
 
 	int NumTypes = 5;
 
+	// Editor mesh creation function
 	UFUNCTION(CallInEditor, Category = "ProcGen")
 		void MakeNewMesh();
 
+	// Load meshes from file
 	void LoadStaticMeshes() override;
 
 };

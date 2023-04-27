@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// CCameron, JMills
 
 #pragma once
 #include "MainPlayerController.h"
@@ -33,9 +33,11 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	bool GameStart = false;
 
+	// Main arena class
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<ALand> LandClass;
 
+	// Background terrain class
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<ABackLand> BackLandClass;
 
@@ -58,6 +60,7 @@ public:
 	UPROPERTY()
 	ALand* LandActor;
 
+	// Array of background terrain
 	UPROPERTY()
 	TArray<ABackLand*> BackLandActors;
 
@@ -68,16 +71,21 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void OnGuiSetValues(FText InSeedString, int InTerrainType);
 
-	//Spawn and Possess the Player
+	//When start is clicked Spawn and Possess the Player
 	UFUNCTION(BlueprintCallable)
 		void OnStart();
 
+	// When back button is clicked
 	UFUNCTION(BlueprintCallable)
 		void OnBack();
 
+	// When play button is clicked
 	UFUNCTION(BlueprintCallable)
 		void OnPlay();
 
+	// When debug button is clicked
+	UFUNCTION(BlueprintCallable)
+		void OnDebug();
 	//MiniMap and Preview
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<ASceneCapture2D> PreviewCaptureClass;
