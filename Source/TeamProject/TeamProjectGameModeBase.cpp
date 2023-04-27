@@ -197,9 +197,6 @@ void ATeamProjectGameModeBase::OnStart()
 		PlayerController->AutoReceiveInput = EAutoReceiveInput::Player0;
 		PlayerController->Possess((PlayerActor));
 
-		// Set developer mode
-		PlayerActor->UpdateDeveloperMode(PlayerController->bDeveloperMode);
-
 		// Destroy old actor
 		PlayerPawn->Destroy();
 		PlayerPawn = PlayerActor;

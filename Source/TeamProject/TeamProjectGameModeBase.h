@@ -82,10 +82,7 @@ public:
 	// When play button is clicked
 	UFUNCTION(BlueprintCallable)
 		void OnPlay();
-
-	// When debug button is clicked
-	UFUNCTION(BlueprintCallable)
-		void OnDebug();
+	
 	//MiniMap and Preview
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<ASceneCapture2D> PreviewCaptureClass;
