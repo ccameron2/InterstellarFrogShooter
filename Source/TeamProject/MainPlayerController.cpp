@@ -250,18 +250,24 @@ void AMainPlayerController::WidgetLoader(int index)
 //Pause the Game and update the Players Input Mode respectively 
 void AMainPlayerController::PauseGame()
 {
-	if(UGameplayStatics::IsGamePaused(GetWorld()))
+	if(SkillTree)
 	{
-		SetInputMode(FInputModeGameOnly());
-		SetShowMouseCursor(false);
-		WidgetLoader(1);
-	}
-	else
-	{
-		WidgetLoader(4);
-		UGameplayStatics::SetGamePaused(GetWorld(), true);
-		SetInputMode(FInputModeUIOnly());
-		SetShowMouseCursor(true);
+		if(!SkillTree->IsInViewport())
+		{
+			if(UGameplayStatics::IsGamePaused(GetWorld()))
+			{
+				SetInputMode(FInputModeGameOnly());
+				SetShowMouseCursor(false);
+				WidgetLoader(1);
+			}
+			else
+			{
+				WidgetLoader(4);
+				UGameplayStatics::SetGamePaused(GetWorld(), true);
+				SetInputMode(FInputModeUIOnly());
+				SetShowMouseCursor(true);
+			}
+		}
 	}
 }
 
