@@ -8,10 +8,13 @@ Info Icon:		  	  https://icons8.com/icon/AqxR8HVzKNDb/info
 Keyboard Icon: 		  https://icons8.com/icon/ppqg6ozxjXqw/keyboard
 Video Card Icon: 	  	  https://icons8.com/icon/GgfGlggOax9C/video-card
 Audio Icon: 		  https://icons8.com/icon/OC2elREGfQ1m/audio
-Heart Model: "Heart" (https://skfb.ly/6WPTn) by Diego T. Yamaguchi is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 Energy Icon:		  https://icons8.com/icon/QtdPDOzlNdVc/lightning-bolt
 Missile Icon: 		  https://icons8.com/icon/IUiKHCKr2ZN5/missile
 Ammo Icon: 			  https://icons8.com/icon/53f3rpiNJYYV/bullet
+
+Heart Model: "Heart" (https://skfb.ly/6WPTn) by Diego T. Yamaguchi is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+Drone Model: "TRON-ish low-poly drone" (https://skfb.ly/6qZCS) by Bachklamk is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+	- glow colour has been changed to Green
 
 Music & Sound:
 - MixKit: https://mixkit.co/license/
@@ -20,3 +23,4 @@ Music & Sound:
   ~ mixkit-forest-walk-607
 
 638938__dibko__ribnisko-selo-rooster-birds-and-crickets - https://freesound.org/people/dibko/ - Creative Commons Attribution 4.0 International License
+
