@@ -315,5 +315,6 @@ private:
 	UFUNCTION()
 		void Raycast(float damage, float range);
 	
-	void PlayFireAudio();	
+	void PlayFireAudio();
+
 };

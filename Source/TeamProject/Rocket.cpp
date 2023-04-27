@@ -23,7 +23,7 @@ ARocket::ARocket()
 
 void ARocket::OnHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if ((OtherActor != nullptr) && (OtherActor != this))
+	if ((OtherActor != nullptr) && (OtherActor != this) && OtherActor != this->GetParentActor())
 	{
 		// Apply a radial force to push objects away from the explosion
 		FVector ExplosionLocation = GetActorLocation();	

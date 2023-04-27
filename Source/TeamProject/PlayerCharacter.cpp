@@ -104,15 +104,15 @@ void APlayerCharacter::Turn(float AxisAmount)
 
 void APlayerCharacter::SpawnDrone()
 {
-	//Make sure the Drone is able to be spawned no matter what
+	//Make sure the Drone is able to be spawned
 	FActorSpawnParameters SpawnParameters;
-	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	FTransform Transform;
 	
-	Transform.SetLocation(GetActorLocation() + FVector{ 200,-100, 50 });
+	Transform.SetLocation(GetActorLocation() + FVector{200,-100, 50});
 	
 	// Spawn drone
-	DroneRef = GetWorld()->SpawnActor<ADrone>(DroneClass, Transform, SpawnParameters);	
+	DroneRef = GetWorld()->SpawnActor<ADrone>(DroneClass, Transform, SpawnParameters);
 	DroneRef->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 	DroneRef->bUseControllerRotationRoll = false;
 }
@@ -132,8 +132,8 @@ void APlayerCharacter::ResetPlayerHitIndicator()
 // Fire the selected weapon and start cooldown
 void APlayerCharacter::FireWeapon()
 {
-	int Damage;
-	int Range;
+	int damage;
+	int range;
 	
 	if (Weapon == WeaponType::Cannons)
 	{
@@ -153,8 +153,8 @@ void APlayerCharacter::FireWeapon()
 		GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, CannonCooldown, false);
 
 		// Set damage and range
-		Damage = CannonBaseDamage;
-		Range = CannonRange;
+		damage = CannonBaseDamage;
+		range = CannonRange;
 		bShowCannonCooldown = true;
 
 		// Rotate cannons
@@ -162,7 +162,7 @@ void APlayerCharacter::FireWeapon()
 		CannonMesh2->AddLocalRotation(FVector{ 0,0,-0.1 }.Rotation());
 		
 		// Raycast to crosshair position and apply damage
-		Raycast(Damage, Range);
+		Raycast(damage, range);
 
 		OnCooldown = true;
 	}
@@ -175,11 +175,11 @@ void APlayerCharacter::FireWeapon()
 
 		// Set damage and range
 		bShowEnergyCooldown = true;
-		Damage = EnergyBaseDamage;
-		Range = EnergyRange;
+		damage = EnergyBaseDamage;
+		range = EnergyRange;
 		
 		// Raycast to crosshair and apply damage
-		Raycast(Damage, Range);
+		Raycast(damage, range);
 
 		OnCooldown = true;
 	}
@@ -195,7 +195,7 @@ void APlayerCharacter::FireWeapon()
 			{
 				
 				FTransform transform;
-				transform.SetLocation(GetActorLocation() + FVector{ 0,0,0 });
+				transform.SetLocation(GetActorLocation() + FVector{ 0,0,200 });
 				transform.SetRotation(GetActorRotation().Quaternion());
 
 				// Spawn new rocket
@@ -307,7 +307,7 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	FTimerHandle UnusedHandle;
 	GetWorld()->GetTimerManager().SetTimer(UnusedHandle, this, &APlayerCharacter::ResetPlayerHitIndicator, 0.3f, false);
 
-	//Reduce the amount of Damage the PLayer will receive
+	//Reduce the amount of damage the Player will receive
 	DamageAmount *= DamageReduction;
 
 	//If the Players' dodge chance is less than a random float then make the Player take damage 
@@ -339,7 +339,7 @@ void APlayerCharacter::RegenerateHealth()
 		PlayerHealth += HealthRegenAmount;
 }
 
-//Increases the Players' Damage reduction by an amount
+//Increases the Players' damage reduction by an amount
 void APlayerCharacter::IncreaseDamageReduction(float Amount)
 {
 	if((Amount > 0.0f && Amount <= 1.0f) || DamageReduction > 0.0f)
@@ -413,8 +413,8 @@ void APlayerCharacter::Raycast(float damage, float range)
 	{	
 		FVector Weapon1Location = CannonMesh1->GetComponentLocation();
 		FVector Weapon2Location = CannonMesh2->GetComponentLocation();
-		DrawDebugLine(GetWorld(), Weapon1Location, End, FColor(0, 127, 255), false, 2.5, 0, 12.333);
-		DrawDebugLine(GetWorld(), Weapon2Location, End, FColor(0, 127, 255), false, 2.5, 0, 12.333);
+		DrawDebugLine(GetWorld(), Weapon1Location, End, FColor(0, 127, 255), false, 0.5, 0, 12.333);
+		DrawDebugLine(GetWorld(), Weapon2Location, End, FColor(0, 127, 255), false, 0.5, 0, 12.333);
 	}
 
 	bool bRayHit = GetWorld()->LineTraceSingleByChannel(Hit, Location, End, ECC_Visibility, CollisionParams);
