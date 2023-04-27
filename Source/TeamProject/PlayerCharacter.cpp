@@ -212,7 +212,6 @@ void APlayerCharacter::FireWeapon()
 				//If the player has the additional Rocket skill
 				if(CurrentRocketAmount > 0)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("Additional Rocket Available"));
 					//Make sure this function cannot be called while a new Rocket is being loaded into the "Mech"
 					bRocketLoadingOnCooldown = true;
 					
@@ -220,7 +219,6 @@ void APlayerCharacter::FireWeapon()
 
 					//Set a timer to Load in the new Rocket
 					GetWorld()->GetTimerManager().SetTimer(RocketLoadingTimerHandle, this, &APlayerCharacter::LoadRocket, RocketCooldown / 2, false);
-					GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, RocketCooldown, false);
 
 					//Allow the Mech to fire again if there is still another Rocket available
 					OnCooldown = false;
@@ -236,9 +234,10 @@ void APlayerCharacter::FireWeapon()
 					}
 
 					//Set a timer to Cooldown the Rocket Launcher
-					GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, RocketCooldown, false);
 					OnCooldown = true;
 				}
+				
+				GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, RocketCooldown, false);
 			}
 		}
 	}
