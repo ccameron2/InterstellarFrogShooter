@@ -21,6 +21,7 @@ APlayerCharacter::APlayerCharacter()
 	CannonMesh2 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Cannon Mesh 2"));
 	CannonMesh2->SetupAttachment(RootComponent);
 
+	//Get a reference to the LevellingUp Component for the Player
 	LevelComponent = CreateDefaultSubobject<ULevellingUpComponent>(TEXT("Level Component"));
 	FireAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("Fire Audio Component"));
 }
@@ -32,6 +33,7 @@ void APlayerCharacter::BeginPlay()
 	GetWorld()->GetTimerManager().SetTimer(HeatCooldownTimer, this, &APlayerCharacter::HeatTimerUp, HeatDissipationRate, true);
 	DefaultMaxSpeed = GetCharacterMovement()->MaxWalkSpeed;
 
+	//Update the Rockets Cooldown to be the Maximum Cooldown
 	RocketCooldown = MaxRocketCooldown;
 }
 
@@ -44,10 +46,12 @@ void APlayerCharacter::Tick(float DeltaTime)
 	
 	if (Firing && !OnCooldown)
  		FireWeapon();
-	
+
+	//If the Energy Cooldown UI is shown update the percentage of the Radial UI element 
 	if (bShowEnergyCooldown)
 		EnergyCooldownUI -= (DeltaTime / EnergyCooldown);
-	
+
+	//If the Rocket Cooldown UI is shown update the percentage of the Radial UI element
 	if(bShowRocketLauncherCooldown)
 		RocketLauncherCooldownUI -= (DeltaTime / MaxRocketCooldown);
 
@@ -106,13 +110,13 @@ void APlayerCharacter::SpawnDrone()
 	DroneRef->bUseControllerRotationRoll = false;
 }
 
-//Update the Players total score for the current game
-//by calling the SetPlayerScore function in the PlayerController 
-void APlayerCharacter::UpdatePlayerScore(const float Amount)
+//Update the Players score for this game
+void APlayerCharacter::UpdatePlayerScore(const float Amount) const
 {
 	Cast<AMainPlayerController>(GetController())->SetPlayerScore(Amount);
 }
 
+//Stop showing the Hit indicator on the HUD
 void APlayerCharacter::ResetPlayerHitIndicator()
 {
 	bShowHitIndicator = false;
@@ -122,6 +126,7 @@ void APlayerCharacter::FireWeapon()
 {
 	int Damage;
 	int Range;
+	
 	if (Weapon == WeaponType::Cannons)
 	{
 		PlayFireAudio();
@@ -173,7 +178,7 @@ void APlayerCharacter::FireWeapon()
 				
 				GetWorld()->SpawnActor<ARocket>(RocketClass, transform);
 
-
+				//Fire a Rocket
 				CurrentRocketAmount -= 1;
 
 				//Allow the HUD Widget to display the Rocket Cooldown
@@ -222,11 +227,7 @@ void APlayerCharacter::StopFireWeapon()
 	Firing = false;
 }
 
-void APlayerCharacter::UpdateDeveloperMode(bool Value)
-{
-	bDeveloperMode = Value;
-}
-
+//Increase the amount of Rockets the Player can fire
 void APlayerCharacter::IncreaseNumberOfRockets(const int Amount)
 {
 	MaxRocketAmount += Amount;
@@ -275,20 +276,29 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
+	//Display the Hit indicator in the HUD User Widget
 	bShowHitIndicator = true;
+
+	//Remove the Hit indicator after a certain time
 	FTimerHandle UnusedHandle;
 	GetWorld()->GetTimerManager().SetTimer(UnusedHandle, this, &APlayerCharacter::ResetPlayerHitIndicator, 0.3f, false);
 
+	//Reduce the amount of Damage the PLayer will receive
 	DamageAmount *= DamageReduction;
-	
+
+	//If the Players' dodge chance is less than a random float then make the Player take damage 
 	if(UKismetMathLibrary::RandomFloatInRange(0.0f, 1.0f) > DodgeChance)
 		PlayerHealth -= DamageAmount;
 
 	if (PlayerHealth <= 0.0f)
 	{
+		//Update the Players High score
 		Cast<AMainPlayerController>(GetController())->UpdateSaveGamePlayerHighScore(false);
+
+		//Load in the EndScreen User Widget
 		Cast<AMainPlayerController>(GetController())->WidgetLoader(3);
 
+		//Pause the Game and then Destroy the PlayerCharacter
 		UGameplayStatics::SetGamePaused(GetWorld(), true);
 		Destroy();
 	}
@@ -296,29 +306,35 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	return PlayerHealth;
 }
 
+//If the Player has unlocked the 'Passive Health Regen' skill
+//Call this function every couple of seconds to add Health to the Player
 void APlayerCharacter::RegenerateHealth()
 {
 	if(PlayerHealth < PlayerMaxHealth)
 		PlayerHealth += HealthRegenAmount;
 }
 
+//Increases the Players' Damage reduction by an amount
 void APlayerCharacter::IncreaseDamageReduction(float Amount)
 {
 	if((Amount > 0.0f && Amount <= 1.0f) || DamageReduction > 0.0f)
 		DamageReduction -= Amount;
 }
 
+//Increase the Players' percentage chance to dodge an enemies shot
 void APlayerCharacter::IncreaseDodgeChance(float Amount)
 {
 	if((Amount > 0.0f && Amount < 1.0f) || DodgeChance < 1.0f)
 		DodgeChance += Amount;
 }
 
+//Increase the amount of Heat the Cannon can withstand
 void APlayerCharacter::IncreaseMaxCannonHeat(float Amount)
 {
 	MaxCannonHeat *= Amount;
 }
 
+//Reset all Cooldown variables 
 void APlayerCharacter::CooldownTimerUp()
 {
 	bShowEnergyCooldown = false;
@@ -331,6 +347,7 @@ void APlayerCharacter::CooldownTimerUp()
 	RocketCooldown = MaxRocketCooldown;
 }
 
+//Load in an additional Rocet
 void APlayerCharacter::LoadRocket()
 {
 	bRocketLoadingOnCooldown = false;
@@ -366,15 +383,8 @@ void APlayerCharacter::Raycast(float damage, float range)
 	CollisionParams.AddIgnoredActor(this);
 	ControllerReference->GetPlayerViewPoint(Location, Rotation);
 	End = Location + (Rotation.Vector() * range);
-
-	if (DebugWeapons)
-	{
-		FVector Weapon1Location = CannonMesh1->GetComponentLocation();
-		FVector Weapon2Location = CannonMesh2->GetComponentLocation();
-		DrawDebugLine(GetWorld(), Weapon1Location, End, FColor(0, 127, 255), false, 2.5, 0, 12.333);
-		DrawDebugLine(GetWorld(), Weapon2Location, End, FColor(0, 127, 255), false, 2.5, 0, 12.333);
-	}
-	if(Weapon == WeaponType::Energy)
+	
+	if(Weapon == WeaponType::Energy || DebugWeapons)
 	{
 		FVector Weapon1Location = CannonMesh1->GetComponentLocation();
 		FVector Weapon2Location = CannonMesh2->GetComponentLocation();

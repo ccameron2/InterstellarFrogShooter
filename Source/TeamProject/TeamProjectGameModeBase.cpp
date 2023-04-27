@@ -20,12 +20,10 @@ void ATeamProjectGameModeBase::BeginPlay()
 		AudioComponent->SetSound(*BackgroundSoundMap.Find("Menu"));
 		AudioComponent->Play();
 	}
-	
-	//MiniMapCapture->GetCaptureComponent2D()->Control
 
+	//Spawn in a SceneCapture2D component to capture the World for the Preview Panel
 	PreviewCapture = GetWorld()->SpawnActor<ASceneCapture2D>(PreviewCaptureClass);
 	PreviewCapture->GetCaptureComponent2D()->TextureTarget = PreviewTextureTarget;
-	//PreviewCapture->SetTextureTarget(PreviewTextureTarget);
 	
 	PlayerController = Cast<AMainPlayerController>(GetWorld()->GetFirstPlayerController());
 	PlayerPawn = PlayerController->GetPawn();
@@ -122,6 +120,7 @@ void ATeamProjectGameModeBase::Tick(float DeltaTime)
 	}
 }
 
+//Update the Land based on the values the Player sets in Preview Panel
 void ATeamProjectGameModeBase::OnGuiSetValues(FText InSeedString, int InTerrainType)
 {
 	if(EnableWaveManager)
@@ -149,10 +148,6 @@ void ATeamProjectGameModeBase::OnGuiSetValues(FText InSeedString, int InTerrainT
 		//Generate a random seed
 		seed = rand();
 	}
-
-	//Currently log the generated Seed and the chosen Terrain Type for Debuging
-	UE_LOG(LogTemp, Warning, TEXT("SEED: %d"), seed);
-	UE_LOG(LogTemp, Warning, TEXT("TERRAIN TYPE: %d"), InTerrainType);
 	
 	// If random selected, pick a random type
 	int type = 0;
@@ -177,20 +172,20 @@ void ATeamProjectGameModeBase::OnGuiSetValues(FText InSeedString, int InTerrainT
 	LandActor->SetActorLocation(FVector{0, 0, 0});
 }
 
+//Spawn and Possess the Player
 void ATeamProjectGameModeBase::OnStart()
 {
 	GameStart = true;
 	if (PlayerCharacterClass)
 	{
 		FTransform Transform;
-		FVector Location = { 0,0,1000 };
+		const FVector Location = { 0,0,1000 };
 		Transform.SetTranslation(Location);
 
 		PlayerActor = GetWorld()->SpawnActor<APlayerCharacter>(PlayerCharacterClass, Transform);
 		PlayerController->UnPossess();
 		PlayerController->AutoReceiveInput = EAutoReceiveInput::Player0;
 		PlayerController->Possess((PlayerActor));
-		PlayerActor->UpdateDeveloperMode(PlayerController->bDeveloperMode);
 
 		PlayerPawn->Destroy();
 		PlayerPawn = PlayerActor;
@@ -215,12 +210,4 @@ void ATeamProjectGameModeBase::OnPlay()
 {
 	if(EnableWaveManager)
 		WaveManager->ClearFrogs();
-}
-
-void ATeamProjectGameModeBase::OnDebug()
-{
-	if(EnableWaveManager)
-		WaveManager->ClearFrogs();
-	
-	LandActor->Clear();
 }

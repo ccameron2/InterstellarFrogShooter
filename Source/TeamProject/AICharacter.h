@@ -119,7 +119,6 @@ public:
 	
 	UPROPERTY()
 		FVector ShootFromLocation; 
-	
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -142,8 +141,7 @@ private:
 
 	UPROPERTY()
 		float XPAmount = 0.0f;
-
-
+	
 	// Pick up classes can be added to the map with there pick up type
 	// These can be added in the AI blueprints
 	// The drop rate can also be selected in the blueprint
@@ -151,13 +149,18 @@ private:
 	UPROPERTY(EditAnywhere, Category="Drops")
 		TMap<EPickUpType, FDrops> PickupMap;	
 	
+	int PickupTotalProbability = 0;
 
+	EPickUpType SelectedType;
+
+	//Allows the setting up of different Frog Colours through the AI Blueprints
 	UPROPERTY(EditAnywhere, Category="Enemy Type")
 		TArray<FLinearColor> BodyColourArray;
 	
 	UPROPERTY(EditAnywhere, Category="Enemy Type")
 		TArray<FLinearColor> ToesAndBellyColourArray;
 
+	//Effects for each Frog type that is able to be fine-tuned in the AI Blueprints
 	UPROPERTY(EditAnywhere, Category="Enemy Type")
 		float DamageTypeMultiplier = 2.0f;
 
@@ -167,7 +170,4 @@ private:
 	UPROPERTY(EditAnywhere, Category="Enemy Type")
 		float SpeedTypeMultiplier = 1.5f;
 		
-	int PickupTotalProbability = 0;
-
-	EPickUpType SelectedType;
 };

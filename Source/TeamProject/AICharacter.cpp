@@ -31,13 +31,21 @@ void AAICharacter::BeginPlay()
 	Super::BeginPlay();
 
 	// Set up frog colours
+	//Get reference to the Material Instances of the FrogMesh that can be updated during Gameplay
 	BodyInstanceMaterial = FrogMesh->CreateDynamicMaterialInstance(0);
 	ToesAndBellyInstanceMaterial = FrogMesh->CreateDynamicMaterialInstance(2);
+
+	//Calculate a random index value in the Colours Array 
 	const uint32_t ColourIndex = FMath::RandRange(0, BodyColourArray.Num() - 1);
+
+	//Ensure that the generated index is valid in both Colour Arrays
 	if(BodyColourArray.IsValidIndex(ColourIndex) && ToesAndBellyColourArray.IsValidIndex(ColourIndex))
 	{
+		//Update the FrogMesh's Material Instance
 		BodyInstanceMaterial->SetVectorParameterValue(FName("Colour"), BodyColourArray[ColourIndex]);
 		ToesAndBellyInstanceMaterial->SetVectorParameterValue(FName("Colour"), ToesAndBellyColourArray[ColourIndex]);
+
+		//Apply different effects for the Frogs based on the Colour chosen
 		if(ColourIndex == 0)
 			Damage *= DamageTypeMultiplier;
 		else if (ColourIndex == 1)
@@ -68,7 +76,6 @@ void AAICharacter::Tick(float DeltaTime)
 void AAICharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
 void AAICharacter::Shoot(AActor* TargetActor)

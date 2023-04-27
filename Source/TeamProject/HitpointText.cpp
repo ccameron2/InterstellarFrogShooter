@@ -16,6 +16,5 @@ AHitpointText::AHitpointText()
 void AHitpointText::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 

@@ -39,18 +39,22 @@ public:
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<ABackLand> BackLandClass;
 
+	//Reference to the PlayerCharacters Class
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<APlayerCharacter> PlayerCharacterClass;
 
+	//Reference to the WaveManager
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<AWaveManager> WaveManagerClass;
 
+	//Reference to the PlayerController
 	UPROPERTY()
 	AMainPlayerController* PlayerController;
 
+	//Reference to the Player Pawn
 	UPROPERTY()
 	APawn* PlayerPawn;
-
+	
 	UPROPERTY()
 	ALand* LandActor;
 
@@ -60,9 +64,11 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 		AWaveManager* WaveManager;
 
+	//Update the Land based on the values the Player sets in Preview Panel
 	UFUNCTION(BlueprintCallable)
 		void OnGuiSetValues(FText InSeedString, int InTerrainType);
 
+	//Spawn and Possess the Player
 	UFUNCTION(BlueprintCallable)
 		void OnStart();
 
@@ -71,9 +77,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void OnPlay();
-
-	UFUNCTION(BlueprintCallable)
-		void OnDebug();
 
 	//MiniMap and Preview
 	UPROPERTY(EditAnywhere)

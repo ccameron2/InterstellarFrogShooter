@@ -1,9 +1,9 @@
+//Jonathan
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
-
 #include "Components/ActorComponent.h"
 #include "LevellingUpComponent.generated.h"
 
@@ -33,6 +33,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		int LevelCap = 10;
 
+	//How much to increase the XP amount by between levels
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "1.0", ClampMax = "2.0", UIMin = "1.0", UIMax = "2.0"))
 		float ExponentialValue = 1.5f;
 
@@ -69,7 +70,7 @@ public:
 	UFUNCTION()
 		void CalculatePercentage();
 
-	//Function to calculate the the MaxXP that the player can get to before levelling up
+	//Function to calculate the Maximum XP that the player can get to before levelling up
 	UFUNCTION()
 		void CalculateMaxXP();
 
@@ -77,9 +78,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void AddXP(float XPToAdd);
 
+	//Function to return whether the Player has unlocked the MiniMap
+	//Gets called in the HUD User Widget to set the Visibility of the MiniMap
 	UFUNCTION(BlueprintCallable)
 		bool MiniMapUnlocked() const {return bMiniMap;}
 
+	//Function to unlock the MiniMap for the Player
+	//Gets called in the UnlockDrone Skill
 	UFUNCTION(BlueprintCallable)
 		void UnlockMiniMap() {bMiniMap = true;}
 
@@ -87,13 +92,15 @@ public:
 	UFUNCTION()
 		void LevelUP();
 
+	//Function to Reset the 'Levelled Up' text being displayed in the HUD User Widget
 	UFUNCTION()
 		void ResetLevelledUpBool();
 
 private:
 	UPROPERTY(EditAnywhere)
 		UAudioComponent* AudioComponent;
-	
+
+	//Whether the Player has access to the MiniMaps
 	UPROPERTY()
 		bool bMiniMap = false;
 		

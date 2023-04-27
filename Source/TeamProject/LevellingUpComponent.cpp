@@ -1,3 +1,4 @@
+//Jonathan
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
@@ -17,17 +18,13 @@ ULevellingUpComponent::ULevellingUpComponent()
 	AudioComponent->SetAutoActivate(false);
 }
 
-
 // Called when the game starts
 void ULevellingUpComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CalculatePercentage();
-	// ...
-	
+	CalculatePercentage();	
 }
-
 
 // Called every frame
 void ULevellingUpComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -51,7 +48,6 @@ void ULevellingUpComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 }
 
 //Calculate the current XP percentage for the progress bars in the XP widgets 
-
 void ULevellingUpComponent::CalculatePercentage()
 {
 	CurrentPercentage = CurrentXP / CurrentMaxXP;
@@ -68,18 +64,21 @@ void ULevellingUpComponent::CalculateMaxXP()
 
 	//Set the MaxXp to this new temporary value
 	CurrentMaxXP = TempXP;
-
 }
 
 //Give the player XP
-void ULevellingUpComponent::AddXP(float XPToAdd)
+void ULevellingUpComponent::AddXP(const float XPToAdd)
 {
 	BufferXP += XPToAdd;
 }
+
 //Level up the player
 void ULevellingUpComponent::LevelUP()
 {
+	//Play the Levelling Up sound
 	AudioComponent->Play();
+
+	//if the Player has reached the Maximum level, make sure they cannot Level up anymore
 	if (CurrentXPLevel >= LevelCap)
 	{
 		CurrentXP = CurrentMaxXP;
@@ -87,20 +86,24 @@ void ULevellingUpComponent::LevelUP()
 	}
 	else
 	{
+		//Calculate the amount of XP needed for the next level
 		++CurrentXPLevel;
-
 		CalculateMaxXP();
+		
 		CurrentXP = 0;
 		BufferXP = 0;
+		
 		AvailableSkillPoints++;
+
+		//Display the 'Levelled Up' text in the HUD User Widget
 		bLevelledUp = true;
 		FTimerHandle UnusedTimerHandle;
 		GetWorld()->GetTimerManager().SetTimer(UnusedTimerHandle, this, &ULevellingUpComponent::ResetLevelledUpBool, 2.0f, false);
 	}
 }
 
+//Function to Reset the 'Levelled Up' text being displayed in the HUD User Widget
 void ULevellingUpComponent::ResetLevelledUpBool()
 {
 	bLevelledUp = false;
 }
-
