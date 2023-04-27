@@ -10,12 +10,9 @@ ADrone::ADrone()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere Collision"));
-	SetRootComponent(SphereCollision);
-
 	DroneMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Drone Mesh"));
 	DroneMesh->SetRelativeRotation(FVector{ 0,0,90 }.ToOrientationQuat());
-	DroneMesh->SetupAttachment(RootComponent);
+	SetRootComponent(DroneMesh);
 
 	FloatingComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Floating Movement"));
 }

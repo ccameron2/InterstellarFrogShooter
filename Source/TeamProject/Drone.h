@@ -34,9 +34,6 @@ public:
 	UPROPERTY(EditAnywhere)
 		UFloatingPawnMovement* FloatingComponent;
 
-	UPROPERTY(EditAnywhere)
-		USphereComponent* SphereCollision;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float DroneDamage = 10.0f;
 

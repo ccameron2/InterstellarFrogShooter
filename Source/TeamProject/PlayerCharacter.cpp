@@ -21,6 +21,10 @@ APlayerCharacter::APlayerCharacter()
 	CannonMesh2 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Cannon Mesh 2"));
 	CannonMesh2->SetupAttachment(RootComponent);
 
+	DroneSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Drone spawn sphere"));
+	DroneSphere->SetupAttachment(RootComponent);
+	DroneSphere->SetWorldLocation(FVector(200.0f, -100.0f, 50.0f));
+
 	//Get a reference to the LevellingUp Component for the Player
 	LevelComponent = CreateDefaultSubobject<ULevellingUpComponent>(TEXT("Level Component"));
 	FireAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("Fire Audio Component"));
@@ -104,16 +108,15 @@ void APlayerCharacter::Turn(float AxisAmount)
 
 void APlayerCharacter::SpawnDrone()
 {
-	//Make sure the Drone is able to be spawned
 	FActorSpawnParameters SpawnParameters;
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	FTransform Transform;
-	
-	Transform.SetLocation(GetActorLocation() + FVector{200,-100, 50});
-	
+
+	FTransform transform;
+	transform.SetLocation(DroneSphere->GetComponentLocation());
+	transform.SetRotation(GetActorRotation().Quaternion());
 	// Spawn drone
-	DroneRef = GetWorld()->SpawnActor<ADrone>(DroneClass, Transform, SpawnParameters);
-	DroneRef->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+	DroneRef = GetWorld()->SpawnActor<ADrone>(DroneClass, transform, SpawnParameters);
+	DroneRef->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
 	DroneRef->bUseControllerRotationRoll = false;
 }
 

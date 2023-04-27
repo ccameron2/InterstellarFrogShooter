@@ -296,8 +296,11 @@ private:
 	FTimerHandle HeatCooldownTimer;
 	FTimerHandle OverheatCooldownTimer;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 		ADrone* DroneRef;
+
+	UPROPERTY(EditAnywhere)
+		USphereComponent* DroneSphere;
 
 	UFUNCTION()
 		void ResetPlayerHitIndicator();

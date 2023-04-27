@@ -39,7 +39,7 @@ void ARocket::OnHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse
 		
 		// Spawn particles and play sound
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionEffect, GetActorLocation());
-		UGameplayStatics::PlaySoundAtLocation(GetWorld(), ExplosionSound, GetActorLocation());
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), ExplosionSound, GetActorLocation(),3.0f);
 
 		Destroy();
 	}
