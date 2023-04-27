@@ -192,11 +192,10 @@ void APlayerCharacter::FireWeapon()
 		if(!bRocketLoadingOnCooldown)
 		{
 			PlayFireAudio();
-
+			
 			//Makes sure that there is a rocket to fire
 			if(CurrentRocketAmount > 0)
 			{
-				
 				FTransform transform;
 				transform.SetLocation(GetActorLocation() + FVector{ 0,0,200 });
 				transform.SetRotation(GetActorRotation().Quaternion());
@@ -213,6 +212,7 @@ void APlayerCharacter::FireWeapon()
 				//If the player has the additional Rocket skill
 				if(CurrentRocketAmount > 0)
 				{
+					UE_LOG(LogTemp, Warning, TEXT("Additional Rocket Available"));
 					//Make sure this function cannot be called while a new Rocket is being loaded into the "Mech"
 					bRocketLoadingOnCooldown = true;
 					
@@ -220,6 +220,7 @@ void APlayerCharacter::FireWeapon()
 
 					//Set a timer to Load in the new Rocket
 					GetWorld()->GetTimerManager().SetTimer(RocketLoadingTimerHandle, this, &APlayerCharacter::LoadRocket, RocketCooldown / 2, false);
+					GetWorld()->GetTimerManager().SetTimer(WeaponCooldownTimer, this, &APlayerCharacter::CooldownTimerUp, RocketCooldown, false);
 
 					//Allow the Mech to fire again if there is still another Rocket available
 					OnCooldown = false;
@@ -375,7 +376,7 @@ void APlayerCharacter::CooldownTimerUp()
 	RocketCooldown = MaxRocketCooldown;
 }
 
-//Load in an additional Rocet
+//Load in an additional Rocket
 void APlayerCharacter::LoadRocket()
 {
 	bRocketLoadingOnCooldown = false;
